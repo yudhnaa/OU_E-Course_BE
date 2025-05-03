@@ -8,6 +8,7 @@ import com.ou.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -18,13 +19,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class IndexController {
 
-    @Autowired
-    private UserService userService;
+//    @Autowired
+//    private UserService userService;
+//
+//    @RequestMapping("/")
+//    public String index(Model model) {
+//        model.addAttribute("helloWorld", userService.getUserById(1).getFirstName());
+//        return "layout";
+//    }
 
-    @RequestMapping("/")
-    public String index(Model model) {
-        model.addAttribute("helloWorld", userService.getUserById(1).getFirstName());
-        return "index";
+    @GetMapping("/")
+    public String index() {
+        return "dashboard/index";
     }
 
 }
