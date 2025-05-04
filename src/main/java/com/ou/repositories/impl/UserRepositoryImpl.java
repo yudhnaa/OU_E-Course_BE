@@ -23,11 +23,10 @@ public class UserRepositoryImpl implements UserRepository {
     @Autowired
     private LocalSessionFactoryBean factory;
 
-//    test 
     @Override
     public User getUserById(int id) {
-        Session s = factory.getObject().getCurrentSession();
-        return s.get(User.class, id);
+        return null;
     }
 
+//    test
 }

@@ -35,7 +35,7 @@ File: Main Css File
 }
 @font-face {
   font-family: "hkgrotesk";
-  src: url("../fonts/hkgrotesk-bold.eot");
+  src: url("../fonts/hkgrotesk-bold.ttf");
   src: local("hkgrotesk bold"), url("../fonts/hkgrotesk-bold.woff") format("woff");
   font-weight: 700;
 }
@@ -1608,22 +1608,18 @@ File: Main Css File
 }
 
 .bg-vertical-gradient {
-  background: -webkit-gradient(linear, left top, right top, from(var(--vz-primary)), to(var(--vz-success)));
   background: linear-gradient(to right, var(--vz-primary), var(--vz-success));
 }
 
 .bg-vertical-gradient-2 {
-  background: -webkit-gradient(linear, left top, right top, from(var(--vz-info)), to(var(--vz-secondary)));
   background: linear-gradient(to right, var(--vz-info), var(--vz-secondary));
 }
 
 .bg-vertical-gradient-3 {
-  background: -webkit-gradient(linear, left top, right top, from(var(--vz-info)), to(var(--vz-success)));
   background: linear-gradient(to right, var(--vz-info), var(--vz-success));
 }
 
 .bg-vertical-gradient-4 {
-  background: -webkit-gradient(linear, left top, right top, from(var(--vz-dark)), to(var(--vz-primary)));
   background: linear-gradient(to right, var(--vz-dark), var(--vz-primary));
 }
 
@@ -2069,7 +2065,7 @@ File: Main Css File
   text-align: center;
   border-radius: 3px;
   margin: 5px 0;
-  display: -webkit-inline-box;
+  display: inline-flex;
   display: -ms-inline-flexbox;
   display: inline-flex;
   -webkit-box-pack: center;
