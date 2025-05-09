@@ -6,12 +6,15 @@ package com.ou.services;
 
 import com.ou.pojo.User;
 
+import java.util.Locale;
+
 /**
  *
  * @author yudhna
  */
+
 public interface UserService {
 
-    public User getUserById(int id);
+    User getUserById(int id, Locale locale) throws Exception;
 
 }

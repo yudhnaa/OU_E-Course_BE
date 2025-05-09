@@ -1,7 +1,6 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
     <head>
         <title>
             Home Page
@@ -20,9 +19,15 @@
 
         <h1 th:text="${helloWorld}"></h1>
 
+        <a th:href="@{/}" class="btn btn-primary">Home</a>
+
+        <a th:href="@{/?lang=en}" class="btn btn-primary">English</a>
+        <a th:href="@{/?lang=vi}" class="btn btn-secondary">Vi</a>
+
         <div th:replace="base :: footer">
 
         </div>
+
 
     </body>
 </html>

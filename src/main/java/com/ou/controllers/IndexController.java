@@ -5,10 +5,14 @@
 package com.ou.controllers;
 
 import com.ou.services.UserService;
+import jakarta.ws.rs.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.Locale;
 
 /**
  *
@@ -22,8 +26,16 @@ public class IndexController {
     private UserService userService;
 
     @RequestMapping("/")
-    public String index(Model model) {
-        model.addAttribute("helloWorld", userService.getUserById(1).getFirstName());
+    public String index(Model model, Locale locale) {
+
+        String helloWorld;
+        try {
+             helloWorld = userService.getUserById(99, locale).getFirstName() + " " + userService.getUserById(1, locale).getLastName();
+        } catch (Exception ex){
+            helloWorld = ex.getMessage();
+        }
+
+        model.addAttribute("helloWorld", helloWorld);
         return "index";
     }
 
