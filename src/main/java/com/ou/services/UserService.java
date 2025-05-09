@@ -6,6 +6,7 @@ package com.ou.services;
 
 import com.ou.exceptions.NotFoundException;
 import com.ou.pojo.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 import java.util.Locale;
@@ -17,10 +18,10 @@ import java.util.Optional;
  * @author yudhna
  */
 
-public interface UserService {
+public interface UserService extends UserDetailsService {
 
     // Retrieve a user by ID with localization support
-    User getUserById(int id, Locale locale);
+    User getUserById(int id);
 
     // Add a new user
     User addUser(User user);

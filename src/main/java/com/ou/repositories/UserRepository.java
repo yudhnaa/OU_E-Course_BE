@@ -13,7 +13,7 @@ import java.util.Optional;
  *
  * @author yudhna
  */
-public interface UserRepository {
+public interface UserRepository{
     // Create operations
     User addUser(User user);
 

@@ -8,8 +8,10 @@ import com.ou.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.security.Principal;
 import java.util.Locale;
 
 /**
@@ -24,11 +26,21 @@ public class IndexController {
     private UserService userService;
 
     @RequestMapping("/")
-    public String index(Model model, Locale locale) throws Exception {
+    public String index(Model model, Locale locale, Principal principal) throws Exception {
 
+        if (principal != null) {
+            String username = principal.getName();
+            model.addAttribute("loged_username", username);
+        }
+
+        return "index";
+    }
+
+    @RequestMapping("/user/{userId}")
+    public String userDetail(Model model, @PathVariable("userId") int userId, Locale locale) throws Exception {
         String helloWorld;
 
-        helloWorld = userService.getUserById(99, locale).getFirstName() + " " + userService.getUserById(1, locale).getLastName();
+        helloWorld = userService.getUserById(userId).getFirstName() + " " + userService.getUserById(userId).getLastName();
 
         model.addAttribute("helloWorld", helloWorld);
         return "index";

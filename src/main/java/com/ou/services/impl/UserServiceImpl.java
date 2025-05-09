@@ -10,34 +10,69 @@ import com.ou.repositories.UserRepository;
 import com.ou.services.LocalizationService;
 import com.ou.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  *
  * @author yudhna
  */
-@Service
+@Service("userDetailService")
+@Transactional
 public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepo;
 
     @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
     private LocalizationService localizationService;
 
     @Override
-    public User getUserById(int id, Locale locale) {
-        return userRepo.getUserById(id).orElseThrow(() -> new NotFoundException(localizationService.getMessage("user.notFound", locale)));
+    public User getUserById(int id) {
+        return userRepo.getUserById(id).orElseThrow(() -> new NotFoundException(localizationService.getMessage("user.notFound", LocaleContextHolder.getLocale())));
     }
 
     @Override
     public User addUser(User user) {
-        return null;
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        User u = userRepo.addUser(user);
+        return u;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+        // Fetch user from the database
+        User user = userRepo.getUserByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        localizationService.getMessage("user.notFound", LocaleContextHolder.getLocale())));
+
+        // Map roles to GrantedAuthority
+        Set<GrantedAuthority> authorities = new HashSet<>();
+        authorities.add(new SimpleGrantedAuthority(user.getUserRoleId().getName()));
+
+        // Return UserDetails object
+        return new org.springframework.security.core.userdetails.User(
+                user.getUsername(),
+                user.getPassword(),
+//                user.getIsActive(),
+//                true, // accountNonExpired
+//                true, // credentialsNonExpired
+//                true, // accountNonLocked
+                authorities
+        );
     }
 
     @Override
