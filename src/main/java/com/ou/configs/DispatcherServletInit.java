@@ -9,7 +9,6 @@ public class DispatcherServletInit extends AbstractAnnotationConfigDispatcherSer
         return new Class[]{
             ThymeleafConfig.class,
             HibernateConfigs.class,
-            MessageSourceConfig.class
         };
     }
 
