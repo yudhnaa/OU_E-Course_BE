@@ -4,12 +4,27 @@
  */
 package com.ou.configs;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.core.env.Environment;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
+import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.i18n.CookieLocaleResolver;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+
+import java.util.Locale;
 
 /**
  *
@@ -26,6 +41,61 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebAppContextConfigs implements WebMvcConfigurer {
     @Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+
         configurer.enable();
+    }
+
+    /*
+     * This method configures the message source for internationalization (i18n).
+     * It sets the base name for the message properties files and the default encoding.
+     */
+    @Bean
+    public MessageSource messageSource() {
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setBasenames("messages");
+        messageSource.setDefaultEncoding("UTF-8");
+        return messageSource;
+    }
+
+    /*
+     * This method configures the LocaleResolver for handling locale changes.
+     * It sets the default locale and the cookie name for storing the locale.
+     */
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+
+        // Add the LocaleChangeInterceptor to the registry for locale change handling
+        registry.addInterceptor(localeChangeInterceptor());
+    }
+
+    /*
+     * This method configures the LocaleChangeInterceptor for handling locale changes.
+     * It sets the parameter name for the locale change request parameter.
+     */
+    @Bean
+    public LocaleChangeInterceptor localeChangeInterceptor() {
+        LocaleChangeInterceptor interceptor = new LocaleChangeInterceptor();
+        interceptor.setParamName("lang");
+        return interceptor;
+    }
+
+    /*
+     * This method configures the LocaleResolver for handling locale changes.
+     * It sets the default locale, cookie name, and cookie expiration time.
+     * The default locale is set to English.
+     * This is used in LocaleChangeInterceptor
+     */
+    @Bean
+    public LocaleResolver localeResolver() {
+        CookieLocaleResolver resolver = new CookieLocaleResolver();
+        resolver.setDefaultLocale(Locale.ENGLISH); // Default locale
+        resolver.setCookieName("lang"); // Cookie name
+        resolver.setCookieMaxAge(9999); // Cookie expiration in seconds
+        return resolver;
+    }
+
+    @Bean
+    public StandardServletMultipartResolver multipartResolver() {
+        return new StandardServletMultipartResolver();
     }
 }
