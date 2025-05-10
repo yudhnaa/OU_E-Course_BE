@@ -3,7 +3,6 @@ package com.ou.repositories.impl;
 import com.ou.configs.WebApplicationSettings;
 import com.ou.pojo.Attachment;
 import com.ou.repositories.AttachmentRepository;
-import com.ou.repositories.TemplateInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
