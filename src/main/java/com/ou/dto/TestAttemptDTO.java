@@ -1,5 +1,9 @@
 package com.ou.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.ou.pojo.Test;
+import com.ou.pojo.User;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -8,17 +12,22 @@ import java.util.Objects;
 /**
  * DTO for {@link com.ou.pojo.TestAttempt}
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TestAttemptDTO implements Serializable {
     private final Integer id;
     private final Date startedAt;
     private final Date submittedAt;
     private final BigDecimal totalScore;
+    private final Test testId;
+    private final User userId;
 
-    public TestAttemptDTO(Integer id, Date startedAt, Date submittedAt, BigDecimal totalScore) {
+    public TestAttemptDTO(Integer id, Date startedAt, Date submittedAt, BigDecimal totalScore, Test testId, User userId) {
         this.id = id;
         this.startedAt = startedAt;
         this.submittedAt = submittedAt;
         this.totalScore = totalScore;
+        this.testId = testId;
+        this.userId = userId;
     }
 
     public Integer getId() {
@@ -37,6 +46,14 @@ public class TestAttemptDTO implements Serializable {
         return totalScore;
     }
 
+    public Test getTestId() {
+        return testId;
+    }
+
+    public User getUserId() {
+        return userId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -45,12 +62,14 @@ public class TestAttemptDTO implements Serializable {
         return Objects.equals(this.id, entity.id) &&
                 Objects.equals(this.startedAt, entity.startedAt) &&
                 Objects.equals(this.submittedAt, entity.submittedAt) &&
-                Objects.equals(this.totalScore, entity.totalScore);
+                Objects.equals(this.totalScore, entity.totalScore) &&
+                Objects.equals(this.testId, entity.testId) &&
+                Objects.equals(this.userId, entity.userId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, startedAt, submittedAt, totalScore);
+        return Objects.hash(id, startedAt, submittedAt, totalScore, testId, userId);
     }
 
     @Override
@@ -59,6 +78,8 @@ public class TestAttemptDTO implements Serializable {
                 "id = " + id + ", " +
                 "startedAt = " + startedAt + ", " +
                 "submittedAt = " + submittedAt + ", " +
-                "totalScore = " + totalScore + ")";
+                "totalScore = " + totalScore + ", " +
+                "testId = " + testId + ", " +
+                "userId = " + userId + ")";
     }
 }

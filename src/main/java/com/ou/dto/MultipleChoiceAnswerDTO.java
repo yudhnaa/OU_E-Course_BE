@@ -1,6 +1,8 @@
 package com.ou.dto;
 
-import jakarta.validation.constraints.*;
+import com.ou.pojo.Question;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -9,20 +11,18 @@ import java.util.Objects;
  * DTO for {@link com.ou.pojo.MultipleChoiceAnswer}
  */
 public class MultipleChoiceAnswerDTO implements Serializable {
-    @NotNull
-    @Positive
     private final Integer id;
     @NotNull
     @Size(min = 1, max = 65535)
-    @NotEmpty(message = "Content can not be empty")
-    @NotBlank(message = "Content can not be blank")
     private final String content;
     private final boolean isCorrect;
+    private final Question questionId;
 
-    public MultipleChoiceAnswerDTO(Integer id, String content, boolean isCorrect) {
+    public MultipleChoiceAnswerDTO(Integer id, String content, boolean isCorrect, Question questionId) {
         this.id = id;
         this.content = content;
         this.isCorrect = isCorrect;
+        this.questionId = questionId;
     }
 
     public Integer getId() {
@@ -37,6 +37,10 @@ public class MultipleChoiceAnswerDTO implements Serializable {
         return isCorrect;
     }
 
+    public Question getQuestionId() {
+        return questionId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -44,12 +48,13 @@ public class MultipleChoiceAnswerDTO implements Serializable {
         MultipleChoiceAnswerDTO entity = (MultipleChoiceAnswerDTO) o;
         return Objects.equals(this.id, entity.id) &&
                 Objects.equals(this.content, entity.content) &&
-                Objects.equals(this.isCorrect, entity.isCorrect);
+                Objects.equals(this.isCorrect, entity.isCorrect) &&
+                Objects.equals(this.questionId, entity.questionId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, content, isCorrect);
+        return Objects.hash(id, content, isCorrect, questionId);
     }
 
     @Override
@@ -57,6 +62,7 @@ public class MultipleChoiceAnswerDTO implements Serializable {
         return getClass().getSimpleName() + "(" +
                 "id = " + id + ", " +
                 "content = " + content + ", " +
-                "isCorrect = " + isCorrect + ")";
+                "isCorrect = " + isCorrect + ", " +
+                "questionId = " + questionId + ")";
     }
 }
