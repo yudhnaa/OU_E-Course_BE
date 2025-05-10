@@ -4,6 +4,7 @@
  */
 package com.ou.services.impl;
 
+import com.cloudinary.Cloudinary;
 import com.ou.exceptions.NotFoundException;
 import com.ou.pojo.User;
 import com.ou.repositories.UserRepository;
@@ -26,7 +27,8 @@ import java.util.logging.Logger;
  *
  * @author yudhna
  */
-@Service("userDetailService")
+
+@Service
 @Transactional
 public class UserServiceImpl implements UserService {
 
@@ -35,6 +37,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    private Cloudinary cloudinary;
 
     @Autowired
     private LocalizationService localizationService;
@@ -49,30 +54,6 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         User u = userRepo.addUser(user);
         return u;
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
-        // Fetch user from the database
-        User user = userRepo.getUserByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(
-                        localizationService.getMessage("user.notFound", LocaleContextHolder.getLocale())));
-
-        // Map roles to GrantedAuthority
-        Set<GrantedAuthority> authorities = new HashSet<>();
-        authorities.add(new SimpleGrantedAuthority(user.getUserRoleId().getName()));
-
-        // Return UserDetails object
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
-//                user.getIsActive(),
-//                true, // accountNonExpired
-//                true, // credentialsNonExpired
-//                true, // accountNonLocked
-                authorities
-        );
     }
 
     @Override

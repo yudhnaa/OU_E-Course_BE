@@ -26,7 +26,7 @@ public class IndexController {
     private UserService userService;
 
     @RequestMapping("/")
-    public String index(Model model, Locale locale, Principal principal) throws Exception {
+    public String index(Model model, Principal principal) throws Exception {
 
         if (principal != null) {
             String username = principal.getName();
@@ -37,7 +37,7 @@ public class IndexController {
     }
 
     @RequestMapping("/user/{userId}")
-    public String userDetail(Model model, @PathVariable("userId") int userId, Locale locale) throws Exception {
+    public String userDetail(Model model, @PathVariable("userId") int userId) throws Exception {
         String helloWorld;
 
         helloWorld = userService.getUserById(userId).getFirstName() + " " + userService.getUserById(userId).getLastName();

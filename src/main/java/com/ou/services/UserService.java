@@ -18,7 +18,7 @@ import java.util.Optional;
  * @author yudhna
  */
 
-public interface UserService extends UserDetailsService {
+public interface UserService {
 
     // Retrieve a user by ID with localization support
     User getUserById(int id);
@@ -61,6 +61,4 @@ public interface UserService extends UserDetailsService {
 
     // Count search results based on filters
     long countSearchResults(Map<String, String> filters);
-
-
 }
