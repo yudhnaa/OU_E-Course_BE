@@ -6,9 +6,13 @@ package com.ou.services.impl;
 
 import com.ou.pojo.User;
 import com.ou.repositories.UserRepository;
+import com.ou.services.LocalizationService;
 import com.ou.services.UserService;
+import jakarta.ws.rs.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Locale;
 
 /**
  *
@@ -20,9 +24,12 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepo;
 
+    @Autowired
+    private LocalizationService localizationService;
+
     @Override
-    public User getUserById(int id) {
-        return userRepo.getUserById(id);
+    public User getUserById(int id, Locale locale) throws Exception {
+        return userRepo.getUserById(id).orElseThrow(() -> new Exception(localizationService.getMessage("user.notFound", locale)));
     }
 
 }
