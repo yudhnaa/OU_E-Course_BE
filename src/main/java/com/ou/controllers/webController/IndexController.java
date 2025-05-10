@@ -2,16 +2,16 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.ou.controllers;
+package com.ou.controllers.webController;
 
 import com.ou.services.UserService;
-import jakarta.ws.rs.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.security.Principal;
 import java.util.Locale;
 
 /**
@@ -26,14 +26,21 @@ public class IndexController {
     private UserService userService;
 
     @RequestMapping("/")
-    public String index(Model model, Locale locale) {
+    public String index(Model model, Principal principal) throws Exception {
 
-        String helloWorld;
-        try {
-             helloWorld = userService.getUserById(99, locale).getFirstName() + " " + userService.getUserById(1, locale).getLastName();
-        } catch (Exception ex){
-            helloWorld = ex.getMessage();
+        if (principal != null) {
+            String username = principal.getName();
+            model.addAttribute("loged_username", username);
         }
+
+        return "index";
+    }
+
+    @RequestMapping("/user/{userId}")
+    public String userDetail(Model model, @PathVariable("userId") int userId) throws Exception {
+        String helloWorld;
+
+        helloWorld = userService.getUserById(userId).getFirstName() + " " + userService.getUserById(userId).getLastName();
 
         model.addAttribute("helloWorld", helloWorld);
         return "index";

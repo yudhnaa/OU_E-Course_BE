@@ -2,6 +2,7 @@ package com.ou.repositories.impl;
 
 import com.ou.configs.WebApplicationSettings;
 import com.ou.pojo.User;
+import com.ou.pojo.UserRole;
 import com.ou.repositories.UserRepository;
 import jakarta.persistence.NoResultException;
 import java.util.ArrayList;
@@ -10,16 +11,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Locale;
+
+import jakarta.persistence.criteria.*;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +31,7 @@ public class UserRepositoryImpl implements UserRepository {
     
     @Autowired
     private LocalSessionFactoryBean sessionFactory;
-    
+
     @Override
     public User addUser(User user) {
         Session session = sessionFactory.getObject().getCurrentSession();
