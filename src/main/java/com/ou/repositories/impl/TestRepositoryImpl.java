@@ -82,7 +82,13 @@ public class TestRepositoryImpl implements TestRepository {
 
     @Override
     public List<Test> getTestsByCourse(Integer courseId) {
-        return List.of();
+        Session session = sessionFactory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Test> query = builder.createQuery(Test.class);
+        Root<Test> root = query.from(Test.class);
+        query.select(root).where(builder.equal(root.get("courseId"), courseId));
+        Query<Test> q = session.createQuery(query);
+        return q.getResultList();
     }
 
     @Override
