@@ -1,7 +1,6 @@
 package com.ou.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.ou.pojo.Question;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -12,17 +11,19 @@ import java.util.Objects;
  * DTO for {@link com.ou.pojo.WritingAnswer}
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class WritingAnswerDTO implements Serializable {
+public class WritingAnswerDto implements Serializable {
     private final Integer id;
-    @NotNull(message = "Conntent cannot be null!")
+    @NotNull
     @Size(min = 1, max = 65535)
     private final String content;
-    private final Question questionId;
+    private final Integer questionIdId;
+    private final String questionIdContent;
 
-    public WritingAnswerDTO(Integer id, String content, Question questionId) {
+    public WritingAnswerDto(Integer id, String content, Integer questionIdId, String questionIdContent) {
         this.id = id;
         this.content = content;
-        this.questionId = questionId;
+        this.questionIdId = questionIdId;
+        this.questionIdContent = questionIdContent;
     }
 
     public Integer getId() {
@@ -33,23 +34,28 @@ public class WritingAnswerDTO implements Serializable {
         return content;
     }
 
-    public Question getQuestionId() {
-        return questionId;
+    public Integer getQuestionIdId() {
+        return questionIdId;
+    }
+
+    public String getQuestionIdContent() {
+        return questionIdContent;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        WritingAnswerDTO entity = (WritingAnswerDTO) o;
+        WritingAnswerDto entity = (WritingAnswerDto) o;
         return Objects.equals(this.id, entity.id) &&
                 Objects.equals(this.content, entity.content) &&
-                Objects.equals(this.questionId, entity.questionId);
+                Objects.equals(this.questionIdId, entity.questionIdId) &&
+                Objects.equals(this.questionIdContent, entity.questionIdContent);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, content, questionId);
+        return Objects.hash(id, content, questionIdId, questionIdContent);
     }
 
     @Override
@@ -57,6 +63,7 @@ public class WritingAnswerDTO implements Serializable {
         return getClass().getSimpleName() + "(" +
                 "id = " + id + ", " +
                 "content = " + content + ", " +
-                "questionId = " + questionId + ")";
+                "questionIdId = " + questionIdId + ", " +
+                "questionIdContent = " + questionIdContent + ")";
     }
 }

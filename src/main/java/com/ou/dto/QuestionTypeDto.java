@@ -1,7 +1,6 @@
 package com.ou.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.ou.pojo.Question;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -13,16 +12,16 @@ import java.util.Set;
  * DTO for {@link com.ou.pojo.QuestionType}
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class QuestionTypeDTO implements Serializable {
+public class QuestionTypeDto implements Serializable {
     private final Integer id;
     @NotNull
     @Size(min = 1, max = 50)
     private final String name;
     @Size(max = 65535)
     private final String description;
-    private final Set<Question> questionSet;
+    private final Set<QuestionDto1> questionSet;
 
-    public QuestionTypeDTO(Integer id, String name, String description, Set<Question> questionSet) {
+    public QuestionTypeDto(Integer id, String name, String description, Set<QuestionDto1> questionSet) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -41,7 +40,7 @@ public class QuestionTypeDTO implements Serializable {
         return description;
     }
 
-    public Set<Question> getQuestionSet() {
+    public Set<QuestionDto1> getQuestionSet() {
         return questionSet;
     }
 
@@ -49,7 +48,7 @@ public class QuestionTypeDTO implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        QuestionTypeDTO entity = (QuestionTypeDTO) o;
+        QuestionTypeDto entity = (QuestionTypeDto) o;
         return Objects.equals(this.id, entity.id) &&
                 Objects.equals(this.name, entity.name) &&
                 Objects.equals(this.description, entity.description) &&
@@ -68,5 +67,48 @@ public class QuestionTypeDTO implements Serializable {
                 "name = " + name + ", " +
                 "description = " + description + ", " +
                 "questionSet = " + questionSet + ")";
+    }
+
+    /**
+     * DTO for {@link com.ou.pojo.Question}
+     */
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class QuestionDto1 implements Serializable {
+        private final Integer id;
+        private final String content;
+
+        public QuestionDto1(Integer id, String content) {
+            this.id = id;
+            this.content = content;
+        }
+
+        public Integer getId() {
+            return id;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            QuestionDto1 entity = (QuestionDto1) o;
+            return Objects.equals(this.id, entity.id) &&
+                    Objects.equals(this.content, entity.content);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id, content);
+        }
+
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + "(" +
+                    "id = " + id + ", " +
+                    "content = " + content + ")";
+        }
     }
 }

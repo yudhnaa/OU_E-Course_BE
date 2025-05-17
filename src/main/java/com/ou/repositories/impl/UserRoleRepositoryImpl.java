@@ -1,49 +1,36 @@
 package com.ou.repositories.impl;
-
-
-import com.ou.pojo.User;
-import com.ou.repositories.UserRepository;
+import com.ou.pojo.UserRole;
+import com.ou.repositories.UserRoleRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 @Repository
 @Transactional
-public class UserRoleRepositoryImpl implements UserRepository {
+public class UserRoleRepositoryImpl implements UserRoleRepository {
 
     @Override
-    public User getUserById(int id) {
-        return null;
-    }
-
-    @Override
-    public List<User> getAllUsers() {
+    public List<UserRole> getAllUserRoles() {
         return List.of();
     }
 
     @Override
-    public User updateUser(User user) {
+    public UserRole getUserRoleById(Integer id) {
         return null;
     }
 
     @Override
-    public boolean deleteUser(int id) {
+    public UserRole addUserRole(UserRole userRole) {
+        return null;
+    }
+
+    @Override
+    public UserRole updateUserRole(UserRole userRole) {
+        return null;
+    }
+
+    @Override
+    public boolean deleteUserRole(Integer id) {
         return false;
-    }
-
-    @Override
-    public User addUser(User user) {
-        return null;
-    }
-
-    @Override
-    public User getUserByUsername(String username) {
-        return null;
-    }
-
-    @Override
-    public List<User> getActiveUsers(boolean isActive) {
-        return List.of();
     }
 }

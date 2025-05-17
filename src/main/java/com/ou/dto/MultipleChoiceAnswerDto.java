@@ -1,6 +1,6 @@
 package com.ou.dto;
 
-import com.ou.pojo.Question;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -10,19 +10,22 @@ import java.util.Objects;
 /**
  * DTO for {@link com.ou.pojo.MultipleChoiceAnswer}
  */
-public class MultipleChoiceAnswerDTO implements Serializable {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class MultipleChoiceAnswerDto implements Serializable {
     private final Integer id;
     @NotNull
     @Size(min = 1, max = 65535)
     private final String content;
     private final boolean isCorrect;
-    private final Question questionId;
+    private final Integer questionIdId;
+    private final String questionIdContent;
 
-    public MultipleChoiceAnswerDTO(Integer id, String content, boolean isCorrect, Question questionId) {
+    public MultipleChoiceAnswerDto(Integer id, String content, boolean isCorrect, Integer questionIdId, String questionIdContent) {
         this.id = id;
         this.content = content;
         this.isCorrect = isCorrect;
-        this.questionId = questionId;
+        this.questionIdId = questionIdId;
+        this.questionIdContent = questionIdContent;
     }
 
     public Integer getId() {
@@ -37,24 +40,29 @@ public class MultipleChoiceAnswerDTO implements Serializable {
         return isCorrect;
     }
 
-    public Question getQuestionId() {
-        return questionId;
+    public Integer getQuestionIdId() {
+        return questionIdId;
+    }
+
+    public String getQuestionIdContent() {
+        return questionIdContent;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        MultipleChoiceAnswerDTO entity = (MultipleChoiceAnswerDTO) o;
+        MultipleChoiceAnswerDto entity = (MultipleChoiceAnswerDto) o;
         return Objects.equals(this.id, entity.id) &&
                 Objects.equals(this.content, entity.content) &&
                 Objects.equals(this.isCorrect, entity.isCorrect) &&
-                Objects.equals(this.questionId, entity.questionId);
+                Objects.equals(this.questionIdId, entity.questionIdId) &&
+                Objects.equals(this.questionIdContent, entity.questionIdContent);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, content, isCorrect, questionId);
+        return Objects.hash(id, content, isCorrect, questionIdId, questionIdContent);
     }
 
     @Override
@@ -63,6 +71,7 @@ public class MultipleChoiceAnswerDTO implements Serializable {
                 "id = " + id + ", " +
                 "content = " + content + ", " +
                 "isCorrect = " + isCorrect + ", " +
-                "questionId = " + questionId + ")";
+                "questionIdId = " + questionIdId + ", " +
+                "questionIdContent = " + questionIdContent + ")";
     }
 }
