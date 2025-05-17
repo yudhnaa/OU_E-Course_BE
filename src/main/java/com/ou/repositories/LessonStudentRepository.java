@@ -5,8 +5,8 @@ import com.ou.pojo.LessonStudent;
 import java.util.List;
 
 public interface LessonStudentRepository {
-    LessonStudent save(LessonStudent lessonStudent);
-    List<LessonStudent> findAll();
+    LessonStudent updateLessonStudent(LessonStudent lessonStudent);
+    List<LessonStudent> getAllLessonStudents();
     List<LessonStudent> findByLessonId(Integer lessonId);
     List<LessonStudent> findByStudentId(Integer studentId);
     List<LessonStudent> findByLearningStatus(Boolean isLearn);

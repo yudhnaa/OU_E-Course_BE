@@ -188,36 +188,36 @@ public class ExerciseServiceImpl implements ExerciseService {
         if (exercise.getCourseId() == null || exercise.getCourseId().getId() == null) {
             throw new Exception("Course is required for an exercise");
         }
-        
+
         // Ensure the course exists
-        Optional<Course> course = Optional.ofNullable(courseRepository.getCourseById(exercise.getCourseId().getId()));
+        Optional<Course> course = courseRepository.getCourseById(exercise.getCourseId().getId());
         if (!course.isPresent()) {
             throw new Exception("Specified course does not exist");
         }
-        
+
         // Validate Lesson
         if (exercise.getLessonId() == null || exercise.getLessonId().getId() == null) {
             throw new Exception("Lesson is required for an exercise");
         }
-        
+
         // Ensure the lesson exists
-        Optional<Lesson> lesson = Optional.ofNullable(lessonRepository.getLessonById(exercise.getLessonId().getId()));
+        Optional<Lesson> lesson = lessonRepository.getLessonById(exercise.getLessonId().getId());
         if (!lesson.isPresent()) {
             throw new Exception("Specified lesson does not exist");
         }
-        
+
         // Validate lesson belongs to the specified course
         if (!lesson.get().getCourseId().getId().equals(exercise.getCourseId().getId())) {
             throw new Exception("Specified lesson does not belong to the specified course");
         }
-        
+
         // Validate User Creator
         if (exercise.getCreatedByUserId() == null || exercise.getCreatedByUserId().getId() == null) {
             throw new Exception("Creator user is required for an exercise");
         }
-        
+
         // Ensure the user exists
-        Optional<User> user = Optional.ofNullable(userRepository.getUserById(exercise.getCreatedByUserId().getId()));
+        Optional<User> user = userRepository.getUserById(exercise.getCreatedByUserId().getId());
         if (!user.isPresent()) {
             throw new Exception("Specified creator user does not exist");
         }

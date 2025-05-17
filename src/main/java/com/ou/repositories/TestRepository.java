@@ -4,10 +4,12 @@ import com.ou.pojo.Test;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public interface TestRepository {
-    List<Test> getAllTests();
-    Test getTestById(Integer id);
+    List<Test> getAllTests(Map<String, String> params);
+    Optional<Test> getTestById(Integer id);
     Test addTest(Test test);
     Test updateTest(Test test);
     boolean deleteTest(Integer id);
