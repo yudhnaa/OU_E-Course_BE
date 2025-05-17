@@ -190,7 +190,7 @@ public class ExerciseServiceImpl implements ExerciseService {
         }
         
         // Ensure the course exists
-        Optional<Course> course = Optional.ofNullable(courseRepository.getCourseById(exercise.getCourseId().getId()));
+        Optional<Course> course = courseRepository.getCourseById(exercise.getCourseId().getId());
         if (!course.isPresent()) {
             throw new Exception("Specified course does not exist");
         }
@@ -201,7 +201,7 @@ public class ExerciseServiceImpl implements ExerciseService {
         }
         
         // Ensure the lesson exists
-        Optional<Lesson> lesson = Optional.ofNullable(lessonRepository.getLessonById(exercise.getLessonId().getId()));
+        Optional<Lesson> lesson = lessonRepository.getLessonById(exercise.getLessonId().getId());
         if (!lesson.isPresent()) {
             throw new Exception("Specified lesson does not exist");
         }
@@ -217,7 +217,7 @@ public class ExerciseServiceImpl implements ExerciseService {
         }
         
         // Ensure the user exists
-        Optional<User> user = Optional.ofNullable(userRepository.getUserById(exercise.getCreatedByUserId().getId()));
+        Optional<User> user = userRepository.getUserById(exercise.getCreatedByUserId().getId());
         if (!user.isPresent()) {
             throw new Exception("Specified creator user does not exist");
         }
