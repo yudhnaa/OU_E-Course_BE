@@ -1,14 +1,9 @@
 package com.ou.repositories.impl;
 
 import com.ou.configs.WebApplicationSettings;
-import com.ou.pojo.User;
-import com.ou.repositories.UserRepository;
+import com.ou.pojo.Course;
+import com.ou.repositories.CourseRepository;
 import jakarta.persistence.NoResultException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import jakarta.persistence.criteria.*;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -17,9 +12,14 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 @Repository
 @Transactional
-public class UserRepositoryImpl implements UserRepository {
+public class CourseRepositoryImpl implements CourseRepository {
 
     private static final int PAGE_SIZE = WebApplicationSettings.PAGE_SIZE;
 
@@ -27,26 +27,26 @@ public class UserRepositoryImpl implements UserRepository {
     private LocalSessionFactoryBean sessionFactory;
 
     @Override
-    public User addUser(User user) {
+    public Course addCourse(Course course) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.save(user);
+        session.save(course);
         session.flush(); // Ensure ID is generated and available
-        return user;
+        return course;
     }
 
     @Override
-    public User updateUser(User user) {
+    public Course updateCourse(Course course) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.update(user);
-        return user;
+        session.update(course);
+        return course;
     }
 
     @Override
-    public boolean deleteUser(Integer userId) {
+    public boolean deleteCourse(Integer courseId) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        User user = session.get(User.class, userId);
-        if (user != null) {
-            session.delete(user);
+        Course course = session.get(Course.class, courseId);
+        if (course != null) {
+            session.delete(course);
             return true;
         }
         return false;
@@ -54,23 +54,23 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<User> getUserById(Integer userId) {
+    public Optional<Course> getCourseById(Integer courseId) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        User user = session.get(User.class, userId);
-        return Optional.ofNullable(user);
+        Course course = session.get(Course.class, courseId);
+        return Optional.ofNullable(course);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<User> getUsers(Map<String, String> params) {
+    public List<Course> getCourses(Map<String, String> params) {
         Session session = sessionFactory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<User> query = builder.createQuery(User.class);
-        Root<User> root = query.from(User.class);
+        CriteriaQuery<Course> query = builder.createQuery(Course.class);
+        Root<Course> root = query.from(Course.class);
         query.select(root);
-
-        Query<User> q = session.createQuery(query);
-
+        
+        Query<Course> q = session.createQuery(query);
+        
         // Process pagination parameters
         if (params != null) {
             int page = Integer.parseInt(params.getOrDefault("page", "1"));
@@ -79,38 +79,38 @@ public class UserRepositoryImpl implements UserRepository {
             q.setMaxResults(pageSize);
             q.setFirstResult(start);
         }
-
+        
         return q.getResultList();
     }
-
+    
     @Override
     @Transactional(readOnly = true)
-    public long countUsers(String locale) {
+    public long countCourses() {
         Session session = sessionFactory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Long> query = builder.createQuery(Long.class);
-        Root<User> root = query.from(User.class);
+        Root<Course> root = query.from(Course.class);
         query.select(builder.count(root));
         return session.createQuery(query).getSingleResult();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<User> searchUsers(Map<String, String> filters, Map<String, String> params) {
+    public List<Course> searchCourses(Map<String, String> filters, Map<String, String> params) {
         Session session = sessionFactory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<User> query = builder.createQuery(User.class);
-        Root<User> root = query.from(User.class);
-
+        CriteriaQuery<Course> query = builder.createQuery(Course.class);
+        Root<Course> root = query.from(Course.class);
+        
         List<Predicate> predicates = buildSearchPredicates(builder, root, filters);
-
+        
         // Apply predicates if any
         if (!predicates.isEmpty()) {
             query.where(builder.and(predicates.toArray(new Predicate[0])));
         }
-
-        Query<User> q = session.createQuery(query);
-
+        
+        Query<Course> q = session.createQuery(query);
+        
         // Process pagination parameters
         if (params != null) {
             int page = Integer.parseInt(params.getOrDefault("page", "1"));
@@ -119,67 +119,67 @@ public class UserRepositoryImpl implements UserRepository {
             q.setMaxResults(pageSize);
             q.setFirstResult(start);
         }
-
+        
         return q.getResultList();
     }
-
+    
     @Override
     @Transactional(readOnly = true)
     public long countSearchResults(Map<String, String> filters) {
         Session session = sessionFactory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Long> query = builder.createQuery(Long.class);
-        Root<User> root = query.from(User.class);
-
+        Root<Course> root = query.from(Course.class);
+        
         List<Predicate> predicates = buildSearchPredicates(builder, root, filters);
-
+        
         if (!predicates.isEmpty()) {
             query.where(builder.and(predicates.toArray(new Predicate[0])));
         }
-
+        
         query.select(builder.count(root));
         return session.createQuery(query).getSingleResult();
     }
-
-    private List<Predicate> buildSearchPredicates(CriteriaBuilder builder, Root<User> root, Map<String, String> filters) {
+    
+    private List<Predicate> buildSearchPredicates(CriteriaBuilder builder, Root<Course> root, Map<String, String> filters) {
         List<Predicate> predicates = new ArrayList<>();
-
+        
         if (filters != null) {
-            if (filters.containsKey("username")) {
-                predicates.add(builder.like(root.get("username"), String.format("%%%s%%", filters.get("username"))));
+            if (filters.containsKey("name")) {
+                predicates.add(builder.like(root.get("name"), String.format("%%%s%%", filters.get("name"))));
             }
-
-            if (filters.containsKey("email")) {
-                predicates.add(builder.like(root.get("email"), String.format("%%%s%%", filters.get("email"))));
+            
+            if (filters.containsKey("description")) {
+                predicates.add(builder.like(root.get("description"), String.format("%%%s%%", filters.get("description"))));
             }
-
-            if (filters.containsKey("firstName")) {
-                predicates.add(builder.like(root.get("firstName"), String.format("%%%s%%", filters.get("firstName"))));
+            
+            if (filters.containsKey("categoryId")) {
+                predicates.add(builder.equal(root.get("categoryId").get("id"), Integer.valueOf(filters.get("categoryId"))));
             }
-
-            if (filters.containsKey("lastName")) {
-                predicates.add(builder.like(root.get("lastName"), String.format("%%%s%%", filters.get("lastName"))));
+            
+            if (filters.containsKey("createdByUserId")) {
+                predicates.add(builder.equal(root.get("createdByUserId").get("id"), Integer.valueOf(filters.get("createdByUserId"))));
             }
-
-            if (filters.containsKey("isActive")) {
-                predicates.add(builder.equal(root.get("isActive"), Boolean.valueOf(filters.get("isActive"))));
+            
+            if (filters.containsKey("dateStart")) {
+                predicates.add(builder.greaterThanOrEqualTo(root.get("dateStart"), filters.get("dateStart")));
             }
-
-            if (filters.containsKey("userRoleId")) {
-                predicates.add(builder.equal(root.get("userRoleId").get("id"), Integer.valueOf(filters.get("userRoleId"))));
+            
+            if (filters.containsKey("dateEnd")) {
+                predicates.add(builder.lessThanOrEqualTo(root.get("dateEnd"), filters.get("dateEnd")));
             }
         }
-
+        
         return predicates;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<User> getUserByUsername(String username) {
+    public Optional<Course> getCourseByName(String name) {
         Session session = sessionFactory.getObject().getCurrentSession();
         try {
-            Query<User> query = session.createNamedQuery("User.findByUsername", User.class);
-            query.setParameter("username", username);
+            Query<Course> query = session.createNamedQuery("Course.findByName", Course.class);
+            query.setParameter("name", name);
             return Optional.ofNullable(query.uniqueResult());
         } catch (NoResultException e) {
             return Optional.empty();
@@ -188,29 +188,16 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<User> getUserByEmail(String email) {
-        Session session = sessionFactory.getObject().getCurrentSession();
-        try {
-            Query<User> query = session.createNamedQuery("User.findByEmail", User.class);
-            query.setParameter("email", email);
-            return Optional.ofNullable(query.uniqueResult());
-        } catch (NoResultException e) {
-            return Optional.empty();
-        }
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<User> getActiveUsers(Map<String, String> params) {
+    public List<Course> getCoursesByCategory(Integer categoryId, Map<String, String> params) {
         Session session = sessionFactory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<User> query = builder.createQuery(User.class);
-        Root<User> root = query.from(User.class);
-
-        query.where(builder.equal(root.get("isActive"), true));
-
-        Query<User> q = session.createQuery(query);
-
+        CriteriaQuery<Course> query = builder.createQuery(Course.class);
+        Root<Course> root = query.from(Course.class);
+        
+        query.where(builder.equal(root.get("categoryId").get("id"), categoryId));
+        
+        Query<Course> q = session.createQuery(query);
+        
         // Process pagination parameters
         if (params != null) {
             int page = Integer.parseInt(params.getOrDefault("page", "1"));
@@ -219,34 +206,34 @@ public class UserRepositoryImpl implements UserRepository {
             q.setMaxResults(pageSize);
             q.setFirstResult(start);
         }
-
+        
         return q.getResultList();
     }
-
+    
     @Override
     @Transactional(readOnly = true)
-    public long countActiveUsers(String locale) {
+    public long countCoursesByCategory(Integer categoryId) {
         Session session = sessionFactory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Long> query = builder.createQuery(Long.class);
-        Root<User> root = query.from(User.class);
-        query.where(builder.equal(root.get("isActive"), true));
+        Root<Course> root = query.from(Course.class);
+        query.where(builder.equal(root.get("categoryId").get("id"), categoryId));
         query.select(builder.count(root));
         return session.createQuery(query).getSingleResult();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<User> getUsersByRole(Integer roleId, Map<String, String> params) {
+    public List<Course> getCoursesCreatedByUser(Integer userId, Map<String, String> params) {
         Session session = sessionFactory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<User> query = builder.createQuery(User.class);
-        Root<User> root = query.from(User.class);
-
-        query.where(builder.equal(root.get("userRoleId").get("id"), roleId));
-
-        Query<User> q = session.createQuery(query);
-
+        CriteriaQuery<Course> query = builder.createQuery(Course.class);
+        Root<Course> root = query.from(Course.class);
+        
+        query.where(builder.equal(root.get("createdByUserId").get("id"), userId));
+        
+        Query<Course> q = session.createQuery(query);
+        
         // Process pagination parameters
         if (params != null) {
             int page = Integer.parseInt(params.getOrDefault("page", "1"));
@@ -255,18 +242,18 @@ public class UserRepositoryImpl implements UserRepository {
             q.setMaxResults(pageSize);
             q.setFirstResult(start);
         }
-
+        
         return q.getResultList();
     }
-
+    
     @Override
     @Transactional(readOnly = true)
-    public long countUsersByRole(Integer roleId) {
+    public long countCoursesCreatedByUser(Integer userId) {
         Session session = sessionFactory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Long> query = builder.createQuery(Long.class);
-        Root<User> root = query.from(User.class);
-        query.where(builder.equal(root.get("userRoleId").get("id"), roleId));
+        Root<Course> root = query.from(Course.class);
+        query.where(builder.equal(root.get("createdByUserId").get("id"), userId));
         query.select(builder.count(root));
         return session.createQuery(query).getSingleResult();
     }

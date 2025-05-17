@@ -22,7 +22,7 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
  * @author yudhna
  */
 @Configuration
-@PropertySource("classpath:database.properties")
+@PropertySource("classpath:application.properties")
 public class HibernateConfigs {
     @Autowired
     private Environment env;
