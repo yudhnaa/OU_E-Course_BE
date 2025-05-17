@@ -23,6 +23,7 @@ import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;
 
@@ -37,7 +38,8 @@ import java.util.Set;
     @NamedQuery(name = "Test.findById", query = "SELECT t FROM Test t WHERE t.id = :id"),
     @NamedQuery(name = "Test.findByName", query = "SELECT t FROM Test t WHERE t.name = :name"),
     @NamedQuery(name = "Test.findByDurationMinutes", query = "SELECT t FROM Test t WHERE t.durationMinutes = :durationMinutes"),
-    @NamedQuery(name = "Test.findByCreatedAt", query = "SELECT t FROM Test t WHERE t.createdAt = :createdAt")})
+    @NamedQuery(name = "Test.findByCreatedAt", query = "SELECT t FROM Test t WHERE t.createdAt = :createdAt"),
+    @NamedQuery(name = "Test.findByMaxScore", query = "SELECT t FROM Test t WHERE t.maxScore = :maxScore")})
 public class Test implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -62,17 +64,19 @@ public class Test implements Serializable {
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "max_score")
+    private BigDecimal maxScore;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "testId")
     private Set<TestQuestion> testQuestionSet;
+    @JoinColumn(name = "created_by_user_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Admin createdByUserId;
     @JoinColumn(name = "course_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Course courseId;
-    @JoinColumn(name = "lesson_id", referencedColumnName = "id")
-    @ManyToOne
-    private Lesson lessonId;
-    @JoinColumn(name = "created_by_user_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private User createdByUserId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "testId")
     private Set<TestAttempt> testAttemptSet;
 
@@ -83,10 +87,11 @@ public class Test implements Serializable {
         this.id = id;
     }
 
-    public Test(Integer id, String name, int durationMinutes) {
+    public Test(Integer id, String name, int durationMinutes, BigDecimal maxScore) {
         this.id = id;
         this.name = name;
         this.durationMinutes = durationMinutes;
+        this.maxScore = maxScore;
     }
 
     public Integer getId() {
@@ -129,6 +134,14 @@ public class Test implements Serializable {
         this.createdAt = createdAt;
     }
 
+    public BigDecimal getMaxScore() {
+        return maxScore;
+    }
+
+    public void setMaxScore(BigDecimal maxScore) {
+        this.maxScore = maxScore;
+    }
+
     public Set<TestQuestion> getTestQuestionSet() {
         return testQuestionSet;
     }
@@ -137,28 +150,20 @@ public class Test implements Serializable {
         this.testQuestionSet = testQuestionSet;
     }
 
+    public Admin getCreatedByUserId() {
+        return createdByUserId;
+    }
+
+    public void setCreatedByUserId(Admin createdByUserId) {
+        this.createdByUserId = createdByUserId;
+    }
+
     public Course getCourseId() {
         return courseId;
     }
 
     public void setCourseId(Course courseId) {
         this.courseId = courseId;
-    }
-
-    public Lesson getLessonId() {
-        return lessonId;
-    }
-
-    public void setLessonId(Lesson lessonId) {
-        this.lessonId = lessonId;
-    }
-
-    public User getCreatedByUserId() {
-        return createdByUserId;
-    }
-
-    public void setCreatedByUserId(User createdByUserId) {
-        this.createdByUserId = createdByUserId;
     }
 
     public Set<TestAttempt> getTestAttemptSet() {

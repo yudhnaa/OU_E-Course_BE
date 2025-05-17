@@ -5,18 +5,18 @@
 package com.ou.pojo;
 
 import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -25,12 +25,11 @@ import java.util.Set;
  * @author yudhna
  */
 @Entity
-@Table(name = "category")
+@Table(name = "admin")
 @NamedQueries({
-    @NamedQuery(name = "Category.findAll", query = "SELECT c FROM Category c"),
-    @NamedQuery(name = "Category.findById", query = "SELECT c FROM Category c WHERE c.id = :id"),
-    @NamedQuery(name = "Category.findByName", query = "SELECT c FROM Category c WHERE c.name = :name")})
-public class Category implements Serializable {
+    @NamedQuery(name = "Admin.findAll", query = "SELECT a FROM Admin a"),
+    @NamedQuery(name = "Admin.findById", query = "SELECT a FROM Admin a WHERE a.id = :id")})
+public class Admin implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -38,28 +37,23 @@ public class Category implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 50)
-    @Column(name = "name")
-    private String name;
-    @Lob
-    @Size(max = 65535)
-    @Column(name = "description")
-    private String description;
-    @OneToMany(mappedBy = "categoryId")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private User userId;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdByUserId")
+    private Set<Exercise> exerciseSet;
+    @OneToMany(mappedBy = "createdByAdminId")
     private Set<Course> courseSet;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdByUserId")
+    private Set<Test> testSet;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userUploadId")
+    private Set<Lesson> lessonSet;
 
-    public Category() {
+    public Admin() {
     }
 
-    public Category(Integer id) {
+    public Admin(Integer id) {
         this.id = id;
-    }
-
-    public Category(Integer id, String name) {
-        this.id = id;
-        this.name = name;
     }
 
     public Integer getId() {
@@ -70,20 +64,20 @@ public class Category implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public User getUserId() {
+        return userId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUserId(User userId) {
+        this.userId = userId;
     }
 
-    public String getDescription() {
-        return description;
+    public Set<Exercise> getExerciseSet() {
+        return exerciseSet;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setExerciseSet(Set<Exercise> exerciseSet) {
+        this.exerciseSet = exerciseSet;
     }
 
     public Set<Course> getCourseSet() {
@@ -92,6 +86,22 @@ public class Category implements Serializable {
 
     public void setCourseSet(Set<Course> courseSet) {
         this.courseSet = courseSet;
+    }
+
+    public Set<Test> getTestSet() {
+        return testSet;
+    }
+
+    public void setTestSet(Set<Test> testSet) {
+        this.testSet = testSet;
+    }
+
+    public Set<Lesson> getLessonSet() {
+        return lessonSet;
+    }
+
+    public void setLessonSet(Set<Lesson> lessonSet) {
+        this.lessonSet = lessonSet;
     }
 
     @Override
@@ -104,10 +114,10 @@ public class Category implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Category)) {
+        if (!(object instanceof Admin)) {
             return false;
         }
-        Category other = (Category) object;
+        Admin other = (Admin) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -116,7 +126,7 @@ public class Category implements Serializable {
 
     @Override
     public String toString() {
-        return "com.ou.pojo.Category[ id=" + id + " ]";
+        return "com.ou.pojo.Admin[ id=" + id + " ]";
     }
 
 }

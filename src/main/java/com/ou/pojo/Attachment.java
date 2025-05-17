@@ -56,8 +56,6 @@ public class Attachment implements Serializable {
     private String description;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "attachmentId")
     private Set<ExerciseAttachment> exerciseAttachmentSet;
-    @OneToMany(mappedBy = "attachmentId")
-    private Set<Exercise> exerciseSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "attachmentId")
     private Set<LessonAttachment> lessonAttachmentSet;
 
@@ -112,14 +110,6 @@ public class Attachment implements Serializable {
 
     public void setExerciseAttachmentSet(Set<ExerciseAttachment> exerciseAttachmentSet) {
         this.exerciseAttachmentSet = exerciseAttachmentSet;
-    }
-
-    public Set<Exercise> getExerciseSet() {
-        return exerciseSet;
-    }
-
-    public void setExerciseSet(Set<Exercise> exerciseSet) {
-        this.exerciseSet = exerciseSet;
     }
 
     public Set<LessonAttachment> getLessonAttachmentSet() {

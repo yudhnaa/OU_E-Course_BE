@@ -20,6 +20,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Set;
 
 /**
@@ -32,7 +33,8 @@ import java.util.Set;
     @NamedQuery(name = "Exercise.findAll", query = "SELECT e FROM Exercise e"),
     @NamedQuery(name = "Exercise.findById", query = "SELECT e FROM Exercise e WHERE e.id = :id"),
     @NamedQuery(name = "Exercise.findByName", query = "SELECT e FROM Exercise e WHERE e.name = :name"),
-    @NamedQuery(name = "Exercise.findByDurationMinutes", query = "SELECT e FROM Exercise e WHERE e.durationMinutes = :durationMinutes")})
+    @NamedQuery(name = "Exercise.findByDurationMinutes", query = "SELECT e FROM Exercise e WHERE e.durationMinutes = :durationMinutes"),
+    @NamedQuery(name = "Exercise.findByMaxScore", query = "SELECT e FROM Exercise e WHERE e.maxScore = :maxScore")})
 public class Exercise implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -50,26 +52,26 @@ public class Exercise implements Serializable {
     @NotNull
     @Column(name = "duration_minutes")
     private int durationMinutes;
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "max_score")
+    private BigDecimal maxScore;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "exerciseId")
     private Set<ExerciseAttachment> exerciseAttachmentSet;
-    @JoinColumn(name = "attachment_id", referencedColumnName = "id")
-    @ManyToOne
-    private Attachment attachmentId;
+    @JoinColumn(name = "created_by_user_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Admin createdByUserId;
     @JoinColumn(name = "course_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Course courseId;
     @JoinColumn(name = "lesson_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Lesson lessonId;
-    @JoinColumn(name = "created_by_user_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private User createdByUserId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "exerciseId")
     private Set<Question> questionSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "exerciseId")
     private Set<ExerciseAttempt> exerciseAttemptSet;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "exerciseId")
-    private Set<ExerciseQuestion> exerciseQuestionSet;
 
     public Exercise() {
     }
@@ -78,10 +80,11 @@ public class Exercise implements Serializable {
         this.id = id;
     }
 
-    public Exercise(Integer id, String name, int durationMinutes) {
+    public Exercise(Integer id, String name, int durationMinutes, BigDecimal maxScore) {
         this.id = id;
         this.name = name;
         this.durationMinutes = durationMinutes;
+        this.maxScore = maxScore;
     }
 
     public Integer getId() {
@@ -108,6 +111,14 @@ public class Exercise implements Serializable {
         this.durationMinutes = durationMinutes;
     }
 
+    public BigDecimal getMaxScore() {
+        return maxScore;
+    }
+
+    public void setMaxScore(BigDecimal maxScore) {
+        this.maxScore = maxScore;
+    }
+
     public Set<ExerciseAttachment> getExerciseAttachmentSet() {
         return exerciseAttachmentSet;
     }
@@ -116,12 +127,12 @@ public class Exercise implements Serializable {
         this.exerciseAttachmentSet = exerciseAttachmentSet;
     }
 
-    public Attachment getAttachmentId() {
-        return attachmentId;
+    public Admin getCreatedByUserId() {
+        return createdByUserId;
     }
 
-    public void setAttachmentId(Attachment attachmentId) {
-        this.attachmentId = attachmentId;
+    public void setCreatedByUserId(Admin createdByUserId) {
+        this.createdByUserId = createdByUserId;
     }
 
     public Course getCourseId() {
@@ -140,14 +151,6 @@ public class Exercise implements Serializable {
         this.lessonId = lessonId;
     }
 
-    public User getCreatedByUserId() {
-        return createdByUserId;
-    }
-
-    public void setCreatedByUserId(User createdByUserId) {
-        this.createdByUserId = createdByUserId;
-    }
-
     public Set<Question> getQuestionSet() {
         return questionSet;
     }
@@ -162,14 +165,6 @@ public class Exercise implements Serializable {
 
     public void setExerciseAttemptSet(Set<ExerciseAttempt> exerciseAttemptSet) {
         this.exerciseAttemptSet = exerciseAttemptSet;
-    }
-
-    public Set<ExerciseQuestion> getExerciseQuestionSet() {
-        return exerciseQuestionSet;
-    }
-
-    public void setExerciseQuestionSet(Set<ExerciseQuestion> exerciseQuestionSet) {
-        this.exerciseQuestionSet = exerciseQuestionSet;
     }
 
     @Override

@@ -39,7 +39,7 @@ public class CourseLecturer implements Serializable {
     private Course courseId;
     @JoinColumn(name = "lecturer_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private User lecturerId;
+    private Lecturer lecturerId;
 
     public CourseLecturer() {
     }
@@ -64,11 +64,11 @@ public class CourseLecturer implements Serializable {
         this.courseId = courseId;
     }
 
-    public User getLecturerId() {
+    public Lecturer getLecturerId() {
         return lecturerId;
     }
 
-    public void setLecturerId(User lecturerId) {
+    public void setLecturerId(Lecturer lecturerId) {
         this.lecturerId = lecturerId;
     }
 

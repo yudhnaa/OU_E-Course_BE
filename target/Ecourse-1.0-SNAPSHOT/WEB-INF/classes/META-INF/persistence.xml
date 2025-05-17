@@ -27,5 +27,7 @@
     <class>com.ou.pojo.WritingAnswer</class>
     <class>com.ou.pojo.LessonAttachment</class>
     <class>com.ou.pojo.ExerciseQuestion</class>
+    <class>com.ou.pojo.Lecturer</class>
+    <class>com.ou.pojo.Admin</class>
   </persistence-unit>
 </persistence>
