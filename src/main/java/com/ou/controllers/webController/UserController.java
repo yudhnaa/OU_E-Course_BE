@@ -8,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
+
 @Controller
 public class UserController {
 
@@ -30,7 +32,7 @@ public class UserController {
     @PostMapping(value = "/register")
     public String register(@ModelAttribute ("user") User user) {
 
-        User u = new User(0, "Smith", "John", "1985-05-15", "admin_test", "1", "/avatars/admin1.jpg", "admin1@ecourse.com", true);
+        User u = new User(1, "A", "B", new Date(), "A", "B", "A");
         u.setUsername(user.getUsername());
         u.setPassword(user.getPassword());
         u.setUserRoleId(new UserRole(1, "admin"));

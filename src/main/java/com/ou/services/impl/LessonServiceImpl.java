@@ -145,11 +145,7 @@ public class LessonServiceImpl implements LessonService {
         if (lesson.getExerciseSet() != null && !lesson.getExerciseSet().isEmpty()) {
             throw new Exception("Cannot delete lesson with associated exercises");
         }
-        
-        if (lesson.getTestSet() != null && !lesson.getTestSet().isEmpty()) {
-            throw new Exception("Cannot delete lesson with associated tests");
-        }
-        
+
         if (lesson.getLessonAttachmentSet() != null && !lesson.getLessonAttachmentSet().isEmpty()) {
             throw new Exception("Cannot delete lesson with associated attachments. Remove attachments first.");
         }

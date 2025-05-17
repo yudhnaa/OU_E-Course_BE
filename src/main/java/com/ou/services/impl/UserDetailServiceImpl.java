@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashSet;
 import java.util.Set;
 
-@Service("userDetailService")
+@Service("userDetailsService")
 @Transactional
 public class UserDetailServiceImpl implements UserDetailService {
 

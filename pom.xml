@@ -28,6 +28,7 @@
             <version>6.2.5</version>
         </dependency>
 
+        <!--Thymeleaf base-->
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-thymeleaf -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -42,7 +43,6 @@
             <artifactId>thymeleaf-layout-dialect</artifactId>
             <version>3.4.0</version>
         </dependency>
-
 
         <!--database dependencies-->
         <!-- https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->

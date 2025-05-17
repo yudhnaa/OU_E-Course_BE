@@ -15,9 +15,12 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  *
@@ -29,7 +32,8 @@ import java.io.Serializable;
     @NamedQuery(name = "LessonStudent.findAll", query = "SELECT l FROM LessonStudent l"),
     @NamedQuery(name = "LessonStudent.findById", query = "SELECT l FROM LessonStudent l WHERE l.id = :id"),
     @NamedQuery(name = "LessonStudent.findByName", query = "SELECT l FROM LessonStudent l WHERE l.name = :name"),
-    @NamedQuery(name = "LessonStudent.findByIsLearn", query = "SELECT l FROM LessonStudent l WHERE l.isLearn = :isLearn")})
+    @NamedQuery(name = "LessonStudent.findByIsLearn", query = "SELECT l FROM LessonStudent l WHERE l.isLearn = :isLearn"),
+    @NamedQuery(name = "LessonStudent.findByLearnedAt", query = "SELECT l FROM LessonStudent l WHERE l.learnedAt = :learnedAt")})
 public class LessonStudent implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -45,6 +49,9 @@ public class LessonStudent implements Serializable {
     private String name;
     @Column(name = "is_learn")
     private Boolean isLearn;
+    @Column(name = "learned_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date learnedAt;
     @JoinColumn(name = "lesson_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Lesson lessonId;
@@ -86,6 +93,14 @@ public class LessonStudent implements Serializable {
 
     public void setIsLearn(Boolean isLearn) {
         this.isLearn = isLearn;
+    }
+
+    public Date getLearnedAt() {
+        return learnedAt;
+    }
+
+    public void setLearnedAt(Date learnedAt) {
+        this.learnedAt = learnedAt;
     }
 
     public Lesson getLessonId() {

@@ -8,6 +8,7 @@ import com.ou.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -25,15 +26,20 @@ public class IndexController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping("/")
-    public String index(Model model, Principal principal) throws Exception {
+//    @RequestMapping("/")
+//    public String index(Model model, Principal principal) throws Exception {
+//
+//        if (principal != null) {
+//            String username = principal.getName();
+//            model.addAttribute("loged_username", username);
+//        }
+//
+//        return "index";
+//    }
 
-        if (principal != null) {
-            String username = principal.getName();
-            model.addAttribute("loged_username", username);
-        }
-
-        return "index";
+    @GetMapping("/")
+    public String index() {
+        return "dashboard/index";
     }
 
     @RequestMapping("/user/{userId}")

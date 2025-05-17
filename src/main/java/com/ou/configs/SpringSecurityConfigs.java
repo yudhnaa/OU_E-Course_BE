@@ -41,9 +41,8 @@ public class SpringSecurityConfigs {
         http.csrf(c -> c.disable())
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/", "/home").permitAll()
-                        .requestMatchers("/static/js/**").permitAll()
-                        .requestMatchers("/static/api/**").permitAll()
-                        .requestMatchers("/user/**").permitAll()
+                        .requestMatchers("/assets/**").permitAll()
+//                        .requestMatchers("/user/**").permitAll()
                 )
                 .formLogin(form
                         -> form.loginPage("/login")
