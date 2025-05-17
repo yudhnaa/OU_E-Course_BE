@@ -67,7 +67,7 @@ public class ExerciseAttempt implements Serializable {
     private ExerciseScoreStatus statusId;
     @JoinColumn(name = "score_by_user_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private User scoreByUserId;
+    private Lecturer scoreByUserId;
 
     public ExerciseAttempt() {
     }
@@ -137,11 +137,11 @@ public class ExerciseAttempt implements Serializable {
         this.statusId = statusId;
     }
 
-    public User getScoreByUserId() {
+    public Lecturer getScoreByUserId() {
         return scoreByUserId;
     }
 
-    public void setScoreByUserId(User scoreByUserId) {
+    public void setScoreByUserId(Lecturer scoreByUserId) {
         this.scoreByUserId = scoreByUserId;
     }
 

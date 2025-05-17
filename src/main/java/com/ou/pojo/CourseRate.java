@@ -50,7 +50,7 @@ public class CourseRate implements Serializable {
     @ManyToOne(optional = false)
     private Course courseId;
     @JoinColumn(name = "student_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private User studentId;
 
     public CourseRate() {

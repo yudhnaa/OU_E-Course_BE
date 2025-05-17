@@ -58,17 +58,15 @@ public class Lesson implements Serializable {
     private String description;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "lessonId")
     private Set<Exercise> exerciseSet;
-    @OneToMany(mappedBy = "lessonId")
-    private Set<Test> testSet;
+    @JoinColumn(name = "user_upload_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Admin userUploadId;
     @JoinColumn(name = "course_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Course courseId;
     @JoinColumn(name = "lesson_type_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private LessonType lessonTypeId;
-    @JoinColumn(name = "user_upload_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private User userUploadId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "lessonId")
     private Set<LessonAttachment> lessonAttachmentSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "lessonId")
@@ -127,12 +125,12 @@ public class Lesson implements Serializable {
         this.exerciseSet = exerciseSet;
     }
 
-    public Set<Test> getTestSet() {
-        return testSet;
+    public Admin getUserUploadId() {
+        return userUploadId;
     }
 
-    public void setTestSet(Set<Test> testSet) {
-        this.testSet = testSet;
+    public void setUserUploadId(Admin userUploadId) {
+        this.userUploadId = userUploadId;
     }
 
     public Course getCourseId() {
@@ -149,14 +147,6 @@ public class Lesson implements Serializable {
 
     public void setLessonTypeId(LessonType lessonTypeId) {
         this.lessonTypeId = lessonTypeId;
-    }
-
-    public User getUserUploadId() {
-        return userUploadId;
-    }
-
-    public void setUserUploadId(User userUploadId) {
-        this.userUploadId = userUploadId;
     }
 
     public Set<LessonAttachment> getLessonAttachmentSet() {

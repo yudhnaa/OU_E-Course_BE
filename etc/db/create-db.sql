@@ -7,19 +7,36 @@ CREATE TABLE `user_role`(
     description TEXT NULL
 );
 
+-- la student co the xoa
 CREATE TABLE `user` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     last_name NVARCHAR(50) NOT NULL,
     first_name NVARCHAR(50) NOT NULL,
-    birthday VARCHAR(50) NOT NULL,
-    username NVARCHAR(50) NOT NULL,
+    birthday DATE NOT NULL,
+    username NVARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-    avatar VARCHAR(255) NOT NULL,
-    email VARCHAR(100) NOT NULL,
-    is_active BOOL NOT NULL DEFAULT TRUE,
-    
+    avatar VARCHAR(255) NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+
     user_role_id INT NOT NULL,
-    FOREIGN KEY (user_role_id) REFERENCES user_role(id)
+    FOREIGN KEY (user_role_id) REFERENCES user_role(id) ON DELETE RESTRICT
+);
+
+-- la admin, khong the xoa
+CREATE TABLE `admin`(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+
+    user_id INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE RESTRICT
+);
+
+-- la giang vien, khong the xoa chi co the khoa
+create table `lecturer`(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    is_active BOOL NOT NULL DEFAULT TRUE,
+
+    user_id INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE RESTRICT
 );
 
 CREATE TABLE `category`(
@@ -37,11 +54,11 @@ CREATE TABLE `course`(
     date_start TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     date_end TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
-    created_by_user_id INT,
-    FOREIGN KEY (created_by_user_id) REFERENCES user(id),
+    created_by_admin_id INT,
+    FOREIGN KEY (created_by_admin_id) REFERENCES admin(id) ON DELETE RESTRICT,
     
-    category_id INT NOT NULL,
-    FOREIGN KEY (category_id) REFERENCES category(id)
+    category_id INT NULL,
+    FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE RESTRICT
 );
 
 -- relationship: n-n
@@ -49,10 +66,10 @@ CREATE TABLE `course_lecturer`(
     id INT AUTO_INCREMENT PRIMARY KEY,
     
     course_id INT NOT NULL,
-    FOREIGN KEY (course_id) REFERENCES course(id),
+    FOREIGN KEY (course_id) REFERENCES course(id) ON DELETE CASCADE,
     
     lecturer_id INT NOT NULL,    
-    FOREIGN KEY (lecturer_id) REFERENCES user(id) 
+    FOREIGN KEY (lecturer_id) REFERENCES lecturer(id) ON DELETE CASCADE
 );
 
 -- relationship: n-n
@@ -62,10 +79,10 @@ CREATE TABLE `course_student`(
     progress DOUBLE NOT NULL DEFAULT 0,
         
     course_id INT NOT NULL,
-    FOREIGN KEY (course_id) REFERENCES course(id),
+    FOREIGN KEY (course_id) REFERENCES course(id) ON DELETE CASCADE,
 
     student_id INT NOT NULL,    
-    FOREIGN KEY (student_id) REFERENCES user(id)    
+    FOREIGN KEY (student_id) REFERENCES user(id) ON DELETE CASCADE
 );
 
 CREATE TABLE course_certificate(
@@ -73,7 +90,7 @@ CREATE TABLE course_certificate(
     download_link VARCHAR(255) NOT NULL,
     
     course_student_id INT NOT NULL,
-    FOREIGN KEY (course_student_id) REFERENCES course_student(id)
+    FOREIGN KEY (course_student_id) REFERENCES course_student(id) ON DELETE CASCADE
 );
 
 CREATE TABLE `course_rate`(
@@ -82,10 +99,10 @@ CREATE TABLE `course_rate`(
     comment TEXT NULL,
         
     course_id INT NOT NULL,
-    FOREIGN KEY (course_id) REFERENCES course(id),
+    FOREIGN KEY (course_id) REFERENCES course(id) ON DELETE CASCADE ,
     
-    student_id INT NOT NULL,    
-    FOREIGN KEY (student_id) REFERENCES user(id)
+    student_id INT NULL,
+    FOREIGN KEY (student_id) REFERENCES user(id) ON DELETE SET NULL
 );
 
 CREATE TABLE attachment(
@@ -110,36 +127,66 @@ CREATE TABLE `lesson`(
     description TEXT NULL,
     
     lesson_type_id INT NOT NULL,
-    FOREIGN KEY (lesson_type_id) REFERENCES lesson_type(id),
+    FOREIGN KEY (lesson_type_id) REFERENCES lesson_type(id)  ON DELETE RESTRICT,
     
     course_id INT NOT NULL,
-    FOREIGN KEY (course_id) REFERENCES course(id),
+    FOREIGN KEY (course_id) REFERENCES course(id) ON DELETE CASCADE ,
     
     user_upload_id INT NOT NULL,    
-    FOREIGN KEY (user_upload_id) REFERENCES user(id)
-    
+    FOREIGN KEY (user_upload_id) REFERENCES admin(id)  ON DELETE RESTRICT
 );
 
+-- 1 attachment thuoc 1 lesson, 1 lesson co nhieu attachment
+-- nhung vi attachment co the thuoc exercise hoac lesson nen ta phai tao 1 bang trung gian
 CREATE TABLE lesson_attachment(
 	id INT AUTO_INCREMENT PRIMARY KEY,
     
     lesson_id INT NOT NULL,
-    FOREIGN KEY (lesson_id) REFERENCES lesson(id),
+    FOREIGN KEY (lesson_id) REFERENCES lesson(id) ON DELETE CASCADE,
     
     attachment_id INT NOT NULL,
-    FOREIGN KEY (attachment_id) REFERENCES attachment(id)
+    FOREIGN KEY (attachment_id) REFERENCES attachment(id) ON DELETE CASCADE
 );
 
 CREATE TABLE `lesson_student`(
     id INT AUTO_INCREMENT PRIMARY KEY,
     name NVARCHAR(50) NOT NULL,
     is_learn BOOL DEFAULT FALSE,
+    learned_at TIMESTAMP NULL,
     
     lesson_id INT NOT NULL,
-    FOREIGN KEY (lesson_id) REFERENCES lesson(id),
+    FOREIGN KEY (lesson_id) REFERENCES lesson(id) ON DELETE CASCADE,
 
     student_id INT NOT NULL,
-    FOREIGN KEY (student_id) REFERENCES user(id)
+    FOREIGN KEY (student_id) REFERENCES user(id) ON DELETE CASCADE
+);
+
+CREATE TABLE exercise(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name NVARCHAR(50) NOT NULL,
+    duration_minutes INT NOT NULL,
+    max_score DECIMAL(5,2) NOT NULL,
+
+    created_by_user_id INT NOT NULL,
+    FOREIGN KEY (created_by_user_id) REFERENCES admin(id) ON DELETE RESTRICT,
+    
+    course_id INT NOT NULL,
+    FOREIGN KEY (course_id) REFERENCES course(id) ON DELETE CASCADE,
+    
+    lesson_id INT NOT NULL,
+    FOREIGN KEY (lesson_id) REFERENCES lesson(id) ON DELETE CASCADE
+);
+
+-- 1 attachment thuoc 1 exercise, 1 exercise co nhieu attachment
+-- nhung vi attachment co the thuoc exercise hoac lesson nen ta phai tao 1 bang trung gian
+CREATE TABLE exercise_attachment(
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    
+    exercise_id INT NOT NULL,
+    FOREIGN KEY (exercise_id) REFERENCES exercise(id) ON DELETE CASCADE,
+    
+    attachment_id INT NOT NULL,
+    FOREIGN KEY (attachment_id) REFERENCES attachment(id) ON DELETE CASCADE
 );
 
 -- multiple choice, writing
@@ -149,43 +196,17 @@ CREATE TABLE question_type(
     description TEXT NULL
 );
 
-CREATE TABLE exercise(
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name NVARCHAR(50) NOT NULL,
-    duration_minutes INT NOT NULL,
-    
-    created_by_user_id INT NOT NULL,
-    FOREIGN KEY (created_by_user_id) REFERENCES user(id),
-    
-    course_id INT NOT NULL,
-    FOREIGN KEY (course_id) REFERENCES course(id),
-    
-    lesson_id INT NOT NULL,
-    FOREIGN KEY (lesson_id) REFERENCES lesson(id),
-    
-    attachment_id INT NULL,
-    FOREIGN KEY (attachment_id) REFERENCES attachment(id)
-);
-
-CREATE TABLE exercise_attachment(
-	id INT AUTO_INCREMENT PRIMARY KEY,
-    
-    exercise_id INT NOT NULL,
-    FOREIGN KEY (exercise_id) REFERENCES exercise(id),
-    
-    attachment_id INT NOT NULL,
-    FOREIGN KEY (attachment_id) REFERENCES attachment(id)
-);
-
+-- 1 question thuoc 1 exercise, 1 exercise co nhieu question
+-- luc tao bai test thi lay nhung question thuoc tu nhieu exercise
 CREATE TABLE question(
     id INT AUTO_INCREMENT PRIMARY KEY,
     content TEXT NOT NULL,
     
     exercise_id INT NOT NULL,
-    FOREIGN KEY (exercise_id) REFERENCES exercise(id),
+    FOREIGN KEY (exercise_id) REFERENCES exercise(id) ON DELETE CASCADE,
     
     question_type_id INT NOT NULL,
-    FOREIGN KEY (question_type_id) REFERENCES question_type(id)
+    FOREIGN KEY (question_type_id) REFERENCES question_type(id) ON DELETE RESTRICT
 );
 
 CREATE TABLE multiple_choice_answer(
@@ -194,7 +215,7 @@ CREATE TABLE multiple_choice_answer(
     is_correct BOOL NOT NULL,
     
     question_id INT NOT NULL,
-    FOREIGN KEY (question_id) REFERENCES question(id)
+    FOREIGN KEY (question_id) REFERENCES question(id) ON DELETE CASCADE
 );
 
 CREATE TABLE writing_answer(
@@ -202,16 +223,10 @@ CREATE TABLE writing_answer(
     content TEXT NOT NULL,
     
     question_id INT NOT NULL,
-    FOREIGN KEY (question_id) REFERENCES question(id)
+    FOREIGN KEY (question_id) REFERENCES question(id) ON DELETE CASCADE
 );
 
-CREATE TABLE exercise_question( -- n-n ???
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    
-    exercise_id INT NOT NULL,
-    FOREIGN KEY (exercise_id) REFERENCES exercise(id)
-);
-
+-- 1 exercise co nhieu status: Submitted, Pending, Graded
 CREATE TABLE exercise_score_status(
     id INT AUTO_INCREMENT PRIMARY KEY,
     name NVARCHAR(50) NOT NULL,
@@ -226,13 +241,13 @@ CREATE TABLE exercise_attempt(
     response TEXT NOT NULL,
     
     status_id INT NOT NULL,
-    FOREIGN KEY (status_id) REFERENCES exercise_score_status(id),
+    FOREIGN KEY (status_id) REFERENCES exercise_score_status(id) ON DELETE RESTRICT,
     
     exercise_id INT NOT NULL,
-    FOREIGN KEY (exercise_id) REFERENCES exercise(id),
+    FOREIGN KEY (exercise_id) REFERENCES exercise(id) ON DELETE CASCADE,
     
     score_by_user_id INT NOT NULL,
-    FOREIGN KEY (score_by_user_id) REFERENCES user(id)
+    FOREIGN KEY (score_by_user_id) REFERENCES lecturer(id) ON DELETE RESTRICT
 );
 
 CREATE TABLE test (
@@ -241,25 +256,23 @@ CREATE TABLE test (
     description TEXT,
     duration_minutes INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    max_score DECIMAL(5,2) NOT NULL,
 
     created_by_user_id INT NOT NULL,
-    FOREIGN KEY (created_by_user_id) REFERENCES user(id),
+    FOREIGN KEY (created_by_user_id) REFERENCES admin(id)  ON DELETE RESTRICT,
 
     course_id INT NOT NULL,
-    FOREIGN KEY (course_id) REFERENCES course(id),
-
-    lesson_id INT,
-    FOREIGN KEY (lesson_id) REFERENCES lesson(id)
+    FOREIGN KEY (course_id) REFERENCES course(id) ON DELETE CASCADE
 );
 
 CREATE TABLE test_question (
     id INT AUTO_INCREMENT PRIMARY KEY,
     
     test_id INT NOT NULL,
-    FOREIGN KEY (test_id) REFERENCES test(id),
+    FOREIGN KEY (test_id) REFERENCES test(id) ON DELETE CASCADE,
 
     question_id INT NOT NULL,
-    FOREIGN KEY (question_id) REFERENCES question(id)
+    FOREIGN KEY (question_id) REFERENCES question(id) ON DELETE CASCADE
 );
 
 CREATE TABLE test_attempt (
@@ -269,8 +282,8 @@ CREATE TABLE test_attempt (
     total_score DECIMAL(5,2),
 
     test_id INT NOT NULL,
-    FOREIGN KEY (test_id) REFERENCES test(id),
+    FOREIGN KEY (test_id) REFERENCES test(id) ON DELETE CASCADE,
 
     user_id INT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES user(id)
+    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
 );

@@ -17,9 +17,12 @@ import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Set;
 
 /**
@@ -37,8 +40,7 @@ import java.util.Set;
     @NamedQuery(name = "User.findByUsername", query = "SELECT u FROM User u WHERE u.username = :username"),
     @NamedQuery(name = "User.findByPassword", query = "SELECT u FROM User u WHERE u.password = :password"),
     @NamedQuery(name = "User.findByAvatar", query = "SELECT u FROM User u WHERE u.avatar = :avatar"),
-    @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
-    @NamedQuery(name = "User.findByIsActive", query = "SELECT u FROM User u WHERE u.isActive = :isActive")})
+    @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email")})
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -59,9 +61,9 @@ public class User implements Serializable {
     private String firstName;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 50)
     @Column(name = "birthday")
-    private String birthday;
+    @Temporal(TemporalType.DATE)
+    private Date birthday;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
@@ -72,9 +74,7 @@ public class User implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "password")
     private String password;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
+    @Size(max = 255)
     @Column(name = "avatar")
     private String avatar;
     // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
@@ -83,24 +83,12 @@ public class User implements Serializable {
     @Size(min = 1, max = 100)
     @Column(name = "email")
     private String email;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "is_active")
-    private boolean isActive;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdByUserId")
-    private Set<Exercise> exerciseSet;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "studentId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    private Set<Admin> adminSet;
+    @OneToMany(mappedBy = "studentId")
     private Set<CourseRate> courseRateSet;
-    @OneToMany(mappedBy = "createdByUserId")
-    private Set<Course> courseSet;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "lecturerId")
-    private Set<CourseLecturer> courseLecturerSet;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdByUserId")
-    private Set<Test> testSet;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "scoreByUserId")
-    private Set<ExerciseAttempt> exerciseAttemptSet;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userUploadId")
-    private Set<Lesson> lessonSet;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    private Set<Lecturer> lecturerSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
     private Set<TestAttempt> testAttemptSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "studentId")
@@ -118,16 +106,14 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public User(Integer id, String lastName, String firstName, String birthday, String username, String password, String avatar, String email, boolean isActive) {
+    public User(Integer id, String lastName, String firstName, Date birthday, String username, String password, String email) {
         this.id = id;
         this.lastName = lastName;
         this.firstName = firstName;
         this.birthday = birthday;
         this.username = username;
         this.password = password;
-        this.avatar = avatar;
         this.email = email;
-        this.isActive = isActive;
     }
 
     public Integer getId() {
@@ -154,11 +140,11 @@ public class User implements Serializable {
         this.firstName = firstName;
     }
 
-    public String getBirthday() {
+    public Date getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(String birthday) {
+    public void setBirthday(Date birthday) {
         this.birthday = birthday;
     }
 
@@ -194,20 +180,12 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public boolean getIsActive() {
-        return isActive;
+    public Set<Admin> getAdminSet() {
+        return adminSet;
     }
 
-    public void setIsActive(boolean isActive) {
-        this.isActive = isActive;
-    }
-
-    public Set<Exercise> getExerciseSet() {
-        return exerciseSet;
-    }
-
-    public void setExerciseSet(Set<Exercise> exerciseSet) {
-        this.exerciseSet = exerciseSet;
+    public void setAdminSet(Set<Admin> adminSet) {
+        this.adminSet = adminSet;
     }
 
     public Set<CourseRate> getCourseRateSet() {
@@ -218,44 +196,12 @@ public class User implements Serializable {
         this.courseRateSet = courseRateSet;
     }
 
-    public Set<Course> getCourseSet() {
-        return courseSet;
+    public Set<Lecturer> getLecturerSet() {
+        return lecturerSet;
     }
 
-    public void setCourseSet(Set<Course> courseSet) {
-        this.courseSet = courseSet;
-    }
-
-    public Set<CourseLecturer> getCourseLecturerSet() {
-        return courseLecturerSet;
-    }
-
-    public void setCourseLecturerSet(Set<CourseLecturer> courseLecturerSet) {
-        this.courseLecturerSet = courseLecturerSet;
-    }
-
-    public Set<Test> getTestSet() {
-        return testSet;
-    }
-
-    public void setTestSet(Set<Test> testSet) {
-        this.testSet = testSet;
-    }
-
-    public Set<ExerciseAttempt> getExerciseAttemptSet() {
-        return exerciseAttemptSet;
-    }
-
-    public void setExerciseAttemptSet(Set<ExerciseAttempt> exerciseAttemptSet) {
-        this.exerciseAttemptSet = exerciseAttemptSet;
-    }
-
-    public Set<Lesson> getLessonSet() {
-        return lessonSet;
-    }
-
-    public void setLessonSet(Set<Lesson> lessonSet) {
-        this.lessonSet = lessonSet;
+    public void setLecturerSet(Set<Lecturer> lecturerSet) {
+        this.lecturerSet = lecturerSet;
     }
 
     public Set<TestAttempt> getTestAttemptSet() {

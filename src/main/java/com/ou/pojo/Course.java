@@ -69,12 +69,12 @@ public class Course implements Serializable {
     private Set<Exercise> exerciseSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseId")
     private Set<CourseRate> courseRateSet;
-    @JoinColumn(name = "category_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Category categoryId;
-    @JoinColumn(name = "created_by_user_id", referencedColumnName = "id")
+    @JoinColumn(name = "created_by_admin_id", referencedColumnName = "id")
     @ManyToOne
-    private User createdByUserId;
+    private Admin createdByAdminId;
+    @JoinColumn(name = "category_id", referencedColumnName = "id")
+    @ManyToOne
+    private Category categoryId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseId")
     private Set<CourseLecturer> courseLecturerSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseId")
@@ -160,20 +160,20 @@ public class Course implements Serializable {
         this.courseRateSet = courseRateSet;
     }
 
+    public Admin getCreatedByAdminId() {
+        return createdByAdminId;
+    }
+
+    public void setCreatedByAdminId(Admin createdByAdminId) {
+        this.createdByAdminId = createdByAdminId;
+    }
+
     public Category getCategoryId() {
         return categoryId;
     }
 
     public void setCategoryId(Category categoryId) {
         this.categoryId = categoryId;
-    }
-
-    public User getCreatedByUserId() {
-        return createdByUserId;
-    }
-
-    public void setCreatedByUserId(User createdByUserId) {
-        this.createdByUserId = createdByUserId;
     }
 
     public Set<CourseLecturer> getCourseLecturerSet() {
