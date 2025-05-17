@@ -20,9 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional
 public class UserRepositoryImpl implements UserRepository {
-    
+
     private static final int PAGE_SIZE = WebApplicationSettings.PAGE_SIZE;
-    
+
     @Autowired
     private LocalSessionFactoryBean sessionFactory;
 
@@ -68,9 +68,9 @@ public class UserRepositoryImpl implements UserRepository {
         CriteriaQuery<User> query = builder.createQuery(User.class);
         Root<User> root = query.from(User.class);
         query.select(root);
-        
+
         Query<User> q = session.createQuery(query);
-        
+
         // Process pagination parameters
         if (params != null) {
             int page = Integer.parseInt(params.getOrDefault("page", "1"));
@@ -79,10 +79,10 @@ public class UserRepositoryImpl implements UserRepository {
             q.setMaxResults(pageSize);
             q.setFirstResult(start);
         }
-        
+
         return q.getResultList();
     }
-    
+
     @Override
     @Transactional(readOnly = true)
     public long countUsers(String locale) {
@@ -101,16 +101,16 @@ public class UserRepositoryImpl implements UserRepository {
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<User> query = builder.createQuery(User.class);
         Root<User> root = query.from(User.class);
-        
+
         List<Predicate> predicates = buildSearchPredicates(builder, root, filters);
-        
+
         // Apply predicates if any
         if (!predicates.isEmpty()) {
             query.where(builder.and(predicates.toArray(new Predicate[0])));
         }
-        
+
         Query<User> q = session.createQuery(query);
-        
+
         // Process pagination parameters
         if (params != null) {
             int page = Integer.parseInt(params.getOrDefault("page", "1"));
@@ -119,10 +119,10 @@ public class UserRepositoryImpl implements UserRepository {
             q.setMaxResults(pageSize);
             q.setFirstResult(start);
         }
-        
+
         return q.getResultList();
     }
-    
+
     @Override
     @Transactional(readOnly = true)
     public long countSearchResults(Map<String, String> filters) {
@@ -130,46 +130,46 @@ public class UserRepositoryImpl implements UserRepository {
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Long> query = builder.createQuery(Long.class);
         Root<User> root = query.from(User.class);
-        
+
         List<Predicate> predicates = buildSearchPredicates(builder, root, filters);
-        
+
         if (!predicates.isEmpty()) {
             query.where(builder.and(predicates.toArray(new Predicate[0])));
         }
-        
+
         query.select(builder.count(root));
         return session.createQuery(query).getSingleResult();
     }
-    
+
     private List<Predicate> buildSearchPredicates(CriteriaBuilder builder, Root<User> root, Map<String, String> filters) {
         List<Predicate> predicates = new ArrayList<>();
-        
+
         if (filters != null) {
             if (filters.containsKey("username")) {
                 predicates.add(builder.like(root.get("username"), String.format("%%%s%%", filters.get("username"))));
             }
-            
+
             if (filters.containsKey("email")) {
                 predicates.add(builder.like(root.get("email"), String.format("%%%s%%", filters.get("email"))));
             }
-            
+
             if (filters.containsKey("firstName")) {
                 predicates.add(builder.like(root.get("firstName"), String.format("%%%s%%", filters.get("firstName"))));
             }
-            
+
             if (filters.containsKey("lastName")) {
                 predicates.add(builder.like(root.get("lastName"), String.format("%%%s%%", filters.get("lastName"))));
             }
-            
+
             if (filters.containsKey("isActive")) {
                 predicates.add(builder.equal(root.get("isActive"), Boolean.valueOf(filters.get("isActive"))));
             }
-            
+
             if (filters.containsKey("userRoleId")) {
                 predicates.add(builder.equal(root.get("userRoleId").get("id"), Integer.valueOf(filters.get("userRoleId"))));
             }
         }
-        
+
         return predicates;
     }
 
@@ -206,11 +206,11 @@ public class UserRepositoryImpl implements UserRepository {
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<User> query = builder.createQuery(User.class);
         Root<User> root = query.from(User.class);
-        
+
         query.where(builder.equal(root.get("isActive"), true));
-        
+
         Query<User> q = session.createQuery(query);
-        
+
         // Process pagination parameters
         if (params != null) {
             int page = Integer.parseInt(params.getOrDefault("page", "1"));
@@ -219,10 +219,10 @@ public class UserRepositoryImpl implements UserRepository {
             q.setMaxResults(pageSize);
             q.setFirstResult(start);
         }
-        
+
         return q.getResultList();
     }
-    
+
     @Override
     @Transactional(readOnly = true)
     public long countActiveUsers(String locale) {
@@ -242,11 +242,11 @@ public class UserRepositoryImpl implements UserRepository {
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<User> query = builder.createQuery(User.class);
         Root<User> root = query.from(User.class);
-        
+
         query.where(builder.equal(root.get("userRoleId").get("id"), roleId));
-        
+
         Query<User> q = session.createQuery(query);
-        
+
         // Process pagination parameters
         if (params != null) {
             int page = Integer.parseInt(params.getOrDefault("page", "1"));
@@ -255,10 +255,10 @@ public class UserRepositoryImpl implements UserRepository {
             q.setMaxResults(pageSize);
             q.setFirstResult(start);
         }
-        
+
         return q.getResultList();
     }
-    
+
     @Override
     @Transactional(readOnly = true)
     public long countUsersByRole(Integer roleId) {

@@ -32,6 +32,7 @@ public class ThymeleafConfigs {
     public SpringTemplateEngine templateEngine() {
         SpringTemplateEngine templateEngine = new SpringTemplateEngine();
         templateEngine.setTemplateResolver(templateResolver());
+        templateEngine.addDialect(new nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect());
         return templateEngine;
     }
 
@@ -42,5 +43,4 @@ public class ThymeleafConfigs {
         viewResolver.setCharacterEncoding("UTF-8");
         return viewResolver;
     }
-
 }
