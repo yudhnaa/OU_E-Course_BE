@@ -162,4 +162,42 @@ public class CourseDto implements Serializable {
                 "courseLecturerSetIds = " + courseLecturerSetIds + ", " +
                 "courseLecturerSetLecturerIds = " + courseLecturerSetLecturerIds + ")";
     }
+
+//    public static Course toEntity(CourseDto courseDto) {
+//        if (courseDto == null) return null;
+//        Course course = new Course();
+//        course.setId(courseDto.getId());
+//        course.setName(courseDto.getName());
+//        course.setDescription(courseDto.getDescription());
+//        course.setDateAdded(courseDto.getDateAdded());
+//        course.setDateStart(courseDto.getDateStart());
+//        course.setDateEnd(courseDto.getDateEnd());
+//        // Category
+//        if (courseDto.getCategoryIdId() != null) {
+//            com.ou.pojo.Category category = new com.ou.pojo.Category();
+//            category.setId(courseDto.getCategoryIdId());
+//            course.setCategoryId(category);
+//        } else {
+//            course.setCategoryId(null);
+//        }
+//        // Note: Not mapping courseLecturerSet or other sets here
+//        return course;
+//    }
+//
+//    public static CourseDto fromEntity(Course course) {
+//        if (course == null) return null;
+//        CourseDto dto = new CourseDto();
+//        dto.setId(course.getId());
+//        dto.setName(course.getName());
+//        dto.setDescription(course.getDescription());
+//        dto.setDateAdded(course.getDateAdded());
+//        dto.setDateStart(course.getDateStart());
+//        dto.setDateEnd(course.getDateEnd());
+//        if (course.getCategoryId() != null) {
+//            dto.setCategoryIdId(course.getCategoryId().getId());
+//            dto.setCategoryIdName(course.getCategoryId().getName());
+//        }
+//        // Note: Not mapping courseLecturerSet or other sets here
+//        return dto;
+//    }
 }

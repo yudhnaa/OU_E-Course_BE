@@ -53,6 +53,8 @@ CREATE TABLE `course`(
     date_added TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     date_start TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     date_end TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    image VARCHAR(255) NULL,
     
     created_by_admin_id INT,
     FOREIGN KEY (created_by_admin_id) REFERENCES admin(id) ON DELETE RESTRICT,
@@ -81,8 +83,10 @@ CREATE TABLE `course_student`(
     course_id INT NOT NULL,
     FOREIGN KEY (course_id) REFERENCES course(id) ON DELETE CASCADE,
 
-    student_id INT NOT NULL,    
-    FOREIGN KEY (student_id) REFERENCES user(id) ON DELETE CASCADE
+    student_id INT NOT NULL,
+    FOREIGN KEY (student_id) REFERENCES user(id) ON DELETE CASCADE,
+
+    UNIQUE KEY unique_course_student (course_id, student_id)
 );
 
 CREATE TABLE course_certificate(
@@ -97,12 +101,9 @@ CREATE TABLE `course_rate`(
     id INT AUTO_INCREMENT PRIMARY KEY,
     rate DOUBLE NOT NULL CHECK (rate <= 5),
     comment TEXT NULL,
-        
-    course_id INT NOT NULL,
-    FOREIGN KEY (course_id) REFERENCES course(id) ON DELETE CASCADE ,
-    
-    student_id INT NULL,
-    FOREIGN KEY (student_id) REFERENCES user(id) ON DELETE SET NULL
+
+    course_student_id INT NULL,
+    FOREIGN KEY (course_student_id) REFERENCES course_student(id) ON DELETE SET NULL
 );
 
 CREATE TABLE attachment(
@@ -168,7 +169,7 @@ CREATE TABLE exercise(
     max_score DECIMAL(5,2) NOT NULL,
 
     created_by_user_id INT NOT NULL,
-    FOREIGN KEY (created_by_user_id) REFERENCES admin(id) ON DELETE RESTRICT,
+    FOREIGN KEY (created_by_user_id) REFERENCES lecturer(id) ON DELETE RESTRICT,
     
     course_id INT NOT NULL,
     FOREIGN KEY (course_id) REFERENCES course(id) ON DELETE CASCADE,
@@ -250,6 +251,7 @@ CREATE TABLE exercise_attempt(
     FOREIGN KEY (score_by_user_id) REFERENCES lecturer(id) ON DELETE RESTRICT
 );
 
+--lecturer co the tao bai tap
 CREATE TABLE test (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name NVARCHAR(100) NOT NULL,
@@ -259,7 +261,7 @@ CREATE TABLE test (
     max_score DECIMAL(5,2) NOT NULL,
 
     created_by_user_id INT NOT NULL,
-    FOREIGN KEY (created_by_user_id) REFERENCES admin(id)  ON DELETE RESTRICT,
+    FOREIGN KEY (created_by_user_id) REFERENCES lecturer(id)  ON DELETE RESTRICT,
 
     course_id INT NOT NULL,
     FOREIGN KEY (course_id) REFERENCES course(id) ON DELETE CASCADE

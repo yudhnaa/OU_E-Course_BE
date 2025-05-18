@@ -10,6 +10,6 @@ package com.ou.configs;
  */
 public class WebApplicationSettings {
 
-    public static final int PAGE_SIZE = 10;
+    public static final int PAGE_SIZE = 2;
 
 }

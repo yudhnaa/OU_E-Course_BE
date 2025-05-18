@@ -1,13 +1,23 @@
 package com.ou.services.impl;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import com.ou.exceptions.NotFoundException;
 import com.ou.pojo.Course;
 import com.ou.repositories.CourseRepository;
 import com.ou.services.CourseService;
+import com.ou.services.LocalizationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Service
 @Transactional
@@ -15,6 +25,13 @@ public class CourseServiceImpl implements CourseService {
 
     @Autowired
     private CourseRepository courseRepository;
+
+    @Autowired
+    private Cloudinary cloudinary;
+
+    @Autowired
+    private LocalizationService localizationService;
+
 
     @Override
     public Course addCourse(Course course) {
@@ -35,34 +52,40 @@ public class CourseServiceImpl implements CourseService {
         
         // Set current date as date added if not provided
         if (course.getDateAdded() == null) {
-            course.setDateAdded(new Date());
+            course.setDateAdded(LocalDateTime.now());
         }
         
         return courseRepository.addCourse(course);
     }
 
     @Override
-    public Course updateCourse(Course course) {
+    public Course updateCourse(Course course) throws IOException {
         // Check if course exists
         if (course.getId() == null || !courseRepository.getCourseById(course.getId()).isPresent()) {
-            throw new IllegalArgumentException("Course not found");
+            throw new IllegalArgumentException(localizationService.getMessage("course.notFound", LocaleContextHolder.getLocale()));
         }
         
         // Validate course data
         if (!isValidCourse(course)) {
-            throw new IllegalArgumentException("Invalid course data");
+            throw new IllegalArgumentException(localizationService.getMessage("course.invalidData", LocaleContextHolder.getLocale()));
         }
         
         // Check for duplicate name (excluding this course)
         if (!isNameUnique(course.getName(), course.getId())) {
-            throw new IllegalArgumentException("Course name already exists");
+            throw new IllegalArgumentException("course.invalidData.name.exists");
         }
         
         // Validate dates
         if (!hasValidDates(course)) {
-            throw new IllegalArgumentException("Invalid course dates");
+            throw new IllegalArgumentException(localizationService.getMessage("course.invalidData", LocaleContextHolder.getLocale()));
         }
-        
+
+        //Upload image to Cloudinary if provided
+        if (!course.getImageFile().isEmpty()){
+            String imageFileUrl = uploadImageToCloudinary(course.getImageFile());
+            course.setImage(imageFileUrl);
+        }
+
         return courseRepository.updateCourse(course);
     }
 
@@ -74,7 +97,7 @@ public class CourseServiceImpl implements CourseService {
         
         // Check if course exists
         Optional<Course> courseOpt = courseRepository.getCourseById(id);
-        if (!courseOpt.isPresent()) {
+        if (courseOpt.isEmpty()) {
             throw new IllegalArgumentException("Course not found");
         }
         
@@ -230,7 +253,7 @@ public class CourseServiceImpl implements CourseService {
     public boolean hasValidDates(Course course) {
         // If end date is set, it must be after start date
         if (course.getDateEnd() != null && course.getDateStart() != null) {
-            return course.getDateEnd().after(course.getDateStart());
+            return course.getDateEnd().isAfter(course.getDateStart());
         }
         
         // If only one date is set or none are set, consider it valid
@@ -284,5 +307,15 @@ public class CourseServiceImpl implements CourseService {
         
         // Add other filter validations as needed
         // For example: date format validation for dateStart and dateEnd
+    }
+
+    private String uploadImageToCloudinary(MultipartFile file) throws IOException {
+        try {
+            Map res = cloudinary.uploader().upload(file.getBytes(),
+                    ObjectUtils.asMap("resource_type", "auto"));
+            return res.get("secure_url").toString();
+        } catch (IOException ex) {
+            throw  new IOException(localizationService.getMessage("cloudinary.upload.error", LocaleContextHolder.getLocale()));
+        }
     }
 }

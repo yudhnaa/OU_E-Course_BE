@@ -50,6 +50,8 @@ public class CourseStudent implements Serializable {
     @NotNull
     @Column(name = "progress")
     private double progress;
+    @OneToMany(mappedBy = "courseStudentId")
+    private Set<CourseRate> courseRateSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseStudentId")
     private Set<CourseCertificate> courseCertificateSet;
     @JoinColumn(name = "course_id", referencedColumnName = "id")
@@ -94,6 +96,14 @@ public class CourseStudent implements Serializable {
 
     public void setProgress(double progress) {
         this.progress = progress;
+    }
+
+    public Set<CourseRate> getCourseRateSet() {
+        return courseRateSet;
+    }
+
+    public void setCourseRateSet(Set<CourseRate> courseRateSet) {
+        this.courseRateSet = courseRateSet;
     }
 
     public Set<CourseCertificate> getCourseCertificateSet() {

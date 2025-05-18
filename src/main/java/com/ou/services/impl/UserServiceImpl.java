@@ -10,7 +10,9 @@ import com.ou.pojo.User;
 import com.ou.repositories.UserRepository;
 import com.ou.services.LocalizationService;
 import com.ou.services.UserService;
+import jakarta.servlet.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -43,6 +45,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private LocalizationService localizationService;
+    @Qualifier("springSecurityFilterChain")
+    @Autowired
+    private Filter filter;
 
     @Override
     public User getUserById(int id) {
@@ -73,7 +78,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> searchUsers(Map<String, String> filters, Map<String, String> params) {
-        return List.of();
+        List<User> users = userRepo.searchUsers(filters, params);
+        return users;
     }
 
     @Override

@@ -1,0 +1,161 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<th:block layout:fragment="pagetitle">
+  <!--page title-->
+  <div th:replace="~{partials/title-meta :: title-meta('Courses')}"></div>
+</th:block>
+
+<head>
+
+</head>
+
+<body>
+<div layout:fragment="content">
+  <!-- start page title -->
+  <div th:replace="~{partials/page-title :: page-title('Courses','Dashboards')}"></div>
+  <!-- end page title -->
+
+  <div class="row">
+      <!-- Danger Alert -->
+      <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${msg_error}">
+          <b th:text="${msg_error}">Dismissible danger Alert </b>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+
+      <!-- Success Alert -->
+      <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${msg_success}">
+          <b th:text="${msg_success}"></b>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <div class="col-xxl-3 col-sm-6 project-card" th:each="course : ${courses}">
+      <div class="card card-height-100">
+        <div class="card-body">
+          <div class="d-flex flex-column h-100">
+            <div class="d-flex">
+              <div class="flex-grow-1">
+                <p class="text-muted mb-4" th:text="'Created ' + ${#temporals.format(course.dateAdded, 'dd-MM-yyyy')}"></p>
+              </div>
+              <div class="flex-shrink-0">
+                <div class="d-flex gap-1 align-items-center">
+                  <div class="dropdown">
+                    <button class="btn btn-link text-muted p-1 mt-n2 py-0 text-decoration-none fs-15"
+                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                           viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                           stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                           class="feather feather-more-horizontal icon-sm">
+                        <circle cx="12" cy="12" r="1"></circle>
+                        <circle cx="19" cy="12" r="1"></circle>
+                        <circle cx="5" cy="12" r="1"></circle>
+                      </svg>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end">
+<!--                      <a class="dropdown-item" th:href="@{'/course/view/' + ${course.id}}">-->
+<!--                        <i class="ri-eye-fill align-bottom me-2 text-muted"></i> View-->
+<!--                      </a>-->
+                      <a class="dropdown-item" th:href="@{'/course/edit/' + ${course.id}}">
+                        <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
+                      </a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#removeProjectModal">
+                        <i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Remove
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex mb-2">
+              <div class="flex-shrink-0 me-3">
+                <div class="avatar-sm">
+                <span class="avatar-title bg-soft-warning rounded p-2">
+                  <img th:src="@{${course.image}}" alt="" class="img-fluid p-1">
+                </span>
+                </div>
+              </div>
+              <div class="flex-grow-1">
+                <h5 class="mb-1 fs-15">
+                  <a th:href="@{'/admin/course/' + ${course.id}}" class="text-dark" th:text="${course.name}"></a>
+                </h5>
+                <p class="text-muted text-truncate-two-lines mb-3" th:text="${course.description}"></p>
+              </div>
+            </div>
+
+            <div class="mt-auto">
+              <div class="d-flex mb-2">
+                <div class="flex-grow-1">More Description If its needed</div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="card-footer bg-transparent border-top-dashed py-2">
+          <div class="d-flex align-items-center">
+            <div class="flex-grow-1">
+              <div class="avatar-group">
+                  <p>Lecture Avatar List here</p>
+<!--                <a class="avatar-group-item" th:each="member : ${course.members}"-->
+<!--                   href="javascript:void(0);" data-bs-toggle="tooltip"-->
+<!--                   data-bs-trigger="hover" data-bs-placement="top"-->
+<!--                   th:attr="data-bs-original-title=${member.name}">-->
+<!--                  <div class="avatar-xxs">-->
+<!--                    <img th:src="@{${member.avatarUrl}}" alt="" class="rounded-circle img-fluid">-->
+<!--                  </div>-->
+<!--                </a>-->
+              </div>
+            </div>
+            <div class="flex-shrink-0">
+              <div class="text-muted">
+                <i class="ri-calendar-event-fill me-1 align-bottom"></i>
+                  <span th:text="${#temporals.format(course.dateEnd, 'dd-MM-yyyy')}"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div class="row g-0 text-center text-sm-start align-items-center mb-3">
+        <div class="col-sm-6">
+            <div>
+                <p class="mb-sm-0" th:text="'Showing ' + ${startIndex} + ' to ' + ${endIndex} + ' of ' + ${totalCourses} + ' entries'"></p>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <ul class="pagination pagination-separated justify-content-center justify-content-sm-end mb-sm-0">
+                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                    <a th:href="@{'/admin/courses?page=' + (${currentPage} - 1)}" class="page-link">
+                        <i class="mdi mdi-chevron-left"></i>
+                    </a>
+                </li>
+                <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}" th:classappend="${page == currentPage} ? 'active'">
+                    <a th:href="@{'/admin/courses?page=' + ${page}}" class="page-link" th:text="${page}"></a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                    <a th:href="@{'/admin/courses?page=' + (${currentPage} + 1)}" class="page-link">
+                        <i class="mdi mdi-chevron-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+
+<th:block layout:fragment="pagejs">
+
+  <!-- apexcharts -->
+  <script th:src="@{/assets/libs/apexcharts/apexcharts.min.js}"></script>
+
+  <!-- Dashboard init -->
+<!--  <script th:src="@{/assets/js/pages/dashboard-projects.init.js}"></script>-->
+</th:block>
+</body>
+
+</html>

@@ -20,7 +20,9 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 @ComponentScan(basePackages = {
         "com.ou.controllers",
         "com.ou.repositories",
-        "com.ou.services"
+        "com.ou.services",
+        "com.ou.formatters",
+        "com.ou.helpers"
 })
 public class SpringSecurityConfigs {
     @Autowired
@@ -38,18 +40,18 @@ public class SpringSecurityConfigs {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(c -> c.disable())
-                .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/", "/home").permitAll()
-                        .requestMatchers("/assets/**").permitAll()
-//                        .requestMatchers("/user/**").permitAll()
-                )
-                .formLogin(form
-                        -> form.loginPage("/login")
-                        .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/")
-                        .failureUrl("/login").permitAll())
-                .logout(logout -> logout.logoutSuccessUrl("/login").permitAll());
+        http.csrf(c -> c.disable());
+//                .authorizeHttpRequests(requests -> requests
+//                        .requestMatchers("/", "/home").permitAll()
+//                        .requestMatchers("/assets/**").permitAll()
+////                        .requestMatchers("/user/**").permitAll()
+//                )
+//                .formLogin(form
+//                        -> form.loginPage("/login")
+//                        .loginProcessingUrl("/login")
+//                        .defaultSuccessUrl("/")
+//                        .failureUrl("/login").permitAll())
+//                .logout(logout -> logout.logoutSuccessUrl("/login").permitAll());
 
         return http.build();
     }

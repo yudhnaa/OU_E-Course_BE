@@ -46,12 +46,9 @@ public class CourseRate implements Serializable {
     @Size(max = 65535)
     @Column(name = "comment")
     private String comment;
-    @JoinColumn(name = "course_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Course courseId;
-    @JoinColumn(name = "student_id", referencedColumnName = "id")
+    @JoinColumn(name = "course_student_id", referencedColumnName = "id")
     @ManyToOne
-    private User studentId;
+    private CourseStudent courseStudentId;
 
     public CourseRate() {
     }
@@ -89,20 +86,12 @@ public class CourseRate implements Serializable {
         this.comment = comment;
     }
 
-    public Course getCourseId() {
-        return courseId;
+    public CourseStudent getCourseStudentId() {
+        return courseStudentId;
     }
 
-    public void setCourseId(Course courseId) {
-        this.courseId = courseId;
-    }
-
-    public User getStudentId() {
-        return studentId;
-    }
-
-    public void setStudentId(User studentId) {
-        this.studentId = studentId;
+    public void setCourseStudentId(CourseStudent courseStudentId) {
+        this.courseStudentId = courseStudentId;
     }
 
     @Override

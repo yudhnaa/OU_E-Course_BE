@@ -85,8 +85,6 @@ public class User implements Serializable {
     private String email;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
     private Set<Admin> adminSet;
-    @OneToMany(mappedBy = "studentId")
-    private Set<CourseRate> courseRateSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
     private Set<Lecturer> lecturerSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
@@ -186,14 +184,6 @@ public class User implements Serializable {
 
     public void setAdminSet(Set<Admin> adminSet) {
         this.adminSet = adminSet;
-    }
-
-    public Set<CourseRate> getCourseRateSet() {
-        return courseRateSet;
-    }
-
-    public void setCourseRateSet(Set<CourseRate> courseRateSet) {
-        this.courseRateSet = courseRateSet;
     }
 
     public Set<Lecturer> getLecturerSet() {
