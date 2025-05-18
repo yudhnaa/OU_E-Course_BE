@@ -23,7 +23,7 @@ import java.util.Set;
 
 /**
  *
- * @author yudhna
+ * @author ADMIN
  */
 @Entity
 @Table(name = "course_student")
@@ -138,5 +138,5 @@ public class CourseStudent implements Serializable {
     public String toString() {
         return "com.ou.pojo.CourseStudent[ id=" + id + " ]";
     }
-
+    
 }
