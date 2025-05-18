@@ -1,5 +1,6 @@
 package com.ou.controllers.webController.adminController;
 import com.ou.dto.TestDto;
+import com.ou.helpers.PaginationHelper;
 import com.ou.pojo.Course;
 import com.ou.pojo.Lecturer;
 import com.ou.pojo.Question;
@@ -8,6 +9,7 @@ import com.ou.services.CourseService;
 import com.ou.services.LecturerService;
 import com.ou.services.QuestionService;
 import com.ou.services.TestService;
+import com.ou.utils.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +24,9 @@ import java.beans.PropertyEditorSupport;
 import java.math.BigDecimal;
 import java.util.*;
 
-@RequestMapping("/admin/course/{courseId}/tests")
+import static com.ou.configs.WebApplicationSettings.PAGE_SIZE;
+
+@RequestMapping("/course/{courseId}/tests")
 @Controller
 public class TestController {
     @Autowired
@@ -33,6 +37,9 @@ public class TestController {
 
     @Autowired
     private LecturerService lecturerService;
+
+    @Autowired
+    private PaginationHelper paginationHelper;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -47,8 +54,6 @@ public class TestController {
                             .orElseThrow(() -> new IllegalArgumentException("Invalid course ID: " + text));
                     setValue(course);
                 }
-
-
             }
 
             @Override
@@ -79,11 +84,25 @@ public class TestController {
     }
 
     @GetMapping
-    public String getAllTests(@PathVariable("courseId") Integer courseId, Model model) {
-        List<Test> tests = testService.getTestsByCourse(courseId);
+    public String getAllTestsByCourse(@PathVariable("courseId") Integer courseId, Model model,@RequestParam Map<String,String> params) {
+        long totalTests = testService.countTestsInCourse(courseId);
+
+        if (totalTests == 0) {
+            model.addAttribute("message", "No tests found for this course.");
+            return "dashboard/lecturer/test";
+        }
+
+        Pagination pagination = paginationHelper.getPagination(params, totalTests);
+
+        List<Test> tests = testService.getTestsByCourse(courseId, params);
         model.addAttribute("tests", tests);
         model.addAttribute("courseId", courseId);
-        return "dashboard/admin/test";
+        model.addAttribute("currentPage", pagination.getCurrentPage());
+//        model.addAttribute("totalTests", totalTests);
+        model.addAttribute("totalPages", pagination.getTotalPages());
+        model.addAttribute("startIndex", pagination.getStartIndex());
+        model.addAttribute("endIndex", pagination.getEndIndex());
+        return "dashboard/lecturer/test";
     }
 
     @GetMapping("/test/{id}")
@@ -95,7 +114,7 @@ public class TestController {
 
         test.setCourseId(new Course(courseId));
         model.addAttribute("test", test);
-        return "dashboard/admin/testDetail";
+        return "dashboard/lecturer/testDetail";
     }
 
 
@@ -110,7 +129,7 @@ public class TestController {
             test.setCourseId(new Course(courseId)); // 👈 Thêm dòng này để tránh lỗi bind khi trả về view
             model.addAttribute("error", "Form has errors.");
             model.addAttribute("test", test);
-            return "dashboard/admin/testDetail";
+            return "dashboard/lecturer/testDetail";
         }
 
         try {
@@ -131,7 +150,7 @@ public class TestController {
             redirectAttributes.addFlashAttribute("error", "Error updating test: " + e.getMessage());
         }
 
-        return "redirect:/admin/course/" + courseId + "/tests/test/" + id;
+        return "redirect:/course/" + courseId + "/tests/test/" + id;
     }
 
 
@@ -149,7 +168,7 @@ public class TestController {
 
         model.addAttribute("test", test);
         model.addAttribute("courseId", courseId);
-        return "dashboard/admin/testAdd";
+        return "dashboard/lecturer/testAdd";
     }
 
     @PostMapping("/add")
@@ -161,7 +180,7 @@ public class TestController {
         if (result.hasErrors()) {
             model.addAttribute("error", "Form has errors.");
             model.addAttribute("test", test);
-            return "dashboard/admin/testAdd";
+            return "dashboard/lecturer/testAdd";
         }
 
         try {
@@ -172,10 +191,10 @@ public class TestController {
             redirectAttributes.addFlashAttribute("success", "Test added successfully!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error adding test: " + e.getMessage());
-            return "dashboard/admin/testAdd";
+            return "dashboard/lecturer/testAdd";
         }
 
-        return "redirect:/admin/course/" + courseId + "/tests";
+        return "redirect:/course/" + courseId + "/tests";
     }
 
     @PostMapping("/test/{id}/delete")
@@ -190,9 +209,6 @@ public class TestController {
         } else {
             redirectAttributes.addFlashAttribute("error", "Test not found!");
         }
-        return "redirect:/admin/course/" + courseId + "/tests";
+        return "redirect:/course/" + courseId + "/tests";
     }
-
-
-
 }

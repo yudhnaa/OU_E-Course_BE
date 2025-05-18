@@ -9,9 +9,11 @@
     <div layout:fragment="content">
         <div th:replace="~{partials/page-title :: page-title('Test','Admin')}"></div>
 
+        <div th:if="${message}" class="alert alert-info" th:text="${message}"></div>
+
 
         <div class="d-flex justify-content-end mb-3" >
-            <a th:href="@{'/admin/course/' + ${courseId} + '/tests/add'}"
+            <a th:href="@{'/course/' + ${courseId} + '/tests/add'}"
                class="btn btn-primary btn-animation waves-effect waves-light ms-2" data-text="Add Test">
                 <span>Add Test</span>
             </a>
@@ -28,7 +30,7 @@
                             Max score: <span th:text="${test.maxScore}"></span>
                         </p>
 
-                        <a th:href="@{'/admin/course/' + ${test.courseId.id} + '/tests/test/' + ${test.id}}"
+                        <a th:href="@{'/course/' + ${test.courseId.id} + '/tests/test/' + ${test.id}}"
                            class="btn btn-primary btn-animation waves-effect waves-light" data-text="Detail">
                             <span>Detail</span>
                         </a>
@@ -36,6 +38,31 @@
                 </div>
             </div>
         </div>
+
+        <!-- Pagination -->
+        <div class="col-sm-6">
+            <ul class="pagination pagination-separated justify-content-center justify-content-sm-end mb-sm-0">
+                <!-- Nút Previous -->
+                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                    <a th:href="@{/course/{courseId}/tests(courseId=${courseId}, page=${currentPage - 1})}" class="page-link">
+                        <i class="mdi mdi-chevron-left"></i>
+                    </a>
+                </li>
+
+                <!-- Các số trang -->
+                <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}" th:classappend="${page == currentPage} ? 'active'">
+                    <a th:href="@{/course/{courseId}/tests(courseId=${courseId}, page=${page})}" class="page-link" th:text="${page}"></a>
+                </li>
+
+                <!-- Nút Next -->
+                <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                    <a th:href="@{/course/{courseId}/tests(courseId=${courseId}, page=${currentPage + 1})}" class="page-link">
+                        <i class="mdi mdi-chevron-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
     </div>
 </body>
 </html>

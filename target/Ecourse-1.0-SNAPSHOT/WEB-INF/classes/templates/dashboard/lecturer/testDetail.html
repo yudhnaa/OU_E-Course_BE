@@ -23,7 +23,7 @@
         </div>
 
         <form id="testForm" th:object="${test}"
-              th:action="@{'/admin/course/1/tests/test/' + ${test.id}}"
+              th:action="@{'/course/1/tests/test/' + ${test.id}}"
               th:method="post">
             <input type="hidden" th:name="courseId" th:value="${test.courseId.id}"/>
             <input type="hidden" th:field="*{id}"/>
@@ -53,7 +53,7 @@
 
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-success">Save</button>
-                <a th:href="@{'/admin/course/' + ${test.courseId.id} + '/tests'}" class="btn btn-secondary">Back to
+                <a th:href="@{'/course/' + ${test.courseId.id} + '/tests'}" class="btn btn-secondary">Back to
                     List</a>
                 <button type="button"
                         class="btn btn-danger btn-delete"
@@ -66,7 +66,7 @@
 
         <!-- FORM ẨN CHO POST DELETE -->
         <form th:id="'deleteForm'"
-              th:action="@{'/admin/course/' + ${test.courseId.id} + '/tests/test/' + ${test.id} + '/delete'}"
+              th:action="@{'/course/' + ${test.courseId.id} + '/tests/test/' + ${test.id} + '/delete'}"
               th:method="post"
               style="display: none;">
         </form>

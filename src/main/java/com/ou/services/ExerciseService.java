@@ -3,6 +3,7 @@ package com.ou.services;
 import com.ou.pojo.Exercise;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public interface ExerciseService {
     // Create operations
@@ -11,7 +12,7 @@ public interface ExerciseService {
     // Read operations with pagination
     List<Exercise> getExercises(Map<String, String> params);
     List<Exercise> searchExercises(Map<String, String> filters, Map<String, String> params);
-    Exercise getExerciseById(Integer id) throws Exception;
+    Optional<Exercise> getExerciseById(Integer id) throws Exception;
     List<Exercise> getExercisesByCourse(Integer courseId, Map<String, String> params);
     List<Exercise> getExercisesByLesson(Integer lessonId, Map<String, String> params);
     List<Exercise> getExercisesByCreator(Integer userId, Map<String, String> params);

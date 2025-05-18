@@ -28,16 +28,17 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import java.util.Locale;
 
 /**
- *
  * @author yudhna
  */
 @Configuration
 @EnableWebMvc
 @EnableTransactionManagement
 @ComponentScan(basePackages = {
-    "com.ou.controllers",
-    "com.ou.repositories",
-    "com.ou.services"
+        "com.ou.controllers",
+        "com.ou.repositories",
+        "com.ou.services",
+        "com.ou.formatters",
+        "com.ou.helpers"
 })
 public class WebAppContextConfigs implements WebMvcConfigurer {
     @Override

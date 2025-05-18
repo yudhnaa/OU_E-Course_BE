@@ -22,7 +22,7 @@
         </div>
 
         <form id="testForm" th:object="${test}"
-              th:action="@{'/admin/course/' + ${courseId} + '/tests/add'}"
+              th:action="@{'/course/' + ${courseId} + '/tests/add'}"
               th:method="post">
             <!-- Hidden fields for course and lecturer -->
             <input type="hidden" th:name="courseId" th:value="${courseId}" />
@@ -50,7 +50,7 @@
 
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-success">Save</button>
-                <a th:href="@{'/admin/course/' + ${courseId} + '/tests'}" class="btn btn-secondary">Cancel</a>
+                <a th:href="@{'/course/' + ${courseId} + '/tests'}" class="btn btn-secondary">Cancel</a>
             </div>
         </form>
     </div>

@@ -45,8 +45,8 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public List<Test> getTestsByCourse(Integer courseId) {
-        return testRepositoryImpl.getTestsByCourse(courseId);
+    public List<Test> getTestsByCourse(Integer courseId, Map<String, String> params) {
+        return testRepositoryImpl.getTestsByCourse(courseId,params);
     }
 
     @Override
@@ -57,5 +57,10 @@ public class TestServiceImpl implements TestService {
     @Override
     public List<Test> getTestsByCreatedDateRange(Date startDate, Date endDate) {
         return testRepositoryImpl.getTestsByCreatedDateRange(startDate, endDate);
+    }
+
+    @Override
+    public long countTestsInCourse(Integer courseId) {
+        return testRepositoryImpl.countTestsInCourse(courseId);
     }
 }

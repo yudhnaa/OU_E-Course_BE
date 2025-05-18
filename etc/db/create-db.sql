@@ -22,6 +22,14 @@ CREATE TABLE `user` (
     FOREIGN KEY (user_role_id) REFERENCES user_role(id) ON DELETE RESTRICT
 );
 
+CREATE TABLE `student`(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    is_active BOOL NOT NULL DEFAULT TRUE,
+
+    user_id INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE RESTRICT
+);
+
 -- la admin, khong the xoa
 CREATE TABLE `admin`(
     id INT AUTO_INCREMENT PRIMARY KEY,

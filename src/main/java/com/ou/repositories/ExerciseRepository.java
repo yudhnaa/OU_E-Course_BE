@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface ExerciseRepository {
     // Create operations
-    Exercise addExercise(Exercise exercise);
+    Exercise createExercise(Exercise exercise);
 
     // Read operations with pagination
     List<Exercise> getExercises(Map<String, String> params);

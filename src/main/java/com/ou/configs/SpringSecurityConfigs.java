@@ -20,7 +20,9 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 @ComponentScan(basePackages = {
         "com.ou.controllers",
         "com.ou.repositories",
-        "com.ou.services"
+        "com.ou.services",
+        "com.ou.formatters",
+        "com.ou.helpers"
 })
 public class SpringSecurityConfigs {
     @Autowired

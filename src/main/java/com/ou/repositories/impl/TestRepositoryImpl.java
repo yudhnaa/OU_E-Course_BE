@@ -83,13 +83,23 @@ public class TestRepositoryImpl implements TestRepository {
     }
 
     @Override
-    public List<Test> getTestsByCourse(Integer courseId) {
+    public List<Test> getTestsByCourse(Integer courseId, Map<String, String> params) {
         Session session = sessionFactory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Test> query = builder.createQuery(Test.class);
         Root<Test> root = query.from(Test.class);
         query.select(root).where(builder.equal(root.get("courseId").get("id"), courseId));
         Query<Test> q = session.createQuery(query);
+
+        // Apply pagination
+        if(params != null) {
+            int page = Integer.parseInt(params.getOrDefault("page","1"));
+            int pageSize = Integer.parseInt(params.getOrDefault("pageSize", String.valueOf(PAGE_SIZE)));
+            int start = (page - 1) * pageSize;
+            q.setMaxResults(pageSize);
+            q.setFirstResult(start);
+        }
+
         return q.getResultList();
     }
 
@@ -111,4 +121,17 @@ public class TestRepositoryImpl implements TestRepository {
         Query<Test> q = session.createQuery(query);
         return q.getResultList();
     }
+
+    @Override
+    public long countTestsInCourse(Integer courseId) {
+        Session session = sessionFactory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Long> query = builder.createQuery(Long.class);
+        Root<Test> root = query.from(Test.class);
+
+        query.select(builder.count(root))
+                .where(builder.equal(root.get("courseId").get("id"), courseId));
+        return session.createQuery(query).getSingleResult();
+    }
+
 }

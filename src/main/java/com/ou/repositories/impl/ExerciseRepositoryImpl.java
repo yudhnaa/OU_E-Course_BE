@@ -27,7 +27,7 @@ public class ExerciseRepositoryImpl implements ExerciseRepository {
     private LocalSessionFactoryBean sessionFactory;
 
     @Override
-    public Exercise addExercise(Exercise exercise) {
+    public Exercise createExercise(Exercise exercise) {
         Session session = sessionFactory.getObject().getCurrentSession();
         session.save(exercise);
         session.flush(); // Ensure ID is generated and available
