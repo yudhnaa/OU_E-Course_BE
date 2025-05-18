@@ -21,7 +21,7 @@ import java.io.Serializable;
 
 /**
  *
- * @author yudhna
+ * @author ADMIN
  */
 @Entity
 @Table(name = "course_certificate")
@@ -106,5 +106,5 @@ public class CourseCertificate implements Serializable {
     public String toString() {
         return "com.ou.pojo.CourseCertificate[ id=" + id + " ]";
     }
-
+    
 }

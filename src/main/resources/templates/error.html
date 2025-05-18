@@ -1,0 +1,13 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <th:block layout:fragment="pagetitle" />
+    <!-- Page CSS -->
+    <div th:replace="~{partials/head-css :: head-css}"></div>
+</head>
+
+<body data-sidebar="dark" data-layout-mode="light">
+    <div th:text="${error}"></div>
+</body>
+
+</html>

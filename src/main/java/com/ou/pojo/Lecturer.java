@@ -23,7 +23,7 @@ import java.util.Set;
 
 /**
  *
- * @author yudhna
+ * @author ADMIN
  */
 @Entity
 @Table(name = "lecturer")
@@ -43,8 +43,12 @@ public class Lecturer implements Serializable {
     @NotNull
     @Column(name = "is_active")
     private boolean isActive;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdByUserId")
+    private Set<Exercise> exerciseSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "lecturerId")
     private Set<CourseLecturer> courseLecturerSet;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdByUserId")
+    private Set<Test> testSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "scoreByUserId")
     private Set<ExerciseAttempt> exerciseAttemptSet;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
@@ -79,12 +83,28 @@ public class Lecturer implements Serializable {
         this.isActive = isActive;
     }
 
+    public Set<Exercise> getExerciseSet() {
+        return exerciseSet;
+    }
+
+    public void setExerciseSet(Set<Exercise> exerciseSet) {
+        this.exerciseSet = exerciseSet;
+    }
+
     public Set<CourseLecturer> getCourseLecturerSet() {
         return courseLecturerSet;
     }
 
     public void setCourseLecturerSet(Set<CourseLecturer> courseLecturerSet) {
         this.courseLecturerSet = courseLecturerSet;
+    }
+
+    public Set<Test> getTestSet() {
+        return testSet;
+    }
+
+    public void setTestSet(Set<Test> testSet) {
+        this.testSet = testSet;
     }
 
     public Set<ExerciseAttempt> getExerciseAttemptSet() {
@@ -127,5 +147,5 @@ public class Lecturer implements Serializable {
     public String toString() {
         return "com.ou.pojo.Lecturer[ id=" + id + " ]";
     }
-
+    
 }

@@ -38,18 +38,18 @@ public class SpringSecurityConfigs {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(c -> c.disable())
-                .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/", "/home").permitAll()
-                        .requestMatchers("/assets/**").permitAll()
-//                        .requestMatchers("/user/**").permitAll()
-                )
-                .formLogin(form
-                        -> form.loginPage("/login")
-                        .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/")
-                        .failureUrl("/login").permitAll())
-                .logout(logout -> logout.logoutSuccessUrl("/login").permitAll());
+        http.csrf(c -> c.disable());
+//                .authorizeHttpRequests(requests -> requests
+//                        .requestMatchers("/", "/home").permitAll()
+//                        .requestMatchers("/assets/**").permitAll()
+////                        .requestMatchers("/user/**").permitAll()
+//                )
+//                .formLogin(form
+//                        -> form.loginPage("/login")
+//                        .loginProcessingUrl("/login")
+//                        .defaultSuccessUrl("/")
+//                        .failureUrl("/login").permitAll())
+//                .logout(logout -> logout.logoutSuccessUrl("/login").permitAll());
 
         return http.build();
     }

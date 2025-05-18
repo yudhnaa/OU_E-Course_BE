@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 /**
  *
- * @author yudhna
+ * @author ADMIN
  */
 @Entity
 @Table(name = "exercise_attachment")
@@ -96,5 +96,5 @@ public class ExerciseAttachment implements Serializable {
     public String toString() {
         return "com.ou.pojo.ExerciseAttachment[ id=" + id + " ]";
     }
-
+    
 }

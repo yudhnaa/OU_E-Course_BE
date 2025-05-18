@@ -23,7 +23,7 @@ import java.util.Set;
 
 /**
  *
- * @author yudhna
+ * @author ADMIN
  */
 @Entity
 @Table(name = "attachment")
@@ -144,5 +144,5 @@ public class Attachment implements Serializable {
     public String toString() {
         return "com.ou.pojo.Attachment[ id=" + id + " ]";
     }
-
+    
 }

@@ -24,7 +24,7 @@ import java.util.Date;
 
 /**
  *
- * @author yudhna
+ * @author ADMIN
  */
 @Entity
 @Table(name = "lesson_student")
@@ -143,5 +143,5 @@ public class LessonStudent implements Serializable {
     public String toString() {
         return "com.ou.pojo.LessonStudent[ id=" + id + " ]";
     }
-
+    
 }

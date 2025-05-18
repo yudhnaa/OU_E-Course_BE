@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 /**
  *
- * @author yudhna
+ * @author ADMIN
  */
 @Entity
 @Table(name = "test_question")
@@ -96,5 +96,5 @@ public class TestQuestion implements Serializable {
     public String toString() {
         return "com.ou.pojo.TestQuestion[ id=" + id + " ]";
     }
-
+    
 }

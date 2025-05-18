@@ -22,7 +22,7 @@ import java.util.Set;
 
 /**
  *
- * @author yudhna
+ * @author ADMIN
  */
 @Entity
 @Table(name = "admin")
@@ -40,12 +40,8 @@ public class Admin implements Serializable {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private User userId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdByUserId")
-    private Set<Exercise> exerciseSet;
     @OneToMany(mappedBy = "createdByAdminId")
     private Set<Course> courseSet;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdByUserId")
-    private Set<Test> testSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userUploadId")
     private Set<Lesson> lessonSet;
 
@@ -72,28 +68,12 @@ public class Admin implements Serializable {
         this.userId = userId;
     }
 
-    public Set<Exercise> getExerciseSet() {
-        return exerciseSet;
-    }
-
-    public void setExerciseSet(Set<Exercise> exerciseSet) {
-        this.exerciseSet = exerciseSet;
-    }
-
     public Set<Course> getCourseSet() {
         return courseSet;
     }
 
     public void setCourseSet(Set<Course> courseSet) {
         this.courseSet = courseSet;
-    }
-
-    public Set<Test> getTestSet() {
-        return testSet;
-    }
-
-    public void setTestSet(Set<Test> testSet) {
-        this.testSet = testSet;
     }
 
     public Set<Lesson> getLessonSet() {
@@ -128,5 +108,5 @@ public class Admin implements Serializable {
     public String toString() {
         return "com.ou.pojo.Admin[ id=" + id + " ]";
     }
-
+    
 }

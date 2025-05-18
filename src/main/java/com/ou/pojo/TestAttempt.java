@@ -23,7 +23,7 @@ import java.util.Date;
 
 /**
  *
- * @author yudhna
+ * @author ADMIN
  */
 @Entity
 @Table(name = "test_attempt")
@@ -136,5 +136,5 @@ public class TestAttempt implements Serializable {
     public String toString() {
         return "com.ou.pojo.TestAttempt[ id=" + id + " ]";
     }
-
+    
 }

@@ -49,6 +49,7 @@ CREATE TABLE `course`(
     id INT AUTO_INCREMENT PRIMARY KEY,
     name NVARCHAR(50) NOT NULL,
     description TEXT NULL,
+    image VARCHAR(255) NULL,
     
     date_added TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     date_start TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -168,7 +169,7 @@ CREATE TABLE exercise(
     max_score DECIMAL(5,2) NOT NULL,
 
     created_by_user_id INT NOT NULL,
-    FOREIGN KEY (created_by_user_id) REFERENCES admin(id) ON DELETE RESTRICT,
+    FOREIGN KEY (created_by_user_id) REFERENCES lecturer(id) ON DELETE RESTRICT,
     
     course_id INT NOT NULL,
     FOREIGN KEY (course_id) REFERENCES course(id) ON DELETE CASCADE,
@@ -259,7 +260,7 @@ CREATE TABLE test (
     max_score DECIMAL(5,2) NOT NULL,
 
     created_by_user_id INT NOT NULL,
-    FOREIGN KEY (created_by_user_id) REFERENCES admin(id)  ON DELETE RESTRICT,
+    FOREIGN KEY (created_by_user_id) REFERENCES lecturer(id)  ON DELETE RESTRICT,
 
     course_id INT NOT NULL,
     FOREIGN KEY (course_id) REFERENCES course(id) ON DELETE CASCADE
