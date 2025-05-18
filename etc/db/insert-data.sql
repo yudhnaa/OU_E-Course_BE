@@ -101,7 +101,14 @@ INSERT INTO exercise_attempt (started_at, submitted_at, total_score, response, s
 
 -- Sample data for test
 INSERT INTO test (name, description, duration_minutes, max_score, created_by_user_id, course_id) VALUES
-  ('Final Test', 'End of course test', 60, 100.00, 1, 1);
+    ('Final Test', 'End of course test', 60, 100.00, 1, 1),
+    ('Final Test', 'End of course test', 60, 100.00, 1, 1),
+    ('Final Test', 'End of course test', 60, 100.00, 1, 1),
+    ('Final Test', 'End of course test', 60, 100.00, 1, 1),
+    ('Final Test', 'End of course test', 60, 100.00, 1, 1),
+    ('Final Test', 'End of course test', 60, 100.00, 1, 1),
+    ('Final Test', 'End of course test', 60, 100.00, 1, 1),
+    ('Final Test', 'End of course test', 60, 100.00, 1, 1);
 
 -- Sample data for test_question
 INSERT INTO test_question (test_id, question_id) VALUES

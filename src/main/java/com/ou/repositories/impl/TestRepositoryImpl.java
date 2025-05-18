@@ -2,6 +2,7 @@ package com.ou.repositories.impl;
 
 import com.ou.configs.WebApplicationSettings;
 import com.ou.pojo.Test;
+import com.ou.repositories.QuestionRepository;
 import com.ou.repositories.TestRepository;
 import org.hibernate.query.Query;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -26,7 +27,7 @@ public class TestRepositoryImpl implements TestRepository {
     private static final int PAGE_SIZE = WebApplicationSettings.PAGE_SIZE;
 
     @Autowired
-    private QuestionRepositoryImpl questionRepositoryImpl;
+    private QuestionRepository questionRepositoryImpl;
 
 
     @Override
@@ -59,7 +60,7 @@ public class TestRepositoryImpl implements TestRepository {
     @Override
     public Test addTest(Test test) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.save(test);
+        session.persist(test);
         return test;
     }
 
@@ -75,6 +76,7 @@ public class TestRepositoryImpl implements TestRepository {
         Session session = sessionFactory.getObject().getCurrentSession();
         Test test = session.get(Test.class, id);
         if (test != null) {
+            session.delete(test);
             return true;
         }
         return false;
@@ -86,18 +88,27 @@ public class TestRepositoryImpl implements TestRepository {
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Test> query = builder.createQuery(Test.class);
         Root<Test> root = query.from(Test.class);
-        query.select(root).where(builder.equal(root.get("courseId"), courseId));
+        query.select(root).where(builder.equal(root.get("courseId").get("id"), courseId));
         Query<Test> q = session.createQuery(query);
         return q.getResultList();
     }
 
     @Override
     public List<Test> searchTestsByName(String name) {
-        return List.of();
+        Session session = sessionFactory.getObject().getCurrentSession();
+        Query <Test> q = session.createNamedQuery("Test.findByName", Test.class);
+        q.setParameter("name", "%" + name + "%");
+        return q.getResultList();
     }
 
     @Override
     public List<Test> getTestsByCreatedDateRange(Date startDate, Date endDate) {
-        return List.of();
+        Session session = sessionFactory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Test> query = builder.createQuery(Test.class);
+        Root<Test> root = query.from(Test.class);
+        query.select(root).where(builder.between(root.get("createdAt"), startDate, endDate));
+        Query<Test> q = session.createQuery(query);
+        return q.getResultList();
     }
 }

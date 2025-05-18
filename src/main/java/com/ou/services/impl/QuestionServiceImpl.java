@@ -12,7 +12,7 @@ import java.util.List;
 public class QuestionServiceImpl implements QuestionService {
 
     @Autowired
-    private QuestionRepository questionRepo;
+    private QuestionRepository questionRepository;
 
     @Override
     public List<Question> getAllQuestions() {
@@ -48,4 +48,10 @@ public class QuestionServiceImpl implements QuestionService {
     public List<Question> getQuestionsByType(Integer questionTypeId) {
         return List.of();
     }
+
+    @Override
+    public List<Question> getQuestionsByTest(Integer testId) {
+        return questionRepository.getQuestionsByTest(testId);
+    }
+
 }

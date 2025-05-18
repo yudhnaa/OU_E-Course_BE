@@ -23,7 +23,7 @@ import java.util.Set;
 
 /**
  *
- * @author yudhna
+ * @author ADMIN
  */
 @Entity
 @Table(name = "lesson_type")
@@ -119,5 +119,5 @@ public class LessonType implements Serializable {
     public String toString() {
         return "com.ou.pojo.LessonType[ id=" + id + " ]";
     }
-
+    
 }

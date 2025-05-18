@@ -1,51 +1,61 @@
 package com.ou.services.impl;
+
 import com.ou.pojo.Test;
+import com.ou.repositories.TestRepository;
 import com.ou.services.TestService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TestServiceImpl implements TestService {
+    @Autowired
+    private TestRepository testRepositoryImpl;
+
+
 
     @Override
-    public List<Test> getAllTests() {
-        return List.of();
+    public List<Test> getAllTests(Map<String, String> params) {
+        return testRepositoryImpl.getAllTests(params);
     }
 
     @Override
-    public Test getTestById(Integer id) {
-        return null;
+    public Optional<Test> getTestById(Integer id) {
+        return testRepositoryImpl.getTestById(id);
     }
 
     @Override
     public Test addTest(Test test) {
-        return null;
+        return testRepositoryImpl.addTest(test);
     }
 
     @Override
     public Test updateTest(Test test) {
-        return null;
+        return testRepositoryImpl.updateTest(test);
     }
 
     @Override
     public boolean deleteTest(Integer id) {
-        return false;
+        return testRepositoryImpl.deleteTest(id);
     }
 
     @Override
     public List<Test> getTestsByCourse(Integer courseId) {
-        return List.of();
+        return testRepositoryImpl.getTestsByCourse(courseId);
     }
 
     @Override
     public List<Test> searchTestsByName(String name) {
-        return List.of();
+        return testRepositoryImpl.searchTestsByName(name);
     }
 
     @Override
     public List<Test> getTestsByCreatedDateRange(Date startDate, Date endDate) {
-        return List.of();
+        return testRepositoryImpl.getTestsByCreatedDateRange(startDate, endDate);
     }
 }

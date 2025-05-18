@@ -12,4 +12,5 @@ public interface QuestionRepository {
     boolean deleteQuestion(Integer id);
     List<Question> getQuestionsByExercise(Integer exerciseId);
     List<Question> getQuestionsByType(Integer questionTypeId);
+    List<Question> getQuestionsByTest(Integer testId);
 }

@@ -29,7 +29,7 @@ import java.util.Set;
 
 /**
  *
- * @author yudhna
+ * @author ADMIN
  */
 @Entity
 @Table(name = "test")
@@ -71,12 +71,12 @@ public class Test implements Serializable {
     private BigDecimal maxScore;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "testId")
     private Set<TestQuestion> testQuestionSet;
-    @JoinColumn(name = "created_by_user_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Admin createdByUserId;
     @JoinColumn(name = "course_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Course courseId;
+    @JoinColumn(name = "created_by_user_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Lecturer createdByUserId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "testId")
     private Set<TestAttempt> testAttemptSet;
 
@@ -150,20 +150,20 @@ public class Test implements Serializable {
         this.testQuestionSet = testQuestionSet;
     }
 
-    public Admin getCreatedByUserId() {
-        return createdByUserId;
-    }
-
-    public void setCreatedByUserId(Admin createdByUserId) {
-        this.createdByUserId = createdByUserId;
-    }
-
     public Course getCourseId() {
         return courseId;
     }
 
     public void setCourseId(Course courseId) {
         this.courseId = courseId;
+    }
+
+    public Lecturer getCreatedByUserId() {
+        return createdByUserId;
+    }
+
+    public void setCreatedByUserId(Lecturer createdByUserId) {
+        this.createdByUserId = createdByUserId;
     }
 
     public Set<TestAttempt> getTestAttemptSet() {
@@ -198,5 +198,5 @@ public class Test implements Serializable {
     public String toString() {
         return "com.ou.pojo.Test[ id=" + id + " ]";
     }
-
+    
 }
