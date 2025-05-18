@@ -35,10 +35,6 @@ public class CourseStudentServiceImpl implements CourseStudentService {
             throw new Exception("Student is already enrolled in this course");
         }
 
-        if (courseStudent.getName() == null || courseStudent.getName().isEmpty()) {
-            courseStudent.setName(courseStudent.getStudentId().getFirstName() + " " + courseStudent.getCourseId().getName());
-        }
-        
         // Initialize progress to 0 for new enrollments
         courseStudent.setProgress(0);
         

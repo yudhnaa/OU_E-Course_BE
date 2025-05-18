@@ -34,7 +34,7 @@ public class CourseServiceImpl implements CourseService {
 
 
     @Override
-    public Course addCourse(Course course) {
+    public Course addCourse(Course course) throws IOException {
         // Validate course before adding
         if (!isValidCourse(course)) {
             throw new IllegalArgumentException("Invalid course data");
@@ -53,6 +53,12 @@ public class CourseServiceImpl implements CourseService {
         // Set current date as date added if not provided
         if (course.getDateAdded() == null) {
             course.setDateAdded(LocalDateTime.now());
+        }
+
+        //Upload image to Cloudinary if provided
+        if (!course.getImageFile().isEmpty()){
+            String imageFileUrl = uploadImageToCloudinary(course.getImageFile());
+            course.setImage(imageFileUrl);
         }
         
         return courseRepository.addCourse(course);
@@ -85,6 +91,9 @@ public class CourseServiceImpl implements CourseService {
             String imageFileUrl = uploadImageToCloudinary(course.getImageFile());
             course.setImage(imageFileUrl);
         }
+
+        // not allow to update dateAdded
+        course.setDateAdded(courseRepository.getCourseById(course.getId()).get().getDateAdded());
 
         return courseRepository.updateCourse(course);
     }

@@ -18,7 +18,6 @@ import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -31,7 +30,6 @@ import java.util.Set;
 @NamedQueries({
     @NamedQuery(name = "CourseStudent.findAll", query = "SELECT c FROM CourseStudent c"),
     @NamedQuery(name = "CourseStudent.findById", query = "SELECT c FROM CourseStudent c WHERE c.id = :id"),
-    @NamedQuery(name = "CourseStudent.findByName", query = "SELECT c FROM CourseStudent c WHERE c.name = :name"),
     @NamedQuery(name = "CourseStudent.findByProgress", query = "SELECT c FROM CourseStudent c WHERE c.progress = :progress")})
 public class CourseStudent implements Serializable {
 
@@ -41,11 +39,6 @@ public class CourseStudent implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 50)
-    @Column(name = "name")
-    private String name;
     @Basic(optional = false)
     @NotNull
     @Column(name = "progress")
@@ -59,7 +52,7 @@ public class CourseStudent implements Serializable {
     private Course courseId;
     @JoinColumn(name = "student_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private User studentId;
+    private Student studentId;
 
     public CourseStudent() {
     }
@@ -68,9 +61,8 @@ public class CourseStudent implements Serializable {
         this.id = id;
     }
 
-    public CourseStudent(Integer id, String name, double progress) {
+    public CourseStudent(Integer id, double progress) {
         this.id = id;
-        this.name = name;
         this.progress = progress;
     }
 
@@ -80,14 +72,6 @@ public class CourseStudent implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public double getProgress() {
@@ -122,11 +106,11 @@ public class CourseStudent implements Serializable {
         this.courseId = courseId;
     }
 
-    public User getStudentId() {
+    public Student getStudentId() {
         return studentId;
     }
 
-    public void setStudentId(User studentId) {
+    public void setStudentId(Student studentId) {
         this.studentId = studentId;
     }
 

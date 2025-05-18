@@ -77,6 +77,11 @@
                   Team
                 </a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link fw-semibold" th:href="@{/admin/course/{courseId}/lesson/create(courseId=${course.id})}">
+                  Content Manager
+                </a>
+              </li>
             </ul>
           </div>
           <!-- end card body -->
@@ -161,7 +166,7 @@
                     <div class="d-flex mb-4" th:each="rate : ${courseRates}">
                       <div class="flex-shrink-0">
                         <img th:if="${rate.courseStudentId.studentId != null}"
-                             th:src="${rate.courseStudentId.studentId.avatar}"
+                             th:src="${rate.courseStudentId.studentId.userId.avatar}"
                              alt="Avatar"
                              class="avatar-xs rounded-circle" />
 
@@ -173,7 +178,7 @@
 
                       <div class="flex-grow-1 ms-3">
                         <h5 class="fs-13 mb-1">
-                          <span th:text="${rate.courseStudentId.studentId.username}">Joseph Parker</span>
+                          <span th:text="${rate.courseStudentId.studentId.userId.username}">Joseph Parker</span>
                           <small class="text-muted ms-1" th:text="${rate.rate + '/5'}">5/5</small>
                         </h5>
 
@@ -246,11 +251,11 @@
                         </div>
                         <div class="col-md-12">
                           <label for="courseDescription" class="form-label">Description</label>
-                          <textarea th:field="*{description}" class="form-control" id="courseDescription" rows="3" placeholder="Course Description"></textarea>
+                          <textarea th:field="*{description}" class="form-control" id="courseDescription" rows="10" placeholder="Course Description"></textarea>
                         </div>
                       <div class="col-md-4">
                         <label for="dateAdded" class="form-label">Date Added</label>
-                        <input type="datetime-local" th:field="*{dateAdded}" class="form-control" id="dateAdded"/>
+                        <input type="datetime-local" th:field="*{dateAdded}" class="form-control" id="dateAdded" readonly/>
                       </div>
                       <div class="col-md-4">
                         <label for="dateStart" class="form-label">Start Date</label>
@@ -265,7 +270,7 @@
                           <label for="courseImage" class="form-label">Image</label>
                           <input type="file" th:field="*{imageFile}" class="form-control" id="imageFile" accept="image/*">
                           <div class="mt-2">
-                            <img th:if="*{image}" th:src="@{${course.image}}" alt="Course Image" class="img-thumbnail" style="max-height: 100px;">
+                            <img th:if="*{image}" th:src="*{image}" alt="Course Image" class="img-thumbnail" style="max-height: 100px;">
                           </div>
                         </div>
 <!--                        <div class="col-md-6">-->
@@ -342,13 +347,13 @@
                     <div class="col-lg-4 col">
                       <div class="team-profile-img">
                         <div class="avatar-lg img-thumbnail rounded-circle">
-                          <img th:src="${student.studentId.avatar}" alt="" class="img-fluid d-block rounded-circle" />
+                          <img th:src="${student.studentId.userId.avatar}" alt="" class="img-fluid d-block rounded-circle" />
                         </div>
                         <div class="team-content">
                           <a href="#" class="d-block">
-                            <h5 class="fs-16 mb-1" th:text="${student.studentId.firstName} + ' ' + ${student.studentId.lastName} "></h5>
+                            <h5 class="fs-16 mb-1" th:text="${student.studentId.userId.firstName} + ' ' + ${student.studentId.userId.lastName} "></h5>
                           </a>
-                          <p class="text-muted mb-0" th:text="${student.studentId.userRoleId.name}"></p>
+                          <p class="text-muted mb-0" th:text="${student.studentId.userId.userRoleId.name}"></p>
                         </div>
                       </div>
                     </div>
@@ -380,7 +385,7 @@
           <div class="row g-0 text-center text-sm-start align-items-center mb-3">
             <div class="col-sm-6">
               <div>
-                <p class="mb-sm-0" th:text="'Showing ' + ${startIndex} + ' to ' + ${endIndex} + ' of ' + ${totalItems} + ' entries'"></p>
+                <p class="mb-sm-0" th:text="|Showing ${startIndex} to ${endIndex} of ${totalItems} entries|"></p>
               </div>
             </div>
 

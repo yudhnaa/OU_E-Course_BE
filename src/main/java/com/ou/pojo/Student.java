@@ -5,6 +5,7 @@
 package com.ou.pojo;
 
 import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,11 +25,11 @@ import java.util.Set;
  * @author yudhna
  */
 @Entity
-@Table(name = "admin")
+@Table(name = "student")
 @NamedQueries({
-    @NamedQuery(name = "Admin.findAll", query = "SELECT a FROM Admin a"),
-    @NamedQuery(name = "Admin.findById", query = "SELECT a FROM Admin a WHERE a.id = :id")})
-public class Admin implements Serializable {
+    @NamedQuery(name = "Student.findAll", query = "SELECT s FROM Student s"),
+    @NamedQuery(name = "Student.findById", query = "SELECT s FROM Student s WHERE s.id = :id")})
+public class Student implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -39,13 +40,17 @@ public class Admin implements Serializable {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private User userId;
-    @OneToMany(mappedBy = "createdByAdminId")
-    private Set<Course> courseSet;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    private Set<TestAttempt> testAttemptSet;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "studentId")
+    private Set<LessonStudent> lessonStudentSet;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "studentId")
+    private Set<CourseStudent> courseStudentSet;
 
-    public Admin() {
+    public Student() {
     }
 
-    public Admin(Integer id) {
+    public Student(Integer id) {
         this.id = id;
     }
 
@@ -65,12 +70,28 @@ public class Admin implements Serializable {
         this.userId = userId;
     }
 
-    public Set<Course> getCourseSet() {
-        return courseSet;
+    public Set<TestAttempt> getTestAttemptSet() {
+        return testAttemptSet;
     }
 
-    public void setCourseSet(Set<Course> courseSet) {
-        this.courseSet = courseSet;
+    public void setTestAttemptSet(Set<TestAttempt> testAttemptSet) {
+        this.testAttemptSet = testAttemptSet;
+    }
+
+    public Set<LessonStudent> getLessonStudentSet() {
+        return lessonStudentSet;
+    }
+
+    public void setLessonStudentSet(Set<LessonStudent> lessonStudentSet) {
+        this.lessonStudentSet = lessonStudentSet;
+    }
+
+    public Set<CourseStudent> getCourseStudentSet() {
+        return courseStudentSet;
+    }
+
+    public void setCourseStudentSet(Set<CourseStudent> courseStudentSet) {
+        this.courseStudentSet = courseStudentSet;
     }
 
     @Override
@@ -83,10 +104,10 @@ public class Admin implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Admin)) {
+        if (!(object instanceof Student)) {
             return false;
         }
-        Admin other = (Admin) object;
+        Student other = (Student) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -95,7 +116,7 @@ public class Admin implements Serializable {
 
     @Override
     public String toString() {
-        return "com.ou.pojo.Admin[ id=" + id + " ]";
+        return "com.ou.pojo.Student[ id=" + id + " ]";
     }
 
 }

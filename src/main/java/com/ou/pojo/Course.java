@@ -4,7 +4,6 @@
  */
 package com.ou.pojo;
 
-import jakarta.mail.Multipart;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -22,13 +21,13 @@ import java.util.Set;
 @Entity
 @Table(name = "course")
 @NamedQueries({
-    @NamedQuery(name = "Course.findAll", query = "SELECT c FROM Course c"),
-    @NamedQuery(name = "Course.findById", query = "SELECT c FROM Course c WHERE c.id = :id"),
-    @NamedQuery(name = "Course.findByName", query = "SELECT c FROM Course c WHERE c.name = :name"),
-    @NamedQuery(name = "Course.findByDateAdded", query = "SELECT c FROM Course c WHERE c.dateAdded = :dateAdded"),
-    @NamedQuery(name = "Course.findByDateStart", query = "SELECT c FROM Course c WHERE c.dateStart = :dateStart"),
-    @NamedQuery(name = "Course.findByDateEnd", query = "SELECT c FROM Course c WHERE c.dateEnd = :dateEnd"),
-    @NamedQuery(name = "Course.findByImage", query = "SELECT c FROM Course c WHERE c.image = :image")})
+        @NamedQuery(name = "Course.findAll", query = "SELECT c FROM Course c"),
+        @NamedQuery(name = "Course.findById", query = "SELECT c FROM Course c WHERE c.id = :id"),
+        @NamedQuery(name = "Course.findByName", query = "SELECT c FROM Course c WHERE c.name = :name"),
+        @NamedQuery(name = "Course.findByDateAdded", query = "SELECT c FROM Course c WHERE c.dateAdded = :dateAdded"),
+        @NamedQuery(name = "Course.findByDateStart", query = "SELECT c FROM Course c WHERE c.dateStart = :dateStart"),
+        @NamedQuery(name = "Course.findByDateEnd", query = "SELECT c FROM Course c WHERE c.dateEnd = :dateEnd"),
+        @NamedQuery(name = "Course.findByImage", query = "SELECT c FROM Course c WHERE c.image = :image")})
 public class Course implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -46,13 +45,13 @@ public class Course implements Serializable {
     @Size(max = 65535)
     @Column(name = "description")
     private String description;
-    @Column(name = "date_added", columnDefinition = "DATETIME")
+    @Column(name = "date_added")
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dateAdded;
-    @Column(name = "date_start", columnDefinition = "DATETIME")
+    @Column(name = "date_start")
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dateStart;
-    @Column(name = "date_end", columnDefinition = "DATETIME")
+    @Column(name = "date_end")
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dateEnd;
     @Size(max = 255)

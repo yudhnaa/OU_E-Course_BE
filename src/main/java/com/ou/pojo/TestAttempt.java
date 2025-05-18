@@ -50,12 +50,12 @@ public class TestAttempt implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "total_score")
     private BigDecimal totalScore;
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Student userId;
     @JoinColumn(name = "test_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Test testId;
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private User userId;
 
     public TestAttempt() {
     }
@@ -96,20 +96,20 @@ public class TestAttempt implements Serializable {
         this.totalScore = totalScore;
     }
 
+    public Student getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Student userId) {
+        this.userId = userId;
+    }
+
     public Test getTestId() {
         return testId;
     }
 
     public void setTestId(Test testId) {
         this.testId = testId;
-    }
-
-    public User getUserId() {
-        return userId;
-    }
-
-    public void setUserId(User userId) {
-        this.userId = userId;
     }
 
     @Override

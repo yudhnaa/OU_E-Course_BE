@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface CourseService {
     // Create operations with validation
-    Course addCourse(Course course);
+    Course addCourse(Course course) throws IOException;
     
     // Read operations
     List<Course> getCourses(Map<String, String> params);

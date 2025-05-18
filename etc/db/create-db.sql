@@ -22,6 +22,16 @@ CREATE TABLE `user` (
     FOREIGN KEY (user_role_id) REFERENCES user_role(id) ON DELETE RESTRICT
 );
 
+
+-- la admin, khong the xoa
+CREATE TABLE `student`(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+
+    user_id INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE RESTRICT
+);
+
+
 -- la admin, khong the xoa
 CREATE TABLE `admin`(
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -77,14 +87,13 @@ CREATE TABLE `course_lecturer`(
 -- relationship: n-n
 CREATE TABLE `course_student`(
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name NVARCHAR(50) NOT NULL,
     progress DOUBLE NOT NULL DEFAULT 0,
         
     course_id INT NOT NULL,
     FOREIGN KEY (course_id) REFERENCES course(id) ON DELETE CASCADE,
 
     student_id INT NOT NULL,
-    FOREIGN KEY (student_id) REFERENCES user(id) ON DELETE CASCADE,
+    FOREIGN KEY (student_id) REFERENCES student(id) ON DELETE CASCADE,
 
     UNIQUE KEY unique_course_student (course_id, student_id)
 );
@@ -122,10 +131,11 @@ CREATE TABLE lesson_type(
 
 CREATE TABLE `lesson`(
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name NVARCHAR(50) NOT NULL,
+    name text NOT NULL,
     
     embed_link VARCHAR(255) NOT NULL,
     description TEXT NULL,
+    image VARCHAR(255) NULL,
     
     lesson_type_id INT NOT NULL,
     FOREIGN KEY (lesson_type_id) REFERENCES lesson_type(id)  ON DELETE RESTRICT,
@@ -134,7 +144,7 @@ CREATE TABLE `lesson`(
     FOREIGN KEY (course_id) REFERENCES course(id) ON DELETE CASCADE ,
     
     user_upload_id INT NOT NULL,    
-    FOREIGN KEY (user_upload_id) REFERENCES admin(id)  ON DELETE RESTRICT
+    FOREIGN KEY (user_upload_id) REFERENCES user(id) ON DELETE RESTRICT
 );
 
 -- 1 attachment thuoc 1 lesson, 1 lesson co nhieu attachment
@@ -151,7 +161,6 @@ CREATE TABLE lesson_attachment(
 
 CREATE TABLE `lesson_student`(
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name NVARCHAR(50) NOT NULL,
     is_learn BOOL DEFAULT FALSE,
     learned_at TIMESTAMP NULL,
     
@@ -159,7 +168,7 @@ CREATE TABLE `lesson_student`(
     FOREIGN KEY (lesson_id) REFERENCES lesson(id) ON DELETE CASCADE,
 
     student_id INT NOT NULL,
-    FOREIGN KEY (student_id) REFERENCES user(id) ON DELETE CASCADE
+    FOREIGN KEY (student_id) REFERENCES student(id) ON DELETE CASCADE
 );
 
 CREATE TABLE exercise(
@@ -287,5 +296,5 @@ CREATE TABLE test_attempt (
     FOREIGN KEY (test_id) REFERENCES test(id) ON DELETE CASCADE,
 
     user_id INT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES student(id) ON DELETE CASCADE
 );

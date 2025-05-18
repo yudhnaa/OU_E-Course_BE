@@ -15,7 +15,11 @@
   <!-- start page title -->
   <div th:replace="~{partials/page-title :: page-title('Courses','Dashboards')}"></div>
   <!-- end page title -->
-
+    <div class="mb-2 text-end">
+        <button type="button" class="btn btn-success waves-effect waves-light">
+            <a th:href="@{/admin/course/create}" class="text-white">Create</a>
+        </button>
+    </div>
   <div class="row">
       <!-- Danger Alert -->
       <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${msg_error}">
@@ -123,7 +127,7 @@
     <div class="row g-0 text-center text-sm-start align-items-center mb-3">
         <div class="col-sm-6">
             <div>
-                <p class="mb-sm-0" th:text="'Showing ' + ${startIndex} + ' to ' + ${endIndex} + ' of ' + ${totalCourses} + ' entries'"></p>
+                <p class="mb-sm-0" th:text="'Showing ' + ${startIndex} + ' to ' + ${endIndex} + ' of ' + ${totalItems} + ' entries'"></p>
             </div>
         </div>
         <div class="col-sm-6">
