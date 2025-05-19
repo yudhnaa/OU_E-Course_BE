@@ -37,7 +37,7 @@ public class CourseRepositoryImpl implements CourseRepository {
     @Override
     public Course updateCourse(Course course) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.update(course);
+        session.merge(course);
         return course;
     }
 

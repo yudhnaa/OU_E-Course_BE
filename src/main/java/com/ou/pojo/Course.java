@@ -4,42 +4,30 @@
  */
 package com.ou.pojo;
 
-import jakarta.persistence.Basic;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.NamedQueries;
-import jakarta.persistence.NamedQuery;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 /**
  *
- * @author ADMIN
+ * @author yudhna
  */
 @Entity
 @Table(name = "course")
 @NamedQueries({
-    @NamedQuery(name = "Course.findAll", query = "SELECT c FROM Course c"),
-    @NamedQuery(name = "Course.findById", query = "SELECT c FROM Course c WHERE c.id = :id"),
-    @NamedQuery(name = "Course.findByName", query = "SELECT c FROM Course c WHERE c.name = :name"),
-    @NamedQuery(name = "Course.findByImage", query = "SELECT c FROM Course c WHERE c.image = :image"),
-    @NamedQuery(name = "Course.findByDateAdded", query = "SELECT c FROM Course c WHERE c.dateAdded = :dateAdded"),
-    @NamedQuery(name = "Course.findByDateStart", query = "SELECT c FROM Course c WHERE c.dateStart = :dateStart"),
-    @NamedQuery(name = "Course.findByDateEnd", query = "SELECT c FROM Course c WHERE c.dateEnd = :dateEnd")})
+        @NamedQuery(name = "Course.findAll", query = "SELECT c FROM Course c"),
+        @NamedQuery(name = "Course.findById", query = "SELECT c FROM Course c WHERE c.id = :id"),
+        @NamedQuery(name = "Course.findByName", query = "SELECT c FROM Course c WHERE c.name = :name"),
+        @NamedQuery(name = "Course.findByDateAdded", query = "SELECT c FROM Course c WHERE c.dateAdded = :dateAdded"),
+        @NamedQuery(name = "Course.findByDateStart", query = "SELECT c FROM Course c WHERE c.dateStart = :dateStart"),
+        @NamedQuery(name = "Course.findByDateEnd", query = "SELECT c FROM Course c WHERE c.dateEnd = :dateEnd"),
+        @NamedQuery(name = "Course.findByImage", query = "SELECT c FROM Course c WHERE c.image = :image")})
 public class Course implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -57,22 +45,20 @@ public class Course implements Serializable {
     @Size(max = 65535)
     @Column(name = "description")
     private String description;
+    @Column(name = "date_added")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime dateAdded;
+    @Column(name = "date_start")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime dateStart;
+    @Column(name = "date_end")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime dateEnd;
     @Size(max = 255)
     @Column(name = "image")
     private String image;
-    @Column(name = "date_added")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dateAdded;
-    @Column(name = "date_start")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dateStart;
-    @Column(name = "date_end")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dateEnd;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseId")
     private Set<Exercise> exerciseSet;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseId")
-    private Set<CourseRate> courseRateSet;
     @JoinColumn(name = "created_by_admin_id", referencedColumnName = "id")
     @ManyToOne
     private Admin createdByAdminId;
@@ -87,6 +73,8 @@ public class Course implements Serializable {
     private Set<Lesson> lessonSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseId")
     private Set<CourseStudent> courseStudentSet;
+    @Transient
+    private MultipartFile imageFile;
 
     public Course() {
     }
@@ -124,6 +112,30 @@ public class Course implements Serializable {
         this.description = description;
     }
 
+    public LocalDateTime getDateAdded() {
+        return dateAdded;
+    }
+
+    public void setDateAdded(LocalDateTime dateAdded) {
+        this.dateAdded = dateAdded;
+    }
+
+    public LocalDateTime getDateStart() {
+        return dateStart;
+    }
+
+    public void setDateStart(LocalDateTime dateStart) {
+        this.dateStart = dateStart;
+    }
+
+    public LocalDateTime getDateEnd() {
+        return dateEnd;
+    }
+
+    public void setDateEnd(LocalDateTime dateEnd) {
+        this.dateEnd = dateEnd;
+    }
+
     public String getImage() {
         return image;
     }
@@ -132,44 +144,12 @@ public class Course implements Serializable {
         this.image = image;
     }
 
-    public Date getDateAdded() {
-        return dateAdded;
-    }
-
-    public void setDateAdded(Date dateAdded) {
-        this.dateAdded = dateAdded;
-    }
-
-    public Date getDateStart() {
-        return dateStart;
-    }
-
-    public void setDateStart(Date dateStart) {
-        this.dateStart = dateStart;
-    }
-
-    public Date getDateEnd() {
-        return dateEnd;
-    }
-
-    public void setDateEnd(Date dateEnd) {
-        this.dateEnd = dateEnd;
-    }
-
     public Set<Exercise> getExerciseSet() {
         return exerciseSet;
     }
 
     public void setExerciseSet(Set<Exercise> exerciseSet) {
         this.exerciseSet = exerciseSet;
-    }
-
-    public Set<CourseRate> getCourseRateSet() {
-        return courseRateSet;
-    }
-
-    public void setCourseRateSet(Set<CourseRate> courseRateSet) {
-        this.courseRateSet = courseRateSet;
     }
 
     public Admin getCreatedByAdminId() {
@@ -220,6 +200,14 @@ public class Course implements Serializable {
         this.courseStudentSet = courseStudentSet;
     }
 
+    public MultipartFile getImageFile() {
+        return imageFile;
+    }
+
+    public void setImageFile(MultipartFile imageFile) {
+        this.imageFile = imageFile;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -244,5 +232,5 @@ public class Course implements Serializable {
     public String toString() {
         return "com.ou.pojo.Course[ id=" + id + " ]";
     }
-    
+
 }

@@ -181,7 +181,7 @@ public class CourseRateRepositoryImpl implements CourseRateRepository {
         CriteriaQuery<CourseRate> query = builder.createQuery(CourseRate.class);
         Root<CourseRate> root = query.from(CourseRate.class);
         
-        query.where(builder.equal(root.get("courseId").get("id"), courseId));
+        query.where(builder.equal(root.get("courseStudentId").get("courseId").get("id"), courseId));
         
         Query<CourseRate> q = session.createQuery(query);
         

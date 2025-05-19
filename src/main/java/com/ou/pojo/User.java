@@ -84,20 +84,16 @@ public class User implements Serializable {
     @Column(name = "email")
     private String email;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    private Set<Student> studentSet;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
     private Set<Admin> adminSet;
-    @OneToMany(mappedBy = "studentId")
-    private Set<CourseRate> courseRateSet;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userUploadId")
+    private Set<Lesson> lessonSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
     private Set<Lecturer> lecturerSet;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
-    private Set<TestAttempt> testAttemptSet;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "studentId")
-    private Set<LessonStudent> lessonStudentSet;
     @JoinColumn(name = "user_role_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private UserRole userRoleId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "studentId")
-    private Set<CourseStudent> courseStudentSet;
 
     public User() {
     }
@@ -180,6 +176,14 @@ public class User implements Serializable {
         this.email = email;
     }
 
+    public Set<Student> getStudentSet() {
+        return studentSet;
+    }
+
+    public void setStudentSet(Set<Student> studentSet) {
+        this.studentSet = studentSet;
+    }
+
     public Set<Admin> getAdminSet() {
         return adminSet;
     }
@@ -188,12 +192,12 @@ public class User implements Serializable {
         this.adminSet = adminSet;
     }
 
-    public Set<CourseRate> getCourseRateSet() {
-        return courseRateSet;
+    public Set<Lesson> getLessonSet() {
+        return lessonSet;
     }
 
-    public void setCourseRateSet(Set<CourseRate> courseRateSet) {
-        this.courseRateSet = courseRateSet;
+    public void setLessonSet(Set<Lesson> lessonSet) {
+        this.lessonSet = lessonSet;
     }
 
     public Set<Lecturer> getLecturerSet() {
@@ -204,36 +208,12 @@ public class User implements Serializable {
         this.lecturerSet = lecturerSet;
     }
 
-    public Set<TestAttempt> getTestAttemptSet() {
-        return testAttemptSet;
-    }
-
-    public void setTestAttemptSet(Set<TestAttempt> testAttemptSet) {
-        this.testAttemptSet = testAttemptSet;
-    }
-
-    public Set<LessonStudent> getLessonStudentSet() {
-        return lessonStudentSet;
-    }
-
-    public void setLessonStudentSet(Set<LessonStudent> lessonStudentSet) {
-        this.lessonStudentSet = lessonStudentSet;
-    }
-
     public UserRole getUserRoleId() {
         return userRoleId;
     }
 
     public void setUserRoleId(UserRole userRoleId) {
         this.userRoleId = userRoleId;
-    }
-
-    public Set<CourseStudent> getCourseStudentSet() {
-        return courseStudentSet;
-    }
-
-    public void setCourseStudentSet(Set<CourseStudent> courseStudentSet) {
-        this.courseStudentSet = courseStudentSet;
     }
 
     @Override

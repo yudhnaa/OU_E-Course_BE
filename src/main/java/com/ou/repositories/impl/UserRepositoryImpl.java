@@ -1,6 +1,7 @@
 package com.ou.repositories.impl;
 
 import com.ou.configs.WebApplicationSettings;
+import com.ou.pojo.CourseStudent;
 import com.ou.pojo.User;
 import com.ou.repositories.UserRepository;
 import jakarta.persistence.NoResultException;
@@ -106,6 +107,17 @@ public class UserRepositoryImpl implements UserRepository {
 
         // Apply predicates if any
         if (!predicates.isEmpty()) {
+
+            if (filters.containsKey("notInCourse")) {
+                Subquery<Integer> subquery = query.subquery(Integer.class);
+                Root<CourseStudent> subRoot = subquery.from(CourseStudent.class);
+
+                subquery.select(subRoot.get("studentId").get("id"))
+                        .where(builder.equal(subRoot.get("courseId").get("id"), Integer.valueOf(filters.get("notInCourse"))));
+
+                predicates.add(builder.not(root.get("id").in(subquery)));
+            }
+
             query.where(builder.and(predicates.toArray(new Predicate[0])));
         }
 
@@ -165,8 +177,8 @@ public class UserRepositoryImpl implements UserRepository {
                 predicates.add(builder.equal(root.get("isActive"), Boolean.valueOf(filters.get("isActive"))));
             }
 
-            if (filters.containsKey("userRoleId")) {
-                predicates.add(builder.equal(root.get("userRoleId").get("id"), Integer.valueOf(filters.get("userRoleId"))));
+            if (filters.containsKey("role")) {
+                predicates.add(builder.equal(root.get("userRoleId").get("name"), filters.get("role")));
             }
         }
 

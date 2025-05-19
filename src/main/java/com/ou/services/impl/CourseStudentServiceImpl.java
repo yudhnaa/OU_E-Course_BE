@@ -34,7 +34,7 @@ public class CourseStudentServiceImpl implements CourseStudentService {
         if (!isEnrollmentValid(courseStudent.getCourseId().getId(), courseStudent.getStudentId().getId())) {
             throw new Exception("Student is already enrolled in this course");
         }
-        
+
         // Initialize progress to 0 for new enrollments
         courseStudent.setProgress(0);
         
@@ -120,10 +120,9 @@ public class CourseStudentServiceImpl implements CourseStudentService {
         if (existingCourseStudent.isEmpty()) {
             throw new Exception("CourseStudent not found with ID: " + id);
         }
-        
-        // Additional business logic can be added here
-        // For example, check if the student has certificates and decide what to do with them
-        
+
+        // All student course certificates will be deleted, ON DELETE CASCADE set in DB
+
         return courseStudentRepository.deleteCourseStudent(id);
     }
 

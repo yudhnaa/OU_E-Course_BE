@@ -28,6 +28,7 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import java.util.Locale;
 
 /**
+ *
  * @author yudhna
  */
 @Configuration

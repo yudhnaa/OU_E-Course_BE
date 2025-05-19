@@ -26,14 +26,14 @@ public class CourseRateServiceImpl implements CourseRateService {
         }
         
         // Check if student is allowed to rate this course
-        if (!studentCanRateCourse(courseRate.getStudentId().getId(), courseRate.getCourseId().getId())) {
-            throw new Exception("Student is not eligible to rate this course.");
-        }
+//        if (!studentCanRateCourse(courseRate.getStudentId().getId(), courseRate.getCourseId().getId())) {
+//            throw new Exception("Student is not eligible to rate this course.");
+//        }
         
         // Check for duplicate ratings
         Map<String, String> filters = Map.of(
-            "courseId", courseRate.getCourseId().getId().toString(), 
-            "studentId", courseRate.getStudentId().getId().toString()
+            "courseId", courseRate.getCourseStudentId().getCourseId().getId().toString(),
+            "studentId", courseRate.getCourseStudentId().getStudentId().getId().toString()
         );
         
         List<CourseRate> existingRatings = courseRateRepository.searchCourseRates(filters, null);
@@ -55,7 +55,7 @@ public class CourseRateServiceImpl implements CourseRateService {
         CourseRate existingRate = existingRateOpt.get();
         
         // Ensure student can only update their own ratings
-        if (!existingRate.getStudentId().getId().equals(courseRate.getStudentId().getId())) {
+        if (!existingRate.getCourseStudentId().getStudentId().getId().equals(courseRate.getCourseStudentId().getStudentId().getId())) {
             throw new Exception("Students can only update their own ratings.");
         }
         
