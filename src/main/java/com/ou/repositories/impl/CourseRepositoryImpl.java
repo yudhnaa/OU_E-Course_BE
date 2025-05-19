@@ -29,7 +29,7 @@ public class CourseRepositoryImpl implements CourseRepository {
     @Override
     public Course addCourse(Course course) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.save(course);
+        session.persist(course);
         session.flush(); // Ensure ID is generated and available
         return course;
     }

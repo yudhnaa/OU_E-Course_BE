@@ -4,23 +4,21 @@ package com.ou.controllers.webController.adminController;
 import com.ou.pojo.Course;
 import com.ou.pojo.Lesson;
 import com.ou.pojo.LessonType;
-import com.ou.services.CourseService;
-import com.ou.services.LessonService;
-import com.ou.services.LessonTypeService;
-import com.ou.services.LocalizationService;
+import com.ou.pojo.User;
+import com.ou.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Optional;
 
 @Controller
+@RequestMapping("/admin")
 public class LessonController {
 
     @Autowired
@@ -35,7 +33,10 @@ public class LessonController {
     @Autowired
     LessonTypeService lessonTypeService;
 
-    @GetMapping("/admin/course/{courseId}/lesson/create")
+    @Autowired
+    private UserService userService;
+
+    @GetMapping("/course/{courseId}/lesson/create")
     public String createLessonView(
             Model model,
             @PathVariable("courseId") Integer courseId,
@@ -53,8 +54,11 @@ public class LessonController {
         Lesson lesson = new Lesson();
         lesson.setCourseId(course.get());
 
-        List<LessonType> lessonTypes = lessonTypeService.getAllLessonTypes();
+        List<LessonType> lessonTypes = lessonTypeService.getLessonTypes();
 
+        //Mock login user
+        User u = userService.getUserById(2);
+        model.addAttribute("authUser", u);
 
         // Add the lesson and course to the model
         model.addAttribute("lesson", lesson);
@@ -64,15 +68,42 @@ public class LessonController {
         return "dashboard/admin/course/course_lesson_create";
     }
 
-    @PostMapping("/admin/course/{courseId}/lesson/create")
+    @PostMapping("/course/{courseId}/lesson/create")
     public String createLesson(
             Model model,
             @PathVariable("courseId") Integer courseId,
+            @ModelAttribute Lesson lesson,
+            BindingResult bindingResult,
             RedirectAttributes redirectAttributes
-    ){
+    ) throws Exception {
 
+        // Validate the lesson object
+        if (bindingResult.hasErrors()) {
+            // If there are validation errors, return to the create lesson view
+            redirectAttributes.addFlashAttribute("msg_error", localizationService.getMessage("lesson.create.error", LocaleContextHolder.getLocale()));
+            return "redirect:/admin/course/{courseId}/lesson/create";
+        }
 
-        return "redirect:/admin/course/{courseId}/lesson/create";
+        // Get the course by ID
+        Optional<Course> course = courseService.getCourseById(courseId);
+        if (course.isEmpty()) {
+            // If the course is not found, redirect to the course list with an error message
+            redirectAttributes.addFlashAttribute("msg_error", localizationService.getMessage("course.notFound", LocaleContextHolder.getLocale()));
+            return "redirect:/admin/course";
+        }
+
+        // Save the lesson
+        Lesson newLesson = lessonService.createLesson(lesson);
+
+        // Check if the lesson was created successfully
+        if (newLesson == null) {
+            // If the lesson creation failed, redirect to the create lesson view with an error message
+            redirectAttributes.addFlashAttribute("msg_error", localizationService.getMessage("lesson.create.error", LocaleContextHolder.getLocale()));
+            return "redirect:/admin/course/{courseId}/lesson/create";
+        }
+
+        // Redirect to the course page with a success message
+        redirectAttributes.addFlashAttribute("msg_success", localizationService.getMessage("lesson.create.success", LocaleContextHolder.getLocale()));
+        return "redirect:/admin/course/" + courseId;
     }
-
 }

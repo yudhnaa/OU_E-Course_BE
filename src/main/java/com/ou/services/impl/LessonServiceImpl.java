@@ -1,12 +1,22 @@
 package com.ou.services.impl;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import com.ou.pojo.Attachment;
 import com.ou.pojo.Lesson;
+import com.ou.pojo.LessonAttachment;
 import com.ou.repositories.LessonRepository;
+import com.ou.services.AttachmentService;
+import com.ou.services.LessonAttachmentService;
 import com.ou.services.LessonService;
+import com.ou.services.LocalizationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -17,6 +27,18 @@ public class LessonServiceImpl implements LessonService {
 
     @Autowired
     private LessonRepository lessonRepository;
+
+    @Autowired
+    private Cloudinary cloudinary;
+
+    @Autowired
+    private LocalizationService localizationService;
+
+    @Autowired
+    private LessonAttachmentService lessonAttachmentService;
+
+    @Autowired
+    private AttachmentService attachmentService;
 
     @Override
     public Lesson createLesson(Lesson lesson) throws Exception {
@@ -40,8 +62,30 @@ public class LessonServiceImpl implements LessonService {
         if (lesson.getUserUploadId() == null) {
             throw new Exception("User who uploads the lesson is required");
         }
-        
-        return lessonRepository.addLesson(lesson);
+
+        if (!lesson.getThumbnailImage().isEmpty()){
+            String imageUrl = uploadImageToCloudinary(lesson.getThumbnailImage());
+            lesson.setImage(imageUrl);
+        }
+        Lesson newLesson = lessonRepository.addLesson(lesson);
+
+        if (lesson.getLessonAttachments() != null && newLesson != null) {
+            for (MultipartFile file : lesson.getLessonAttachments()) {
+                if (!file.isEmpty()) {
+                    Attachment attachment = new Attachment();
+                    attachment.setName(file.getOriginalFilename());
+                    attachment.setFile(file);
+                    Attachment savedAttachment = attachmentService.addAttachment(attachment);
+
+                    LessonAttachment lessonAttachment = new LessonAttachment();
+                    lessonAttachment.setLessonId(newLesson);
+                    lessonAttachment.setAttachmentId(savedAttachment);
+                    lessonAttachmentService.createLessonAttachment(lessonAttachment);
+                }
+            }
+        }
+
+        return newLesson;
     }
 
     @Override
@@ -229,6 +273,16 @@ public class LessonServiceImpl implements LessonService {
         // Description validation (optional field)
         if (lesson.getDescription() != null && lesson.getDescription().length() > 65535) {
             throw new Exception("Description is too long");
+        }
+    }
+
+    private String uploadImageToCloudinary(MultipartFile file) throws IOException {
+        try {
+            Map res = cloudinary.uploader().upload(file.getBytes(),
+                    ObjectUtils.asMap("resource_type", "auto"));
+            return res.get("secure_url").toString();
+        } catch (IOException ex) {
+            throw  new IOException(localizationService.getMessage("cloudinary.upload.error", LocaleContextHolder.getLocale()));
         }
     }
 }

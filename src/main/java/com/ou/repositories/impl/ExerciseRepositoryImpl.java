@@ -29,7 +29,7 @@ public class ExerciseRepositoryImpl implements ExerciseRepository {
     @Override
     public Exercise addExercise(Exercise exercise) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.save(exercise);
+        session.persist(exercise);
         session.flush(); // Ensure ID is generated and available
         return exercise;
     }
@@ -37,7 +37,7 @@ public class ExerciseRepositoryImpl implements ExerciseRepository {
     @Override
     public Exercise updateExercise(Exercise exercise) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.update(exercise);
+        session.merge(exercise);
         return exercise;
     }
 

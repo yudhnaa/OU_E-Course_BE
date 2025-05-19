@@ -28,7 +28,7 @@ public class CourseLecturerRepositoryImpl implements CourseLecturerRepository {
     @Override
     public CourseLecturer addCourseLecturer(CourseLecturer courseLecturer) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.save(courseLecturer);
+        session.persist(courseLecturer);
         session.flush(); // Ensure ID is generated and available
         return courseLecturer;
     }
@@ -36,7 +36,7 @@ public class CourseLecturerRepositoryImpl implements CourseLecturerRepository {
     @Override
     public CourseLecturer updateCourseLecturer(CourseLecturer courseLecturer) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.update(courseLecturer);
+        session.merge(courseLecturer);
         return courseLecturer;
     }
 

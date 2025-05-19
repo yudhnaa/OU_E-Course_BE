@@ -29,7 +29,7 @@ public class ExerciseScoreStatusRepositoryImpl implements ExerciseScoreStatusRep
     @Override
     public ExerciseScoreStatus addExerciseScoreStatus(ExerciseScoreStatus status) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.save(status);
+        session.persist(status);
         session.flush(); // Ensure ID is generated and available
         return status;
     }
@@ -37,7 +37,7 @@ public class ExerciseScoreStatusRepositoryImpl implements ExerciseScoreStatusRep
     @Override
     public ExerciseScoreStatus updateExerciseScoreStatus(ExerciseScoreStatus status) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.update(status);
+        session.merge(status);
         return status;
     }
 

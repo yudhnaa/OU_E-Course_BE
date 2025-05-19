@@ -21,9 +21,22 @@
           enctype="multipart/form-data">
 
         <!-- Hidden userUploadId -->
-        <input type="hidden" th:field="*{userUploadId}" th:value="${#authentication?.name != null} ? ${#authentication.name} : 1" />
+        <input type="hidden" th:value="${authUser.id}" id="userUploadId" name="userUploadId" />
 
         <div class="row">
+
+            <!-- Danger Alert -->
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${msg_error}">
+                <b th:text="${msg_error}">Dismissible danger Alert </b>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <!-- Success Alert -->
+            <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${msg_success}">
+                <b th:text="${msg_success}"></b>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
             <!-- LEFT -->
             <div class="col-lg-8">
                 <!-- LESSON INFO -->
@@ -49,6 +62,23 @@
                     </div>
                 </div>
 
+                <!-- Embed link -->
+                <div class="card" id="video-link-container">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Embed link</h5>
+                    </div>
+                    <div class="card-body">
+                        <div>
+                            <!-- Textbox nhập link video, ẩn mặc định -->
+                            <div style="margin-top: 10px;">
+                                <label for="video-link" class="form-label">Embed Video Link</label>
+                                <input type="text" th:field="*{embedLink}" class="form-control" id="video-link" placeholder="Enter embed video URL">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end card -->
+
                 <!-- ATTACHMENTS -->
                 <div class="card">
                     <div class="card-header">
@@ -60,7 +90,7 @@
 
                             <div class="dropzone">
                                 <div class="fallback">
-                                    <input name="file" type="file" th:field="*{lessonAttachments}" multiple="multiple" accept=".pdf,.png,.jpg,.jpeg,.docx,.xlsx">
+                                    <input type="file" th:field="*{lessonAttachments}" multiple="multiple" accept=".pdf,.png,.jpg,.jpeg,.docx,.xlsx">
                                 </div>
                                 <div class="dz-message needsclick">
                                     <div class="mb-3">
@@ -73,26 +103,7 @@
 
                             <ul class="list-unstyled mb-0" id="dropzone-preview">
                                 <li class="mt-2" id="dropzone-preview-list">
-                                    <!-- This is used as the file preview template -->
-                                    <div class="border rounded">
-                                        <div class="d-flex p-2">
-                                            <div class="flex-shrink-0 me-3">
-                                                <div class="avatar-sm bg-light rounded">
-                                                    <img th:src="@{#}" alt="Project-Image" data-dz-thumbnail class="img-fluid rounded d-block" />
-                                                </div>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <div class="pt-1">
-                                                    <h5 class="fs-14 mb-1" data-dz-name>&nbsp;</h5>
-                                                    <p class="fs-13 text-muted mb-0" data-dz-size></p>
-                                                    <strong class="error text-danger" data-dz-errormessage></strong>
-                                                </div>
-                                            </div>
-                                            <div class="flex-shrink-0 ms-3">
-                                                <button data-dz-remove class="btn btn-sm btn-danger">Delete</button>
-                                            </div>
-                                        </div>
-                                    </div>
+
                                 </li>
                             </ul>
                             <!-- end dropzon-preview -->
@@ -130,7 +141,7 @@
                     </div>
                     <div class="card-body">
                         <label for="courseSelect" class="form-label">Course</label>
-                        <select th:field="*{courseId.id}" class="form-select" id="courseSelect">
+                        <select th:field="*{courseId}" class="form-select" id="courseSelect">
                             <option th:value="${course.id}" th:text="${course.name}"
                                     selected></option>
                         </select>
@@ -143,149 +154,146 @@
 
 
 
-<th:block layout:fragment="modal">
-    <!-- Modal -->
-    <div class="modal fade" id="inviteMembersModal" tabindex="-1" aria-labelledby="inviteMembersModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header p-3 ps-4 bg-soft-primary">
-                    <h5 class="modal-title" id="inviteMembersModalLabel">Members</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <div class="search-box mb-3">
-                        <input type="text" class="form-control bg-light border-light" placeholder="Search here...">
-                        <i class="ri-search-line search-icon"></i>
-                    </div>
+<!--<th:block layout:fragment="modal">-->
+<!--    &lt;!&ndash; Modal &ndash;&gt;-->
+<!--    <div class="modal fade" id="inviteMembersModal" tabindex="-1" aria-labelledby="inviteMembersModalLabel" aria-hidden="true">-->
+<!--        <div class="modal-dialog modal-dialog-centered">-->
+<!--            <div class="modal-content">-->
+<!--                <div class="modal-header p-3 ps-4 bg-soft-primary">-->
+<!--                    <h5 class="modal-title" id="inviteMembersModalLabel">Members</h5>-->
+<!--                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+<!--                </div>-->
+<!--                <div class="modal-body p-4">-->
+<!--                    <div class="search-box mb-3">-->
+<!--                        <input type="text" class="form-control bg-light border-light" placeholder="Search here...">-->
+<!--                        <i class="ri-search-line search-icon"></i>-->
+<!--                    </div>-->
 
-                    <div class="mb-4 d-flex align-items-center">
-                        <div class="me-2">
-                            <h5 class="mb-0 fs-13">Members :</h5>
-                        </div>
-                        <div class="avatar-group justify-content-center">
-                            <a href="javascript: void(0);" class="avatar-group-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Brent Gonzalez">
-                                <div class="avatar-xs">
-                                    <img th:src="@{assets/images/users/avatar-3.jpg}" alt="" class="rounded-circle img-fluid">
-                                </div>
-                            </a>
-                            <a href="javascript: void(0);" class="avatar-group-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Sylvia Wright">
-                                <div class="avatar-xs">
-                                    <div class="avatar-title rounded-circle bg-primary">
-                                        S
-                                    </div>
-                                </div>
-                            </a>
-                            <a href="javascript: void(0);" class="avatar-group-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Ellen Smith">
-                                <div class="avatar-xs">
-                                    <img th:src="@{assets/images/users/avatar-4.jpg}" alt="" class="rounded-circle img-fluid">
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="mx-n4 px-4" data-simplebar style="max-height: 225px;">
-                        <div class="vstack gap-3">
-                            <div class="d-flex align-items-center">
-                                <div class="avatar-xs flex-shrink-0 me-3">
-                                    <img th:src="@{assets/images/users/avatar-2.jpg}" alt="" class="img-fluid rounded-circle">
-                                </div>
-                                <div class="flex-grow-1">
-                                    <h5 class="fs-13 mb-0"><a href="#" class="text-body d-block">Nancy Martino</a></h5>
-                                </div>
-                                <div class="flex-shrink-0">
-                                    <button type="button" class="btn btn-light btn-sm">Add</button>
-                                </div>
-                            </div>
-                            <!-- end member item -->
-                            <div class="d-flex align-items-center">
-                                <div class="avatar-xs flex-shrink-0 me-3">
-                                    <div class="avatar-title bg-soft-success text-success rounded-circle">
-                                        HB
-                                    </div>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <h5 class="fs-13 mb-0"><a href="#" class="text-body d-block">Henry Baird</a></h5>
-                                </div>
-                                <div class="flex-shrink-0">
-                                    <button type="button" class="btn btn-light btn-sm">Add</button>
-                                </div>
-                            </div>
-                            <!-- end member item -->
-                            <div class="d-flex align-items-center">
-                                <div class="avatar-xs flex-shrink-0 me-3">
-                                    <img th:src="@{assets/images/users/avatar-3.jpg}" alt="" class="img-fluid rounded-circle">
-                                </div>
-                                <div class="flex-grow-1">
-                                    <h5 class="fs-13 mb-0"><a href="#" class="text-body d-block">Frank Hook</a></h5>
-                                </div>
-                                <div class="flex-shrink-0">
-                                    <button type="button" class="btn btn-light btn-sm">Add</button>
-                                </div>
-                            </div>
-                            <!-- end member item -->
-                            <div class="d-flex align-items-center">
-                                <div class="avatar-xs flex-shrink-0 me-3">
-                                    <img th:src="@{assets/images/users/avatar-4.jpg}" alt="" class="img-fluid rounded-circle">
-                                </div>
-                                <div class="flex-grow-1">
-                                    <h5 class="fs-13 mb-0"><a href="#" class="text-body d-block">Jennifer Carter</a></h5>
-                                </div>
-                                <div class="flex-shrink-0">
-                                    <button type="button" class="btn btn-light btn-sm">Add</button>
-                                </div>
-                            </div>
-                            <!-- end member item -->
-                            <div class="d-flex align-items-center">
-                                <div class="avatar-xs flex-shrink-0 me-3">
-                                    <div class="avatar-title bg-soft-success text-success rounded-circle">
-                                        AC
-                                    </div>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <h5 class="fs-13 mb-0"><a href="#" class="text-body d-block">Alexis Clarke</a></h5>
-                                </div>
-                                <div class="flex-shrink-0">
-                                    <button type="button" class="btn btn-light btn-sm">Add</button>
-                                </div>
-                            </div>
-                            <!-- end member item -->
-                            <div class="d-flex align-items-center">
-                                <div class="avatar-xs flex-shrink-0 me-3">
-                                    <img th:src="@{assets/images/users/avatar-7.jpg}" alt="" class="img-fluid rounded-circle">
-                                </div>
-                                <div class="flex-grow-1">
-                                    <h5 class="fs-13 mb-0"><a href="#" class="text-body d-block">Joseph Parker</a></h5>
-                                </div>
-                                <div class="flex-shrink-0">
-                                    <button type="button" class="btn btn-light btn-sm">Add</button>
-                                </div>
-                            </div>
-                            <!-- end member item -->
-                        </div>
-                        <!-- end list -->
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light w-xs" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary w-xs">Invite</button>
-                </div>
-            </div>
-            <!-- end modal-content -->
-        </div>
-        <!-- modal-dialog -->
-    </div>
-    <!-- end modal -->
+<!--                    <div class="mb-4 d-flex align-items-center">-->
+<!--                        <div class="me-2">-->
+<!--                            <h5 class="mb-0 fs-13">Members :</h5>-->
+<!--                        </div>-->
+<!--                        <div class="avatar-group justify-content-center">-->
+<!--                            <a href="javascript: void(0);" class="avatar-group-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Brent Gonzalez">-->
+<!--                                <div class="avatar-xs">-->
+<!--                                    <img th:src="@{assets/images/users/avatar-3.jpg}" alt="" class="rounded-circle img-fluid">-->
+<!--                                </div>-->
+<!--                            </a>-->
+<!--                            <a href="javascript: void(0);" class="avatar-group-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Sylvia Wright">-->
+<!--                                <div class="avatar-xs">-->
+<!--                                    <div class="avatar-title rounded-circle bg-primary">-->
+<!--                                        S-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </a>-->
+<!--                            <a href="javascript: void(0);" class="avatar-group-item" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="top" title="Ellen Smith">-->
+<!--                                <div class="avatar-xs">-->
+<!--                                    <img th:src="@{assets/images/users/avatar-4.jpg}" alt="" class="rounded-circle img-fluid">-->
+<!--                                </div>-->
+<!--                            </a>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="mx-n4 px-4" data-simplebar style="max-height: 225px;">-->
+<!--                        <div class="vstack gap-3">-->
+<!--                            <div class="d-flex align-items-center">-->
+<!--                                <div class="avatar-xs flex-shrink-0 me-3">-->
+<!--                                    <img th:src="@{assets/images/users/avatar-2.jpg}" alt="" class="img-fluid rounded-circle">-->
+<!--                                </div>-->
+<!--                                <div class="flex-grow-1">-->
+<!--                                    <h5 class="fs-13 mb-0"><a href="#" class="text-body d-block">Nancy Martino</a></h5>-->
+<!--                                </div>-->
+<!--                                <div class="flex-shrink-0">-->
+<!--                                    <button type="button" class="btn btn-light btn-sm">Add</button>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            &lt;!&ndash; end member item &ndash;&gt;-->
+<!--                            <div class="d-flex align-items-center">-->
+<!--                                <div class="avatar-xs flex-shrink-0 me-3">-->
+<!--                                    <div class="avatar-title bg-soft-success text-success rounded-circle">-->
+<!--                                        HB-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                <div class="flex-grow-1">-->
+<!--                                    <h5 class="fs-13 mb-0"><a href="#" class="text-body d-block">Henry Baird</a></h5>-->
+<!--                                </div>-->
+<!--                                <div class="flex-shrink-0">-->
+<!--                                    <button type="button" class="btn btn-light btn-sm">Add</button>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            &lt;!&ndash; end member item &ndash;&gt;-->
+<!--                            <div class="d-flex align-items-center">-->
+<!--                                <div class="avatar-xs flex-shrink-0 me-3">-->
+<!--                                    <img th:src="@{assets/images/users/avatar-3.jpg}" alt="" class="img-fluid rounded-circle">-->
+<!--                                </div>-->
+<!--                                <div class="flex-grow-1">-->
+<!--                                    <h5 class="fs-13 mb-0"><a href="#" class="text-body d-block">Frank Hook</a></h5>-->
+<!--                                </div>-->
+<!--                                <div class="flex-shrink-0">-->
+<!--                                    <button type="button" class="btn btn-light btn-sm">Add</button>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            &lt;!&ndash; end member item &ndash;&gt;-->
+<!--                            <div class="d-flex align-items-center">-->
+<!--                                <div class="avatar-xs flex-shrink-0 me-3">-->
+<!--                                    <img th:src="@{assets/images/users/avatar-4.jpg}" alt="" class="img-fluid rounded-circle">-->
+<!--                                </div>-->
+<!--                                <div class="flex-grow-1">-->
+<!--                                    <h5 class="fs-13 mb-0"><a href="#" class="text-body d-block">Jennifer Carter</a></h5>-->
+<!--                                </div>-->
+<!--                                <div class="flex-shrink-0">-->
+<!--                                    <button type="button" class="btn btn-light btn-sm">Add</button>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            &lt;!&ndash; end member item &ndash;&gt;-->
+<!--                            <div class="d-flex align-items-center">-->
+<!--                                <div class="avatar-xs flex-shrink-0 me-3">-->
+<!--                                    <div class="avatar-title bg-soft-success text-success rounded-circle">-->
+<!--                                        AC-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                <div class="flex-grow-1">-->
+<!--                                    <h5 class="fs-13 mb-0"><a href="#" class="text-body d-block">Alexis Clarke</a></h5>-->
+<!--                                </div>-->
+<!--                                <div class="flex-shrink-0">-->
+<!--                                    <button type="button" class="btn btn-light btn-sm">Add</button>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            &lt;!&ndash; end member item &ndash;&gt;-->
+<!--                            <div class="d-flex align-items-center">-->
+<!--                                <div class="avatar-xs flex-shrink-0 me-3">-->
+<!--                                    <img th:src="@{assets/images/users/avatar-7.jpg}" alt="" class="img-fluid rounded-circle">-->
+<!--                                </div>-->
+<!--                                <div class="flex-grow-1">-->
+<!--                                    <h5 class="fs-13 mb-0"><a href="#" class="text-body d-block">Joseph Parker</a></h5>-->
+<!--                                </div>-->
+<!--                                <div class="flex-shrink-0">-->
+<!--                                    <button type="button" class="btn btn-light btn-sm">Add</button>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            &lt;!&ndash; end member item &ndash;&gt;-->
+<!--                        </div>-->
+<!--                        &lt;!&ndash; end list &ndash;&gt;-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="modal-footer">-->
+<!--                    <button type="button" class="btn btn-light w-xs" data-bs-dismiss="modal">Cancel</button>-->
+<!--                    <button type="button" class="btn btn-primary w-xs">Invite</button>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            &lt;!&ndash; end modal-content &ndash;&gt;-->
+<!--        </div>-->
+<!--        &lt;!&ndash; modal-dialog &ndash;&gt;-->
+<!--    </div>-->
+<!--    &lt;!&ndash; end modal &ndash;&gt;-->
 
-</th:block>
+<!--</th:block>-->
 
 <th:block layout:fragment="pagejs">
-
-    <!-- ckeditor -->
-    <script th:src="@{/assets/libs/@ckeditor/ckeditor5-build-classic/build/ckeditor.js}"></script>
 
     <!-- dropzone js -->
     <script th:src="@{/assets/libs/dropzone/dropzone-min.js}"></script>
     <!-- project-create init -->
-    <script th:src="@{/assets/js/pages/project-create.init.js}"></script>
+    <script th:src="@{/assets/js/pages/lesson-create.init.js}"></script>
 
 </th:block>
 </body>

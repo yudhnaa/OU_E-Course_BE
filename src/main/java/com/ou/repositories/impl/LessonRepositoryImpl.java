@@ -32,7 +32,7 @@ public class LessonRepositoryImpl implements LessonRepository {
     @Override
     public Lesson addLesson(Lesson lesson) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.save(lesson);
+        session.persist(lesson);
         session.flush(); // Ensure ID is generated and available
         return lesson;
     }
@@ -40,7 +40,7 @@ public class LessonRepositoryImpl implements LessonRepository {
     @Override
     public Lesson updateLesson(Lesson lesson) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.update(lesson);
+        session.merge(lesson);
         return lesson;
     }
 

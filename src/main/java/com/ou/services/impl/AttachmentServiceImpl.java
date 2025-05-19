@@ -1,15 +1,21 @@
 package com.ou.services.impl;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import com.ou.exceptions.NotFoundException;
 import com.ou.pojo.Attachment;
 import com.ou.repositories.AttachmentRepository;
 import com.ou.services.AttachmentService;
+import com.ou.services.LocalizationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -18,26 +24,31 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Autowired
     private AttachmentRepository attachmentRepository;
+
+    @Autowired
+    private LocalizationService localizationService;
+
+    @Autowired
+    private Cloudinary cloudinary;
     
     @Override
-    public Attachment addAttachment(Attachment attachment) {
+    public Attachment addAttachment(Attachment attachment) throws IOException {
         // Validate attachment input
         if (attachment == null) {
-            throw new IllegalArgumentException("Attachment cannot be null");
+            throw new IllegalArgumentException(localizationService.getMessage("attachment.null", LocaleContextHolder.getLocale()));
         }
         if (attachment.getName() == null || attachment.getName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Attachment name cannot be empty");
+            throw new IllegalArgumentException(localizationService.getMessage("attachment.name.empty", LocaleContextHolder.getLocale()));
         }
-        if (attachment.getLink() == null || attachment.getLink().trim().isEmpty()) {
-            throw new IllegalArgumentException("Attachment link cannot be empty");
+
+        // Upload file to Cloudinary if provided
+        if (attachment.getFile() != null && !attachment.getFile().isEmpty()) {
+            String cloudinaryLink = uploadFileToCloudinary(attachment.getFile());
+            attachment.setLink(cloudinaryLink);
+        } else if (attachment.getLink() == null || attachment.getLink().trim().isEmpty()) {
+            throw new IllegalArgumentException(localizationService.getMessage("attachment.link.empty", LocaleContextHolder.getLocale()));
         }
-        
-        // Check if attachment with same name already exists
-        Optional<Attachment> existingAttachment = attachmentRepository.getAttachmentByName(attachment.getName());
-        if (existingAttachment.isPresent()) {
-            throw new IllegalStateException("Attachment with name '" + attachment.getName() + "' already exists");
-        }
-        
+
         return attachmentRepository.addAttachment(attachment);
     }
     
@@ -54,57 +65,75 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Override
     public Attachment getAttachmentById(Integer id) {
         if (id == null) {
-            throw new IllegalArgumentException("Attachment ID cannot be null");
+            throw new IllegalArgumentException(localizationService.getMessage("attachment.id.null", LocaleContextHolder.getLocale()));
         }
         
         return attachmentRepository.getAttachmentById(id)
-                .orElseThrow(() -> new NoSuchElementException("Attachment not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException(
+                    localizationService.getMessage("attachment.notFound", LocaleContextHolder.getLocale())
+                ));
     }
     
     @Override
     public Attachment getAttachmentByName(String name) {
         if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Attachment name cannot be empty");
+            throw new IllegalArgumentException(localizationService.getMessage("attachment.name.empty", LocaleContextHolder.getLocale()));
         }
         
         return attachmentRepository.getAttachmentByName(name)
-                .orElseThrow(() -> new NoSuchElementException("Attachment not found with name: " + name));
+                .orElseThrow(() -> new NotFoundException(
+                    localizationService.getMessage("attachment.name.notFound", LocaleContextHolder.getLocale())
+                ));
     }
     
     @Override
     public Attachment getAttachmentByLink(String link) {
         if (link == null || link.trim().isEmpty()) {
-            throw new IllegalArgumentException("Attachment link cannot be empty");
+            throw new IllegalArgumentException(localizationService.getMessage("attachment.link.empty", LocaleContextHolder.getLocale()));
         }
         
         return attachmentRepository.getAttachmentByLink(link)
-                .orElseThrow(() -> new NoSuchElementException("Attachment not found with link: " + link));
+                .orElseThrow(() -> new NotFoundException(
+                    localizationService.getMessage("attachment.link.notFound", LocaleContextHolder.getLocale())
+                ));
     }
     
     @Override
     public Attachment updateAttachment(Attachment attachment) {
         // Validate attachment input
         if (attachment == null) {
-            throw new IllegalArgumentException("Attachment cannot be null");
+            throw new IllegalArgumentException(localizationService.getMessage("attachment.null", LocaleContextHolder.getLocale()));
         }
         if (attachment.getId() == null) {
-            throw new IllegalArgumentException("Attachment ID cannot be null for update operation");
+            throw new IllegalArgumentException(localizationService.getMessage("attachment.id.null", LocaleContextHolder.getLocale()));
         }
         if (attachment.getName() == null || attachment.getName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Attachment name cannot be empty");
-        }
-        if (attachment.getLink() == null || attachment.getLink().trim().isEmpty()) {
-            throw new IllegalArgumentException("Attachment link cannot be empty");
+            throw new IllegalArgumentException(localizationService.getMessage("attachment.name.empty", LocaleContextHolder.getLocale()));
         }
         
         // Check if attachment exists
-        attachmentRepository.getAttachmentById(attachment.getId())
-                .orElseThrow(() -> new NoSuchElementException("Cannot update. Attachment not found with id: " + attachment.getId()));
+        Attachment existingAttachment = getAttachmentById(attachment.getId());
         
-        // Check if updating the name to one that already exists (excluding this attachment)
-        Optional<Attachment> existingAttachment = attachmentRepository.getAttachmentByName(attachment.getName());
-        if (existingAttachment.isPresent() && !existingAttachment.get().getId().equals(attachment.getId())) {
-            throw new IllegalStateException("Cannot update. Another attachment with name '" + attachment.getName() + "' already exists");
+        // Upload new file if provided
+        MultipartFile file = attachment.getFile();
+        if (file != null && !file.isEmpty()) {
+            try {
+                String cloudinaryLink = uploadFileToCloudinary(file);
+                attachment.setLink(cloudinaryLink);
+            } catch (IOException e) {
+                throw new RuntimeException(localizationService.getMessage("cloudinary.upload.error", LocaleContextHolder.getLocale()), e);
+            }
+        } else if (attachment.getLink() == null || attachment.getLink().trim().isEmpty()) {
+            // Keep existing link if new link is not provided
+            attachment.setLink(existingAttachment.getLink());
+        }
+
+        // Check for name uniqueness if name is changed
+        if (!attachment.getName().equals(existingAttachment.getName())) {
+            Optional<Attachment> attachmentWithSameName = attachmentRepository.getAttachmentByName(attachment.getName());
+            if (attachmentWithSameName.isPresent() && !attachmentWithSameName.get().getId().equals(attachment.getId())) {
+                throw new IllegalArgumentException(localizationService.getMessage("attachment.name.duplicate", LocaleContextHolder.getLocale()));
+            }
         }
         
         return attachmentRepository.updateAttachment(attachment);
@@ -113,12 +142,11 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Override
     public boolean deleteAttachment(Integer id) {
         if (id == null) {
-            throw new IllegalArgumentException("Attachment ID cannot be null for delete operation");
+            throw new IllegalArgumentException(localizationService.getMessage("attachment.id.null", LocaleContextHolder.getLocale()));
         }
         
         // Check if attachment exists before attempting to delete
-        attachmentRepository.getAttachmentById(id)
-                .orElseThrow(() -> new NoSuchElementException("Cannot delete. Attachment not found with id: " + id));
+        getAttachmentById(id);
         
         return attachmentRepository.deleteAttachment(id);
     }
@@ -131,5 +159,15 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Override
     public long countSearchResults(Map<String, String> filters) {
         return attachmentRepository.countSearchResults(filters);
+    }
+
+    private String uploadFileToCloudinary(MultipartFile file) throws IOException {
+        try {
+            Map res = cloudinary.uploader().upload(file.getBytes(),
+                    ObjectUtils.asMap("resource_type", "auto"));
+            return res.get("secure_url").toString();
+        } catch (IOException ex) {
+            throw new IOException(localizationService.getMessage("cloudinary.upload.error", LocaleContextHolder.getLocale()));
+        }
     }
 }

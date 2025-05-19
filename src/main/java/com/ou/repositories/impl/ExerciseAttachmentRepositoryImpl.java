@@ -28,7 +28,7 @@ public class ExerciseAttachmentRepositoryImpl implements ExerciseAttachmentRepos
     @Override
     public ExerciseAttachment addExerciseAttachment(ExerciseAttachment exerciseAttachment) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.save(exerciseAttachment);
+        session.persist(exerciseAttachment);
         session.flush(); // Ensure ID is generated and available
         return exerciseAttachment;
     }
@@ -36,7 +36,7 @@ public class ExerciseAttachmentRepositoryImpl implements ExerciseAttachmentRepos
     @Override
     public ExerciseAttachment updateExerciseAttachment(ExerciseAttachment exerciseAttachment) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.update(exerciseAttachment);
+        session.merge(exerciseAttachment);
         return exerciseAttachment;
     }
 

@@ -23,7 +23,7 @@ public class LessonAttachmentRepositoryImpl implements LessonAttachmentRepositor
     public LessonAttachment createLessonAttachment(LessonAttachment lessonAttachment) {
         Session session = factory.getObject().getCurrentSession();
         try {
-            session.save(lessonAttachment);
+            session.persist(lessonAttachment);
             return lessonAttachment;
         } catch (Exception e) {
             e.printStackTrace();
@@ -57,7 +57,7 @@ public class LessonAttachmentRepositoryImpl implements LessonAttachmentRepositor
     public LessonAttachment updateLessonAttachment(LessonAttachment lessonAttachment) {
         Session session = factory.getObject().getCurrentSession();
         try {
-            session.update(lessonAttachment);
+            session.merge(lessonAttachment);
             return lessonAttachment;
         } catch (Exception e) {
             e.printStackTrace();

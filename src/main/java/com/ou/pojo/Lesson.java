@@ -69,6 +69,7 @@ public class Lesson implements Serializable {
 
     @Transient
     private MultipartFile thumbnailImage;
+
     @Transient
     private List<MultipartFile> lessonAttachments;
 

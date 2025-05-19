@@ -1,6 +1,8 @@
 package com.ou.services;
 
 import com.ou.pojo.Attachment;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -10,7 +12,7 @@ import java.util.Map;
  */
 public interface AttachmentService {
     // Create operations
-    Attachment addAttachment(Attachment attachment);
+    Attachment addAttachment(Attachment attachment) throws IOException;
     
     // Read operations with pagination
     List<Attachment> getAttachments(Map<String, String> params);

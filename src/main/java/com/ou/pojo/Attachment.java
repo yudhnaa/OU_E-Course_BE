@@ -4,20 +4,11 @@
  */
 package com.ou.pojo;
 
-import jakarta.persistence.Basic;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
-import jakarta.persistence.NamedQueries;
-import jakarta.persistence.NamedQuery;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.Serializable;
 import java.util.Set;
 
@@ -59,6 +50,9 @@ public class Attachment implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "attachmentId")
     private Set<LessonAttachment> lessonAttachmentSet;
 
+    @Transient
+    private MultipartFile file;
+
     public Attachment() {
     }
 
@@ -70,6 +64,14 @@ public class Attachment implements Serializable {
         this.id = id;
         this.name = name;
         this.link = link;
+    }
+
+    public MultipartFile getFile() {
+        return file;
+    }
+
+    public void setFile(MultipartFile file) {
+        this.file = file;
     }
 
     public Integer getId() {

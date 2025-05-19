@@ -30,7 +30,7 @@ public class CourseStudentRepositoryImpl implements CourseStudentRepository {
     @Override
     public CourseStudent addCourseStudent(CourseStudent courseStudent) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.save(courseStudent);
+        session.persist(courseStudent);
         session.flush(); // Ensure ID is generated and available
         return courseStudent;
     }
@@ -38,7 +38,7 @@ public class CourseStudentRepositoryImpl implements CourseStudentRepository {
     @Override
     public CourseStudent updateCourseStudent(CourseStudent courseStudent) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.update(courseStudent);
+        session.merge(courseStudent);
         return courseStudent;
     }
 
