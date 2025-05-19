@@ -86,7 +86,6 @@ public class TestController {
     @GetMapping
     public String getAllTestsByCourse(@PathVariable("courseId") Integer courseId, Model model,@RequestParam Map<String,String> params) {
         long totalTests = testService.countTestsInCourse(courseId);
-
         if (totalTests == 0) {
             model.addAttribute("message", "No tests found for this course.");
             return "dashboard/lecturer/test";
