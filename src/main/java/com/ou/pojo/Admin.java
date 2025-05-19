@@ -5,7 +5,6 @@
 package com.ou.pojo;
 
 import jakarta.persistence.Basic;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,7 +21,7 @@ import java.util.Set;
 
 /**
  *
- * @author ADMIN
+ * @author yudhna
  */
 @Entity
 @Table(name = "admin")
@@ -42,8 +41,6 @@ public class Admin implements Serializable {
     private User userId;
     @OneToMany(mappedBy = "createdByAdminId")
     private Set<Course> courseSet;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userUploadId")
-    private Set<Lesson> lessonSet;
 
     public Admin() {
     }
@@ -76,14 +73,6 @@ public class Admin implements Serializable {
         this.courseSet = courseSet;
     }
 
-    public Set<Lesson> getLessonSet() {
-        return lessonSet;
-    }
-
-    public void setLessonSet(Set<Lesson> lessonSet) {
-        this.lessonSet = lessonSet;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -108,5 +97,5 @@ public class Admin implements Serializable {
     public String toString() {
         return "com.ou.pojo.Admin[ id=" + id + " ]";
     }
-    
+
 }

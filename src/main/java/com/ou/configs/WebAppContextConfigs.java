@@ -37,7 +37,10 @@ import java.util.Locale;
 @ComponentScan(basePackages = {
     "com.ou.controllers",
     "com.ou.repositories",
-    "com.ou.services"
+    "com.ou.services",
+    "com.ou.formatters",
+    "com.ou.helpers"
+
 })
 public class WebAppContextConfigs implements WebMvcConfigurer {
     @Override

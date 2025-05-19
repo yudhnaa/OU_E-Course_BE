@@ -26,17 +26,6 @@ public class IndexController {
     @Autowired
     private UserService userService;
 
-//    @RequestMapping("/")
-//    public String index(Model model, Principal principal) throws Exception {
-//
-//        if (principal != null) {
-//            String username = principal.getName();
-//            model.addAttribute("loged_username", username);
-//        }
-//
-//        return "index";
-//    }
-
     @GetMapping("/")
     public String index() {
         return "dashboard/index";

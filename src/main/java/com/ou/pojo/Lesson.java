@@ -4,23 +4,13 @@
  */
 package com.ou.pojo;
 
-import jakarta.persistence.Basic;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.NamedQueries;
-import jakarta.persistence.NamedQuery;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -32,8 +22,8 @@ import java.util.Set;
 @NamedQueries({
     @NamedQuery(name = "Lesson.findAll", query = "SELECT l FROM Lesson l"),
     @NamedQuery(name = "Lesson.findById", query = "SELECT l FROM Lesson l WHERE l.id = :id"),
-    @NamedQuery(name = "Lesson.findByName", query = "SELECT l FROM Lesson l WHERE l.name = :name"),
-    @NamedQuery(name = "Lesson.findByEmbedLink", query = "SELECT l FROM Lesson l WHERE l.embedLink = :embedLink")})
+    @NamedQuery(name = "Lesson.findByEmbedLink", query = "SELECT l FROM Lesson l WHERE l.embedLink = :embedLink"),
+    @NamedQuery(name = "Lesson.findByImage", query = "SELECT l FROM Lesson l WHERE l.image = :image")})
 public class Lesson implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -44,7 +34,8 @@ public class Lesson implements Serializable {
     private Integer id;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 50)
+    @Lob
+    @Size(min = 1, max = 65535)
     @Column(name = "name")
     private String name;
     @Basic(optional = false)
@@ -56,21 +47,31 @@ public class Lesson implements Serializable {
     @Size(max = 65535)
     @Column(name = "description")
     private String description;
+    @Size(max = 255)
+    @Column(name = "image")
+    private String image;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "lessonId")
     private Set<Exercise> exerciseSet;
-    @JoinColumn(name = "user_upload_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Admin userUploadId;
     @JoinColumn(name = "course_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Course courseId;
     @JoinColumn(name = "lesson_type_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private LessonType lessonTypeId;
+    @JoinColumn(name = "user_upload_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private User userUploadId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "lessonId")
     private Set<LessonAttachment> lessonAttachmentSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "lessonId")
     private Set<LessonStudent> lessonStudentSet;
+
+
+    @Transient
+    private MultipartFile thumbnailImage;
+    @Transient
+    private List<MultipartFile> lessonAttachments;
+
 
     public Lesson() {
     }
@@ -83,6 +84,22 @@ public class Lesson implements Serializable {
         this.id = id;
         this.name = name;
         this.embedLink = embedLink;
+    }
+
+    public MultipartFile getThumbnailImage() {
+        return thumbnailImage;
+    }
+
+    public void setThumbnailImage(MultipartFile thumbnailImage) {
+        this.thumbnailImage = thumbnailImage;
+    }
+
+    public List<MultipartFile> getLessonAttachments() {
+        return lessonAttachments;
+    }
+
+    public void setLessonAttachments(List<MultipartFile> lessonAttachments) {
+        this.lessonAttachments = lessonAttachments;
     }
 
     public Integer getId() {
@@ -117,20 +134,20 @@ public class Lesson implements Serializable {
         this.description = description;
     }
 
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     public Set<Exercise> getExerciseSet() {
         return exerciseSet;
     }
 
     public void setExerciseSet(Set<Exercise> exerciseSet) {
         this.exerciseSet = exerciseSet;
-    }
-
-    public Admin getUserUploadId() {
-        return userUploadId;
-    }
-
-    public void setUserUploadId(Admin userUploadId) {
-        this.userUploadId = userUploadId;
     }
 
     public Course getCourseId() {
@@ -147,6 +164,14 @@ public class Lesson implements Serializable {
 
     public void setLessonTypeId(LessonType lessonTypeId) {
         this.lessonTypeId = lessonTypeId;
+    }
+
+    public User getUserUploadId() {
+        return userUploadId;
+    }
+
+    public void setUserUploadId(User userUploadId) {
+        this.userUploadId = userUploadId;
     }
 
     public Set<LessonAttachment> getLessonAttachmentSet() {

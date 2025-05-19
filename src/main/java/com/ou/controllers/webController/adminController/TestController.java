@@ -22,7 +22,7 @@ import java.beans.PropertyEditorSupport;
 import java.math.BigDecimal;
 import java.util.*;
 
-@RequestMapping("/admin/course/{courseId}/tests")
+@RequestMapping("/course/{courseId}/tests")
 @Controller
 public class TestController {
     @Autowired

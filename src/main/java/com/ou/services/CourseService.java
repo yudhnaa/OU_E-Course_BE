@@ -1,13 +1,15 @@
 package com.ou.services;
 
 import com.ou.pojo.Course;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 public interface CourseService {
     // Create operations with validation
-    Course addCourse(Course course);
+    Course addCourse(Course course) throws IOException;
     
     // Read operations
     List<Course> getCourses(Map<String, String> params);
@@ -18,7 +20,7 @@ public interface CourseService {
     List<Course> getCoursesCreatedByUser(Integer userId, Map<String, String> params);
     
     // Update operation with validation
-    Course updateCourse(Course course);
+    Course updateCourse(Course course) throws IOException;
     
     // Delete operation
     boolean deleteCourse(Integer id);
