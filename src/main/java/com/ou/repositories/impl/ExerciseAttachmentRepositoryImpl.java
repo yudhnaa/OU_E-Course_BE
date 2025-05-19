@@ -227,4 +227,19 @@ public class ExerciseAttachmentRepositoryImpl implements ExerciseAttachmentRepos
         query.select(builder.count(root));
         return session.createQuery(query).getSingleResult();
     }
+
+    @Override
+    public long countExerciseAttachmentsByLesson(Integer lessonId) {
+        Session session = sessionFactory.getObject().getCurrentSession();
+
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Long> query = builder.createQuery(Long.class);
+
+        Root<ExerciseAttachment> root = query.from(ExerciseAttachment.class);
+
+        query.where(builder.equal(root.get("lessonId").get("id"), lessonId));
+        query.select(builder.count(root));
+
+        return session.createQuery(query).getSingleResult();
+    }
 }

@@ -22,7 +22,8 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
         "com.ou.repositories",
         "com.ou.services",
         "com.ou.formatters",
-        "com.ou.helpers"
+        "com.ou.helpers",
+        "com.ou.mappers",
 })
 public class SpringSecurityConfigs {
     @Autowired

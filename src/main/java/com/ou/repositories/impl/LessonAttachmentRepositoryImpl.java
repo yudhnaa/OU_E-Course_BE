@@ -1,8 +1,12 @@
 package com.ou.repositories.impl;
 
 
+import com.ou.pojo.ExerciseAttachment;
 import com.ou.pojo.LessonAttachment;
 import com.ou.repositories.LessonAttachmentRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -78,6 +82,24 @@ public class LessonAttachmentRepositoryImpl implements LessonAttachmentRepositor
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    @Override
+    public long countLessonAttachmentsByLesson(Integer lessonId) {
+        Session session = factory.getObject().getCurrentSession();
+        try {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Long> query = builder.createQuery(Long.class);
+
+            Root<LessonAttachment> root = query.from(LessonAttachment.class);
+            query.select(builder.count(root));
+            query.where(builder.equal(root.get("lessonId").get("id"), lessonId));
+
+            return session.createQuery(query).getSingleResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.ou.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.ou.pojo.Lesson;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -9,42 +8,46 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * DTO for {@link Lesson}
+ * DTO for {@link com.ou.pojo.Lesson}
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LessonDto implements Serializable {
     private Integer id;
     @NotNull
-    @Size(min = 1, max = 50)
+    @Size(min = 1, max = 65535)
     private String name;
     @NotNull
     @Size(min = 1, max = 255)
     private String embedLink;
     @Size(max = 65535)
     private String description;
+    @Size(max = 255)
+    private String image;
     private Integer courseIdId;
     private String courseIdName;
     private Integer lessonTypeIdId;
     private String lessonTypeIdName;
-    private String lessonTypeIdDescription;
     private Integer userUploadIdId;
     private String userUploadIdLastName;
     private String userUploadIdFirstName;
     private String userUploadIdUsername;
+    private long countAttachment;
+    private long countExercise;
+
 
     public LessonDto() {
     }
 
-    public LessonDto(Integer id, String name, String embedLink, String description, Integer courseIdId, String courseIdName, Integer lessonTypeIdId, String lessonTypeIdName, String lessonTypeIdDescription, Integer userUploadIdId, String userUploadIdLastName, String userUploadIdFirstName, String userUploadIdUsername) {
+    public LessonDto(Integer id, String name, String embedLink, String description, String image, Integer courseIdId, String courseIdName, Integer lessonTypeIdId, String lessonTypeIdName, Integer userUploadIdId, String userUploadIdLastName, String userUploadIdFirstName, String userUploadIdUsername) {
         this.id = id;
         this.name = name;
         this.embedLink = embedLink;
         this.description = description;
+        this.image = image;
         this.courseIdId = courseIdId;
         this.courseIdName = courseIdName;
         this.lessonTypeIdId = lessonTypeIdId;
         this.lessonTypeIdName = lessonTypeIdName;
-        this.lessonTypeIdDescription = lessonTypeIdDescription;
         this.userUploadIdId = userUploadIdId;
         this.userUploadIdLastName = userUploadIdLastName;
         this.userUploadIdFirstName = userUploadIdFirstName;
@@ -60,15 +63,31 @@ public class LessonDto implements Serializable {
                 Objects.equals(this.name, entity.name) &&
                 Objects.equals(this.embedLink, entity.embedLink) &&
                 Objects.equals(this.description, entity.description) &&
+                Objects.equals(this.image, entity.image) &&
                 Objects.equals(this.courseIdId, entity.courseIdId) &&
                 Objects.equals(this.courseIdName, entity.courseIdName) &&
                 Objects.equals(this.lessonTypeIdId, entity.lessonTypeIdId) &&
                 Objects.equals(this.lessonTypeIdName, entity.lessonTypeIdName) &&
-                Objects.equals(this.lessonTypeIdDescription, entity.lessonTypeIdDescription) &&
                 Objects.equals(this.userUploadIdId, entity.userUploadIdId) &&
                 Objects.equals(this.userUploadIdLastName, entity.userUploadIdLastName) &&
                 Objects.equals(this.userUploadIdFirstName, entity.userUploadIdFirstName) &&
                 Objects.equals(this.userUploadIdUsername, entity.userUploadIdUsername);
+    }
+
+    public long getCountAttachment() {
+        return countAttachment;
+    }
+
+    public void setCountAttachment(long countAttachment) {
+        this.countAttachment = countAttachment;
+    }
+
+    public long getCountExercise() {
+        return countExercise;
+    }
+
+    public void setCountExercise(long countExercise) {
+        this.countExercise = countExercise;
     }
 
     public Integer getCourseIdId() {
@@ -91,8 +110,8 @@ public class LessonDto implements Serializable {
         return id;
     }
 
-    public String getLessonTypeIdDescription() {
-        return lessonTypeIdDescription;
+    public String getImage() {
+        return image;
     }
 
     public Integer getLessonTypeIdId() {
@@ -125,7 +144,7 @@ public class LessonDto implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, embedLink, description, courseIdId, courseIdName, lessonTypeIdId, lessonTypeIdName, lessonTypeIdDescription, userUploadIdId, userUploadIdLastName, userUploadIdFirstName, userUploadIdUsername);
+        return Objects.hash(id, name, embedLink, description, image, courseIdId, courseIdName, lessonTypeIdId, lessonTypeIdName, userUploadIdId, userUploadIdLastName, userUploadIdFirstName, userUploadIdUsername);
     }
 
     public void setCourseIdId(Integer courseIdId) {
@@ -148,8 +167,8 @@ public class LessonDto implements Serializable {
         this.id = id;
     }
 
-    public void setLessonTypeIdDescription(String lessonTypeIdDescription) {
-        this.lessonTypeIdDescription = lessonTypeIdDescription;
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public void setLessonTypeIdId(Integer lessonTypeIdId) {
@@ -187,11 +206,11 @@ public class LessonDto implements Serializable {
                 "name = " + name + ", " +
                 "embedLink = " + embedLink + ", " +
                 "description = " + description + ", " +
+                "image = " + image + ", " +
                 "courseIdId = " + courseIdId + ", " +
                 "courseIdName = " + courseIdName + ", " +
                 "lessonTypeIdId = " + lessonTypeIdId + ", " +
                 "lessonTypeIdName = " + lessonTypeIdName + ", " +
-                "lessonTypeIdDescription = " + lessonTypeIdDescription + ", " +
                 "userUploadIdId = " + userUploadIdId + ", " +
                 "userUploadIdLastName = " + userUploadIdLastName + ", " +
                 "userUploadIdFirstName = " + userUploadIdFirstName + ", " +

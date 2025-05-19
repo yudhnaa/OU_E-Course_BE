@@ -59,4 +59,15 @@ public class LessonAttachmentServiceImpl implements LessonAttachmentService {
         getLessonAttachmentById(id);
         return lessonAttachmentRepo.deleteLessonAttachment(id);
     }
+
+    @Override
+    public long countLessonAttachmentsByLesson(Integer lessonId) {
+
+        // Verify that the lesson exists before counting attachments
+        if (lessonAttachmentRepo.getLessonAttachmentById(lessonId) == null) {
+            throw new NotFoundException(localizationService.getMessage("lesson.notFound", LocaleContextHolder.getLocale()));
+        }
+
+        return lessonAttachmentRepo.countLessonAttachmentsByLesson(lessonId);
+    }
 }

@@ -42,7 +42,8 @@ import java.util.Locale;
     "com.ou.repositories",
     "com.ou.services",
     "com.ou.formatters",
-    "com.ou.helpers"
+    "com.ou.helpers",
+    "com.ou.mappers",
 
 })
 public class WebAppContextConfigs implements WebMvcConfigurer {

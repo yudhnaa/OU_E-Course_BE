@@ -1,0 +1,300 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<th:block layout:fragment="pagetitle">
+    <!--page title-->
+    <div th:replace="partials/title-meta :: title-meta('Course Detail')"></div>
+</th:block>
+
+<head>
+    <!-- Sweet Alert css-->
+    <link th:href="@{/assets/libs/sweetalert2/sweetalert2.min.css}" rel="stylesheet" type="text/css"/>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card mt-n4 mx-n4 border-0">
+                <div class="bg-soft-primary">
+                    <div class="card-body pb-0 px-4">
+                        <div class="row mb-3">
+                            <div class="col-md">
+                                <div class="row align-items-center g-3">
+                                    <div class="col-md-auto">
+                                        <div class="avatar-md">
+                                            <div class="avatar-title bg-white rounded-circle">
+                                                <img th:src="${course.image}" alt="" class="avatar-xs">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md">
+                                        <div>
+                                            <h4 class="fw-bold" th:text="${course.name}"></h4>
+                                            <div class="hstack gap-3 flex-wrap">
+                                                <div>
+                                                    <i class="ri-building-line align-bottom me-1"></i>
+                                                    <span th:text="${course.categoryId.name}"></span>
+                                                </div>
+                                                <div class="vr"></div>
+                                                <div>Create Date : <span class="fw-medium"
+                                                                         th:text="${@dateTimeFormatter.format(course.dateAdded, 'dd-MM-yyyy')}"></span>
+                                                </div>
+                                                <div class="vr"></div>
+                                                <div>Due Date : <span class="fw-medium"
+                                                                      th:text="${@dateTimeFormatter.format(course.dateEnd, 'dd-MM-yyyy')}"></span>
+                                                </div>
+                                                <div class="vr"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-auto">
+                                <div class="hstack gap-1 flex-wrap">
+                                    <button type="button" class="btn py-0 fs-16 favourite-btn active">
+                                        <i class="ri-star-fill"></i>
+                                    </button>
+                                    <button type="button" class="btn py-0 fs-16 text-body">
+                                        <i class="ri-share-line"></i>
+                                    </button>
+                                    <button type="button" class="btn py-0 fs-16 text-body">
+                                        <i class="ri-flag-line"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <ul class="nav nav-tabs-custom border-bottom-0" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link fw-semibold"
+                                   th:href="@{/admin/course/{courseId}#course-overview(courseId=${course.id})}"
+                                   role="tab">
+                                    Overview
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link fw-semibold"
+                                   th:href="@{/admin/course/{courseId}#course-details(courseId=${course.id})}"
+                                   role="tab">
+                                    Details
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link fw-semibold"
+                                   th:href="@{/admin/course/{courseId}#course-team(courseId=${course.id})}" role="tab">
+                                    Team
+                                </a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link fw-semibold active" data-bs-toggle="tab" role="tab"
+                                   aria-selected="true" href="#course-lesson">
+                                    Content Manager
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- end card body -->
+                </div>
+            </div>
+            <!-- end card -->
+        </div>
+        <!-- end col -->
+    </div>
+    <!-- end row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="tab-content text-muted">
+
+                <div class="row tab-pane fade show active" id="course-lesson">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <h6 class="card-title mb-0 flex-grow-1">Search Lessons</h6>
+                                </div>
+
+                                <div class="row mt-1 gy-3">
+                                    <div class="col-xxl-10 col-md-6">
+                                        <div class="search-box">
+                                            <input type="text" class="form-control search bg-light border-light"
+                                                   id="searchLessons"
+                                                   autocomplete="off" placeholder="Search lessons...">
+                                            <i class="ri-search-line search-icon"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 d-flex justify-content-end">
+                                        <div class="flex-shrink-0">
+                                            <a class="btn btn-primary"
+                                               th:href="@{/admin/course/{courseId}/lesson/create(courseId=${course.id})}">
+                                                <i class="ri-add-line align-bottom me-1"></i>
+                                                Create New Lesson
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xxl-9">
+                        <div id="job-list">
+
+<!--                            <div class="card joblist-card">-->
+<!--                                <div class="card-body">-->
+<!--                                    <div class="d-flex mb-4">-->
+<!--                                        <div class="avatar-sm">-->
+<!--                                            <div class="avatar-title bg-light rounded"><img-->
+<!--                                                    src="assets/images/companies/img-7.png" alt=""-->
+<!--                                                    class="avatar-xxs companyLogo-img"></div>-->
+<!--                                        </div>-->
+<!--                                        <div class="ms-3 flex-grow-1"><img src="assets/images/small/img-8.jpg" alt=""-->
+<!--                                                                           class="d-none cover-img"> <a href="#!"><h5-->
+<!--                                                class="job-title">Product Designer</h5></a>-->
+<!--                                            <p class="company-name text-muted mb-0">Themesbrand</p></div>-->
+<!--                                        <div>-->
+<!--                                            <button type="button" class="btn btn-ghost-primary btn-icon custom-toggle"-->
+<!--                                                    data-bs-toggle="button"><span class="icon-on"><i-->
+<!--                                                    class="ri-bookmark-line"></i></span> <span class="icon-off"><i-->
+<!--                                                    class="ri-bookmark-fill"></i></span></button>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <p class="text-muted job-description">A UI/UX designer's job is to create-->
+<!--                                        user-friendly interfaces that enable users to understand how to use complex-->
+<!--                                        technical products. If you're passionate about the latest technology trends and-->
+<!--                                        devices, you'll find great fulfillment in being involved in the design process-->
+<!--                                        for the next hot gadget.</p>-->
+<!--                                    <div><span class="badge bg-primary-subtle text-primary me-1">Design</span><span-->
+<!--                                            class="badge bg-primary-subtle text-primary me-1">Remote</span><span-->
+<!--                                            class="badge bg-primary-subtle text-primary me-1">UI/UX Designer</span><span-->
+<!--                                            class="badge bg-primary-subtle text-primary me-1">Designer</span></div>-->
+<!--                                </div>-->
+<!--                                <div class="card-footer border-top-dashed">-->
+<!--                                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">-->
+<!--                                        <div><i class="ri-briefcase-2-line align-bottom me-1"></i> <span-->
+<!--                                                class="job-type">Full Time</span></div>-->
+<!--                                        <div class="d-none"><span class="job-experience">1 - 2 Year</span></div>-->
+<!--                                        <div><i class="ri-map-pin-2-line align-bottom me-1"></i> <span-->
+<!--                                                class="job-location">United Kingdom</span></div>-->
+<!--                                        <div><i class="ri-user-3-line align-bottom me-1"></i> 74 Applied</div>-->
+<!--                                        <div><i class="ri-time-line align-bottom me-1"></i> <span class="job-postdate">15 Sep, 2022</span>-->
+<!--                                        </div>-->
+<!--                                        <div><a href="#!" class="btn btn-primary viewjob-list">View More <i-->
+<!--                                                class="ri-arrow-right-line align-bottom ms-1"></i></a></div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+
+                            <!-- Lesson List -->
+                            <div th:each="lesson : ${lessons}" class="card joblist-card">
+                                <div class="card-body">
+                                    <div class="d-flex mb-4">
+                                        <div class="avatar-sm">
+                                            <div class="avatar-title bg-light rounded">
+<!--                                                <img th:if="${lesson.image}" th:src="@{'/images/lessons/' + ${lesson.image}}" alt=""-->
+<!--                                                     class="avatar-xxs companyLogo-img">-->
+<!--                                                <img th:unless="${lesson.image}" th:src="@{/assets/images/default-lesson.png}" alt=""-->
+<!--                                                     class="avatar-xxs companyLogo-img">-->
+                                            </div>
+                                        </div>
+                                        <div class="ms-3 flex-grow-1">
+<!--                                            <img th:if="${lesson.image}" th:src="@{'/images/lessons/' + ${lesson.image}}" alt=""-->
+<!--                                                 class="d-none cover-img">-->
+                                            <a th:href="@{'/lessons/' + ${lesson.id}}">
+                                                <h5 class="job-title" th:text="${lesson.name}">Lesson Name</h5>
+                                            </a>
+                                            <p class="company-name text-muted mb-0" th:text="${lesson.courseIdName}">Course Name</p>
+                                        </div>
+                                        <div>
+                                            <button type="button" class="btn btn-ghost-primary btn-icon custom-toggle"
+                                                    data-bs-toggle="button">
+                                                <span class="icon-on"><i class="ri-bookmark-line"></i></span>
+                                                <span class="icon-off"><i class="ri-bookmark-fill"></i></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <p class="text-muted job-description" th:text="${lesson.description}">Lesson description goes here.</p>
+                                    <div>
+                                        <span class="badge bg-primary-subtle text-primary me-1" th:text="${lesson.lessonTypeIdName}">Lesson Type</span>
+                                        <span class="badge bg-primary-subtle text-primary me-1" th:if="${lesson.countAttachment > 0}">Has Attachments</span>
+                                        <span class="badge bg-primary-subtle text-primary me-1" th:if="${lesson.countExercise > 0}">Has Exercises</span>
+                                    </div>
+                                </div>
+                                <div class="card-footer border-top-dashed">
+                                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                                        <div>
+                                            <i class="ri-book-line align-bottom me-1"></i>
+                                            <span class="job-type" th:text="${lesson.lessonTypeIdName}">Lesson Type</span>
+                                        </div>
+                                        <div>
+                                            <i class="ri-file-list-line align-bottom me-1"></i>
+                                            <span th:text="${lesson.countAttachment + ' Attachments'}">Attachments</span>
+                                        </div>
+                                        <div>
+                                            <i class="ri-user-3-line align-bottom me-1"></i>
+                                            <span th:text="${lesson.countExercise + ' Exercise'}">Students Enrolled</span>
+                                        </div>
+                                        <div>
+                                            <i class="ri-user-star-line align-bottom me-1"></i>
+                                            <span th:text="${lesson.userUploadIdFirstName + ' ' + lesson.userUploadIdLastName}">Instructor</span>
+                                        </div>
+                                        <div>
+                                            <a th:href="@{'/lessons/' + ${lesson.id}}" class="btn btn-primary viewjob-list">
+                                                View Lesson <i class="ri-arrow-right-line align-bottom ms-1"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End Lesson List -->
+
+                        </div>
+
+                        <div class="row g-0 justify-content-end mb-4" id="pagination-element">
+                            <!-- end col -->
+                            <div class="col-sm-6">
+                                <div
+                                        class="pagination-block pagination pagination-separated justify-content-center justify-content-sm-end mb-sm-0">
+                                    <div class="page-item">
+                                        <a href="javascript:void(0);" class="page-link" id="page-prev">Previous</a>
+                                    </div>
+                                    <span id="page-num" class="pagination"></span>
+                                    <div class="page-item">
+                                        <a href="javascript:void(0);" class="page-link" id="page-next">Next</a>
+                                    </div>
+                                </div>
+                            </div><!-- end col -->
+                        </div>
+                        <!-- end row -->
+                    </div>
+                    <!--end col-->
+                </div>
+
+
+                <!--        end tab-pane-->
+            </div>
+        </div>
+        <!-- end col -->
+        <!-- end row -->
+    </div>
+
+
+    <th:block layout:fragment="pagejs">
+
+
+        <!-- Sweet Alerts js -->
+        <script th:src="@{/assets/libs/sweetalert2/sweetalert2.min.js}"></script>
+
+        <script th:src="@{/assets/js/lesson-list.init.js}"></script>
+
+
+        <!--  &lt;!&ndash; Sweet alert init js&ndash;&gt;-->
+        <!--  <script th:src="@{/assets/js/pages/sweetalerts.init.js}"></script>-->
+
+    </th:block>
+</body>
+
+</html>

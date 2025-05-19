@@ -78,7 +78,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link fw-semibold" th:href="@{/admin/course/{courseId}/lesson/create(courseId=${course.id})}">
+                <a class="nav-link fw-semibold" th:href="@{/admin/course/{courseId}/lessons(courseId=${course.id})}">
                   Content Manager
                 </a>
               </li>
@@ -465,7 +465,7 @@
   <!-- Sweet Alerts js -->
   <script th:src="@{/assets/libs/sweetalert2/sweetalert2.min.js}"></script>
 
-  <script th:src="@{/assets/js/pages/course-detail.init.js}"></script>
+  <script th:src="@{/assets/js/course-detail.init.js}"></script>
 
 
 <!--  &lt;!&ndash; Sweet alert init js&ndash;&gt;-->
