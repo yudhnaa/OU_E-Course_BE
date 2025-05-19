@@ -6,6 +6,7 @@ import com.ou.pojo.Lesson;
 import com.ou.pojo.LessonType;
 import com.ou.services.CourseService;
 import com.ou.services.LessonService;
+import com.ou.services.LessonTypeService;
 import com.ou.services.LocalizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -30,8 +32,8 @@ public class LessonController {
     @Autowired
     LocalizationService localizationService;
 
-//    @Autowired
-//    LessonTypeService lessonTypeService;
+    @Autowired
+    LessonTypeService lessonTypeService;
 
     @GetMapping("/admin/course/{courseId}/lesson/create")
     public String createLessonView(
@@ -51,10 +53,12 @@ public class LessonController {
         Lesson lesson = new Lesson();
         lesson.setCourseId(course.get());
 
+        List<LessonType> lessonTypes = lessonTypeService.getAllLessonTypes();
 
 
         // Add the lesson and course to the model
         model.addAttribute("lesson", lesson);
+        model.addAttribute("lessonTypes", lessonTypes);
         model.addAttribute("course", course.get());
 
         return "dashboard/admin/course/course_lesson_create";

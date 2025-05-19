@@ -46,18 +46,6 @@
                             <label class="form-label" for="lessonDescription">Lesson Description</label>
                             <textarea th:field="*{description}" class="form-control" id="lessonDescription" rows="10" placeholder="Lesson Description"></textarea>
                         </div>
-
-                        <!-- Lesson Type -->
-                        <div class="row">
-                            <div class="col-lg-4">
-                                <div class="mb-3 mb-lg-0">
-                                    <label for="lesson-type" class="form-label">Lesson Type</label>
-                                    <select th:field="*{lessonTypeId.id}" class="form-select" id="lesson-type">
-                                        <option th:each="type : ${types}" th:value="${type.id}" th:text="${type.name}"></option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -126,13 +114,25 @@
                 <!-- Course selection -->
                 <div class="card">
                     <div class="card-header">
+                        <h5 class="card-title mb-0">Lesson</h5>
+                    </div>
+                    <div class="card-body">
+                        <label for="lesson-type" class="form-label">Lesson Type</label>
+                        <select th:field="*{lessonTypeId.id}" class="form-select" id="lesson-type">
+                            <option th:each="type : ${lessonTypes}" th:value="${type.id}" th:text="${type.name}"></option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
                         <h5 class="card-title mb-0">Course</h5>
                     </div>
                     <div class="card-body">
                         <label for="courseSelect" class="form-label">Course</label>
                         <select th:field="*{courseId.id}" class="form-select" id="courseSelect">
-                            <option th:each="course : ${courses}" th:value="${course.id}" th:text="${course.name}"
-                                    th:selected="${course.id} == ${lesson.courseId?.id}"></option>
+                            <option th:value="${course.id}" th:text="${course.name}"
+                                    selected></option>
                         </select>
                     </div>
                 </div>
