@@ -14,7 +14,7 @@ import java.util.Set;
 
 /**
  *
- * @author ADMIN
+ * @author yudhna
  */
 @Entity
 @Table(name = "attachment")
@@ -22,7 +22,8 @@ import java.util.Set;
     @NamedQuery(name = "Attachment.findAll", query = "SELECT a FROM Attachment a"),
     @NamedQuery(name = "Attachment.findById", query = "SELECT a FROM Attachment a WHERE a.id = :id"),
     @NamedQuery(name = "Attachment.findByName", query = "SELECT a FROM Attachment a WHERE a.name = :name"),
-    @NamedQuery(name = "Attachment.findByLink", query = "SELECT a FROM Attachment a WHERE a.link = :link")})
+    @NamedQuery(name = "Attachment.findByLink", query = "SELECT a FROM Attachment a WHERE a.link = :link"),
+    @NamedQuery(name = "Attachment.findByPublicId", query = "SELECT a FROM Attachment a WHERE a.publicId = :publicId")})
 public class Attachment implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -41,6 +42,9 @@ public class Attachment implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "link")
     private String link;
+    @Size(max = 100)
+    @Column(name = "public_id")
+    private String publicId;
     @Lob
     @Size(max = 65535)
     @Column(name = "description")
@@ -52,6 +56,7 @@ public class Attachment implements Serializable {
 
     @Transient
     private MultipartFile file;
+
 
     public Attachment() {
     }
@@ -66,16 +71,16 @@ public class Attachment implements Serializable {
         this.link = link;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
     public MultipartFile getFile() {
         return file;
     }
 
     public void setFile(MultipartFile file) {
         this.file = file;
-    }
-
-    public Integer getId() {
-        return id;
     }
 
     public void setId(Integer id) {
@@ -96,6 +101,14 @@ public class Attachment implements Serializable {
 
     public void setLink(String link) {
         this.link = link;
+    }
+
+    public String getPublicId() {
+        return publicId;
+    }
+
+    public void setPublicId(String publicId) {
+        this.publicId = publicId;
     }
 
     public String getDescription() {
@@ -146,5 +159,5 @@ public class Attachment implements Serializable {
     public String toString() {
         return "com.ou.pojo.Attachment[ id=" + id + " ]";
     }
-    
+
 }

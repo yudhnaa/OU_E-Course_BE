@@ -237,7 +237,7 @@ public class ExerciseAttachmentRepositoryImpl implements ExerciseAttachmentRepos
 
         Root<ExerciseAttachment> root = query.from(ExerciseAttachment.class);
 
-        query.where(builder.equal(root.get("lessonId").get("id"), lessonId));
+        query.where(builder.equal(root.get("exerciseId").get("lessonId").get("id"), lessonId));
         query.select(builder.count(root));
 
         return session.createQuery(query).getSingleResult();

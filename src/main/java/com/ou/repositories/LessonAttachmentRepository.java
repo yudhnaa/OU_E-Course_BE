@@ -10,6 +10,7 @@ public interface LessonAttachmentRepository {
 
     LessonAttachment getLessonAttachmentById(Integer id);
     List<LessonAttachment> getAllLessonAttachments();
+    List<LessonAttachment> getLessonAttachmentsByLesson(Integer lessonId);
 
     LessonAttachment updateLessonAttachment(LessonAttachment lessonAttachment);
 

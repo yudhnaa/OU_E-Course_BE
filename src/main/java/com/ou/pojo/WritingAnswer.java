@@ -22,7 +22,7 @@ import java.io.Serializable;
 
 /**
  *
- * @author ADMIN
+ * @author yudhna
  */
 @Entity
 @Table(name = "writing_answer")
@@ -107,5 +107,5 @@ public class WritingAnswer implements Serializable {
     public String toString() {
         return "com.ou.pojo.WritingAnswer[ id=" + id + " ]";
     }
-    
+
 }

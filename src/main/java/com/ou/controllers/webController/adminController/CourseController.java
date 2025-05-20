@@ -56,6 +56,7 @@ public class CourseController{
         List<Course> courses = courseService.getCourses(params);
 
         model.addAttribute("courses", courses);
+
         model.addAttribute("currentPage", pagination.getCurrentPage());
         model.addAttribute("totalPages", pagination.getTotalPages());
         model.addAttribute("startIndex", pagination.getStartIndex());

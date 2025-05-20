@@ -4,7 +4,6 @@
  */
 package com.ou.services.impl;
 
-import com.cloudinary.Cloudinary;
 import com.ou.exceptions.NotFoundException;
 import com.ou.pojo.User;
 import com.ou.repositories.UserRepository;
@@ -39,9 +38,6 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
-
-    @Autowired
-    private Cloudinary cloudinary;
 
     @Autowired
     private LocalizationService localizationService;

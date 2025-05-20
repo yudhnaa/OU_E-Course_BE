@@ -58,7 +58,7 @@ public class LessonMapper {
         lessonDto.setImage( lesson.getImage() );
         lessonDto.setName( lesson.getName() );
         lessonDto.setCountAttachment(lessonAttachmentService.countLessonAttachmentsByLesson(lesson.getId()));
-        lessonDto.setCountExercise(exerciseAttachmentService.countExerciseAttachmentsByExercise(lesson.getId()));
+        lessonDto.setCountExercise(exerciseAttachmentService.countExerciseAttachmentsByLesson(lesson.getId()));
 
         return lessonDto;
     }

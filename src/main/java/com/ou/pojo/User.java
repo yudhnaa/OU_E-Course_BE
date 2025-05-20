@@ -27,7 +27,7 @@ import java.util.Set;
 
 /**
  *
- * @author ADMIN
+ * @author yudhna
  */
 @Entity
 @Table(name = "user")
@@ -40,6 +40,7 @@ import java.util.Set;
     @NamedQuery(name = "User.findByUsername", query = "SELECT u FROM User u WHERE u.username = :username"),
     @NamedQuery(name = "User.findByPassword", query = "SELECT u FROM User u WHERE u.password = :password"),
     @NamedQuery(name = "User.findByAvatar", query = "SELECT u FROM User u WHERE u.avatar = :avatar"),
+    @NamedQuery(name = "User.findByPublicId", query = "SELECT u FROM User u WHERE u.publicId = :publicId"),
     @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email")})
 public class User implements Serializable {
 
@@ -77,6 +78,9 @@ public class User implements Serializable {
     @Size(max = 255)
     @Column(name = "avatar")
     private String avatar;
+    @Size(max = 100)
+    @Column(name = "public_id")
+    private String publicId;
     // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Basic(optional = false)
     @NotNull
@@ -168,6 +172,14 @@ public class User implements Serializable {
         this.avatar = avatar;
     }
 
+    public String getPublicId() {
+        return publicId;
+    }
+
+    public void setPublicId(String publicId) {
+        this.publicId = publicId;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -240,5 +252,5 @@ public class User implements Serializable {
     public String toString() {
         return "com.ou.pojo.User[ id=" + id + " ]";
     }
-    
+
 }

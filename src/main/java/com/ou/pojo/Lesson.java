@@ -15,7 +15,7 @@ import java.util.Set;
 
 /**
  *
- * @author ADMIN
+ * @author yudhna
  */
 @Entity
 @Table(name = "lesson")
@@ -23,7 +23,8 @@ import java.util.Set;
     @NamedQuery(name = "Lesson.findAll", query = "SELECT l FROM Lesson l"),
     @NamedQuery(name = "Lesson.findById", query = "SELECT l FROM Lesson l WHERE l.id = :id"),
     @NamedQuery(name = "Lesson.findByEmbedLink", query = "SELECT l FROM Lesson l WHERE l.embedLink = :embedLink"),
-    @NamedQuery(name = "Lesson.findByImage", query = "SELECT l FROM Lesson l WHERE l.image = :image")})
+    @NamedQuery(name = "Lesson.findByImage", query = "SELECT l FROM Lesson l WHERE l.image = :image"),
+    @NamedQuery(name = "Lesson.findByPublicId", query = "SELECT l FROM Lesson l WHERE l.publicId = :publicId")})
 public class Lesson implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -50,6 +51,9 @@ public class Lesson implements Serializable {
     @Size(max = 255)
     @Column(name = "image")
     private String image;
+    @Size(max = 100)
+    @Column(name = "public_id")
+    private String publicId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "lessonId")
     private Set<Exercise> exerciseSet;
     @JoinColumn(name = "course_id", referencedColumnName = "id")
@@ -65,7 +69,6 @@ public class Lesson implements Serializable {
     private Set<LessonAttachment> lessonAttachmentSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "lessonId")
     private Set<LessonStudent> lessonStudentSet;
-
 
     @Transient
     private MultipartFile thumbnailImage;
@@ -87,20 +90,20 @@ public class Lesson implements Serializable {
         this.embedLink = embedLink;
     }
 
-    public MultipartFile getThumbnailImage() {
-        return thumbnailImage;
-    }
-
-    public void setThumbnailImage(MultipartFile thumbnailImage) {
-        this.thumbnailImage = thumbnailImage;
-    }
-
     public List<MultipartFile> getLessonAttachments() {
         return lessonAttachments;
     }
 
     public void setLessonAttachments(List<MultipartFile> lessonAttachments) {
         this.lessonAttachments = lessonAttachments;
+    }
+
+    public MultipartFile getThumbnailImage() {
+        return thumbnailImage;
+    }
+
+    public void setThumbnailImage(MultipartFile thumbnailImage) {
+        this.thumbnailImage = thumbnailImage;
     }
 
     public Integer getId() {
@@ -141,6 +144,14 @@ public class Lesson implements Serializable {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getPublicId() {
+        return publicId;
+    }
+
+    public void setPublicId(String publicId) {
+        this.publicId = publicId;
     }
 
     public Set<Exercise> getExerciseSet() {
@@ -215,5 +226,5 @@ public class Lesson implements Serializable {
     public String toString() {
         return "com.ou.pojo.Lesson[ id=" + id + " ]";
     }
-    
+
 }

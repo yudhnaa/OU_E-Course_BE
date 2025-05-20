@@ -15,6 +15,17 @@
 <body>
 <div layout:fragment="content">
     <div class="row">
+        <!-- Danger Alert -->
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${msg_error}">
+            <b th:text="${msg_error}">Dismissible danger Alert </b>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Success Alert -->
+        <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${msg_success}">
+            <b th:text="${msg_success}"></b>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
         <div class="col-lg-12">
             <div class="card mt-n4 mx-n4 border-0">
                 <div class="bg-soft-primary">
@@ -142,67 +153,21 @@
                 <div class="row">
                     <div class="col-xxl-9">
                         <div id="job-list">
-
-<!--                            <div class="card joblist-card">-->
-<!--                                <div class="card-body">-->
-<!--                                    <div class="d-flex mb-4">-->
-<!--                                        <div class="avatar-sm">-->
-<!--                                            <div class="avatar-title bg-light rounded"><img-->
-<!--                                                    src="assets/images/companies/img-7.png" alt=""-->
-<!--                                                    class="avatar-xxs companyLogo-img"></div>-->
-<!--                                        </div>-->
-<!--                                        <div class="ms-3 flex-grow-1"><img src="assets/images/small/img-8.jpg" alt=""-->
-<!--                                                                           class="d-none cover-img"> <a href="#!"><h5-->
-<!--                                                class="job-title">Product Designer</h5></a>-->
-<!--                                            <p class="company-name text-muted mb-0">Themesbrand</p></div>-->
-<!--                                        <div>-->
-<!--                                            <button type="button" class="btn btn-ghost-primary btn-icon custom-toggle"-->
-<!--                                                    data-bs-toggle="button"><span class="icon-on"><i-->
-<!--                                                    class="ri-bookmark-line"></i></span> <span class="icon-off"><i-->
-<!--                                                    class="ri-bookmark-fill"></i></span></button>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                    <p class="text-muted job-description">A UI/UX designer's job is to create-->
-<!--                                        user-friendly interfaces that enable users to understand how to use complex-->
-<!--                                        technical products. If you're passionate about the latest technology trends and-->
-<!--                                        devices, you'll find great fulfillment in being involved in the design process-->
-<!--                                        for the next hot gadget.</p>-->
-<!--                                    <div><span class="badge bg-primary-subtle text-primary me-1">Design</span><span-->
-<!--                                            class="badge bg-primary-subtle text-primary me-1">Remote</span><span-->
-<!--                                            class="badge bg-primary-subtle text-primary me-1">UI/UX Designer</span><span-->
-<!--                                            class="badge bg-primary-subtle text-primary me-1">Designer</span></div>-->
-<!--                                </div>-->
-<!--                                <div class="card-footer border-top-dashed">-->
-<!--                                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">-->
-<!--                                        <div><i class="ri-briefcase-2-line align-bottom me-1"></i> <span-->
-<!--                                                class="job-type">Full Time</span></div>-->
-<!--                                        <div class="d-none"><span class="job-experience">1 - 2 Year</span></div>-->
-<!--                                        <div><i class="ri-map-pin-2-line align-bottom me-1"></i> <span-->
-<!--                                                class="job-location">United Kingdom</span></div>-->
-<!--                                        <div><i class="ri-user-3-line align-bottom me-1"></i> 74 Applied</div>-->
-<!--                                        <div><i class="ri-time-line align-bottom me-1"></i> <span class="job-postdate">15 Sep, 2022</span>-->
-<!--                                        </div>-->
-<!--                                        <div><a href="#!" class="btn btn-primary viewjob-list">View More <i-->
-<!--                                                class="ri-arrow-right-line align-bottom ms-1"></i></a></div>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </div>-->
-
                             <!-- Lesson List -->
                             <div th:each="lesson : ${lessons}" class="card joblist-card">
                                 <div class="card-body">
                                     <div class="d-flex mb-4">
                                         <div class="avatar-sm">
                                             <div class="avatar-title bg-light rounded">
-<!--                                                <img th:if="${lesson.image}" th:src="@{'/images/lessons/' + ${lesson.image}}" alt=""-->
-<!--                                                     class="avatar-xxs companyLogo-img">-->
-<!--                                                <img th:unless="${lesson.image}" th:src="@{/assets/images/default-lesson.png}" alt=""-->
-<!--                                                     class="avatar-xxs companyLogo-img">-->
+                                                <img th:if="${lesson.image}" th:src="${lesson.image}" alt=""
+                                                     class="avatar-xxs companyLogo-img">
+                                                <img th:unless="${lesson.image}" th:src="@{/assets/images/default-lesson.png}" alt=""
+                                                     class="avatar-xxs companyLogo-img">
                                             </div>
                                         </div>
                                         <div class="ms-3 flex-grow-1">
-<!--                                            <img th:if="${lesson.image}" th:src="@{'/images/lessons/' + ${lesson.image}}" alt=""-->
-<!--                                                 class="d-none cover-img">-->
+                                            <img th:if="${lesson.image}" th:src="@{'/images/lessons/' + ${lesson.image}}" alt=""
+                                                 class="d-none cover-img">
                                             <a th:href="@{'/lessons/' + ${lesson.id}}">
                                                 <h5 class="job-title" th:text="${lesson.name}">Lesson Name</h5>
                                             </a>
@@ -242,7 +207,7 @@
                                             <span th:text="${lesson.userUploadIdFirstName + ' ' + lesson.userUploadIdLastName}">Instructor</span>
                                         </div>
                                         <div>
-                                            <a th:href="@{'/lessons/' + ${lesson.id}}" class="btn btn-primary viewjob-list">
+                                            <a th:href="@{/admin/course/{courseId}/lesson/{lessonId}(courseId=${course.id},lessonId=${lesson.id})}" class="btn btn-primary viewjob-list">
                                                 View Lesson <i class="ri-arrow-right-line align-bottom ms-1"></i>
                                             </a>
                                         </div>
@@ -255,18 +220,51 @@
 
                         <div class="row g-0 justify-content-end mb-4" id="pagination-element">
                             <!-- end col -->
-                            <div class="col-sm-6">
-                                <div
-                                        class="pagination-block pagination pagination-separated justify-content-center justify-content-sm-end mb-sm-0">
-                                    <div class="page-item">
-                                        <a href="javascript:void(0);" class="page-link" id="page-prev">Previous</a>
-                                    </div>
-                                    <span id="page-num" class="pagination"></span>
-                                    <div class="page-item">
-                                        <a href="javascript:void(0);" class="page-link" id="page-next">Next</a>
+                            <div class="row g-0 text-center text-sm-start align-items-center mb-3">
+                                <div class="col-sm-6">
+                                    <div>
+                                        <p class="mb-sm-0" th:text="'Showing ' + ${startIndex} + ' to ' + ${endIndex} + ' of ' + ${totalItems} + ' entries'"></p>
                                     </div>
                                 </div>
-                            </div><!-- end col -->
+                                <div class="col-sm-6">
+                                    <ul class="pagination pagination-separated justify-content-center justify-content-sm-end mb-sm-0">
+
+                                        <!-- Previous page -->
+                                        <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                                            <a class="page-link"
+                                               th:if="${currentPage > 1}"
+                                               th:href="@{'/admin/course/{courseId}/lessons'(page=${currentPage - 1}, courseId=${course.Id})}">
+                                                <i class="mdi mdi-chevron-left"></i>
+                                            </a>
+                                            <a class="page-link" th:if="${currentPage == 1}">
+                                                <i class="mdi mdi-chevron-left"></i>
+                                            </a>
+                                        </li>
+
+                                        <!-- Page numbers -->
+                                        <li class="page-item"
+                                            th:each="page : ${#numbers.sequence(1, totalPages)}"
+                                            th:classappend="${page == currentPage} ? 'active' : ''">
+                                            <a class="page-link"
+                                               th:href="@{'/admin/course/{courseId}/lessons'(page=${page}, courseId=${course.Id})}"
+                                               th:text="${page}"></a>
+                                        </li>
+
+                                        <!-- Next page -->
+                                        <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                                            <a class="page-link"
+                                               th:if="${currentPage < totalPages}"
+                                               th:href="@{'/admin/course/{courseId}/lessons'(page=${currentPage + 1}, courseId=${course.Id})}">
+                                                <i class="mdi mdi-chevron-right"></i>
+                                            </a>
+                                            <a class="page-link" th:if="${currentPage == totalPages}">
+                                                <i class="mdi mdi-chevron-right"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                            </div>
                         </div>
                         <!-- end row -->
                     </div>

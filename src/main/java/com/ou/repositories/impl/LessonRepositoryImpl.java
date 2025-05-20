@@ -149,11 +149,15 @@ public class LessonRepositoryImpl implements LessonRepository {
     @Transactional(readOnly = true)
     public long countLessonsByCourse(Integer courseId) {
         Session session = sessionFactory.getObject().getCurrentSession();
+
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Long> query = builder.createQuery(Long.class);
+
         Root<Lesson> root = query.from(Lesson.class);
+
         query.where(builder.equal(root.get("courseId").get("id"), courseId));
         query.select(builder.count(root));
+        
         return session.createQuery(query).getSingleResult();
     }
 

@@ -21,13 +21,14 @@ import java.util.Set;
 @Entity
 @Table(name = "course")
 @NamedQueries({
-        @NamedQuery(name = "Course.findAll", query = "SELECT c FROM Course c"),
-        @NamedQuery(name = "Course.findById", query = "SELECT c FROM Course c WHERE c.id = :id"),
-        @NamedQuery(name = "Course.findByName", query = "SELECT c FROM Course c WHERE c.name = :name"),
-        @NamedQuery(name = "Course.findByDateAdded", query = "SELECT c FROM Course c WHERE c.dateAdded = :dateAdded"),
-        @NamedQuery(name = "Course.findByDateStart", query = "SELECT c FROM Course c WHERE c.dateStart = :dateStart"),
-        @NamedQuery(name = "Course.findByDateEnd", query = "SELECT c FROM Course c WHERE c.dateEnd = :dateEnd"),
-        @NamedQuery(name = "Course.findByImage", query = "SELECT c FROM Course c WHERE c.image = :image")})
+    @NamedQuery(name = "Course.findAll", query = "SELECT c FROM Course c"),
+    @NamedQuery(name = "Course.findById", query = "SELECT c FROM Course c WHERE c.id = :id"),
+    @NamedQuery(name = "Course.findByName", query = "SELECT c FROM Course c WHERE c.name = :name"),
+    @NamedQuery(name = "Course.findByImage", query = "SELECT c FROM Course c WHERE c.image = :image"),
+    @NamedQuery(name = "Course.findByPublicId", query = "SELECT c FROM Course c WHERE c.publicId = :publicId"),
+    @NamedQuery(name = "Course.findByDateAdded", query = "SELECT c FROM Course c WHERE c.dateAdded = :dateAdded"),
+    @NamedQuery(name = "Course.findByDateStart", query = "SELECT c FROM Course c WHERE c.dateStart = :dateStart"),
+    @NamedQuery(name = "Course.findByDateEnd", query = "SELECT c FROM Course c WHERE c.dateEnd = :dateEnd")})
 public class Course implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -45,6 +46,12 @@ public class Course implements Serializable {
     @Size(max = 65535)
     @Column(name = "description")
     private String description;
+    @Size(max = 255)
+    @Column(name = "image")
+    private String image;
+    @Size(max = 100)
+    @Column(name = "public_id")
+    private String publicId;
     @Column(name = "date_added")
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dateAdded;
@@ -54,9 +61,6 @@ public class Course implements Serializable {
     @Column(name = "date_end")
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dateEnd;
-    @Size(max = 255)
-    @Column(name = "image")
-    private String image;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseId")
     private Set<Exercise> exerciseSet;
     @JoinColumn(name = "created_by_admin_id", referencedColumnName = "id")
@@ -73,8 +77,10 @@ public class Course implements Serializable {
     private Set<Lesson> lessonSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseId")
     private Set<CourseStudent> courseStudentSet;
+
     @Transient
     private MultipartFile imageFile;
+
 
     public Course() {
     }
@@ -86,6 +92,14 @@ public class Course implements Serializable {
     public Course(Integer id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public MultipartFile getImageFile() {
+        return imageFile;
+    }
+
+    public void setImageFile(MultipartFile imageFile) {
+        this.imageFile = imageFile;
     }
 
     public Integer getId() {
@@ -112,6 +126,22 @@ public class Course implements Serializable {
         this.description = description;
     }
 
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getPublicId() {
+        return publicId;
+    }
+
+    public void setPublicId(String publicId) {
+        this.publicId = publicId;
+    }
+
     public LocalDateTime getDateAdded() {
         return dateAdded;
     }
@@ -134,14 +164,6 @@ public class Course implements Serializable {
 
     public void setDateEnd(LocalDateTime dateEnd) {
         this.dateEnd = dateEnd;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
     }
 
     public Set<Exercise> getExerciseSet() {
@@ -198,14 +220,6 @@ public class Course implements Serializable {
 
     public void setCourseStudentSet(Set<CourseStudent> courseStudentSet) {
         this.courseStudentSet = courseStudentSet;
-    }
-
-    public MultipartFile getImageFile() {
-        return imageFile;
-    }
-
-    public void setImageFile(MultipartFile imageFile) {
-        this.imageFile = imageFile;
     }
 
     @Override

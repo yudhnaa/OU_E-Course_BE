@@ -15,10 +15,12 @@
 <div layout:fragment="content">
     <div th:replace="~{partials/page-title :: page-title('Create Lesson','Course')}"></div>
     <form id="courseForm"
-          th:action="@{/admin/course/{courseId}/lesson/create(courseId=${course.id})}"
+          th:action="@{/admin/course/{courseId}/lesson/{lessonId}/update(courseId=${course.id},lessonId=${lesson.id})}"
           th:object="${lesson}"
           method="post"
           enctype="multipart/form-data">
+
+        <input type="hidden" th:field="*{id}"/>
 
         <!-- Hidden userUploadId -->
         <input type="hidden" th:value="${authUser.id}" id="userUploadId" name="userUploadId" />
@@ -87,6 +89,20 @@
                     <div class="card-body">
                         <div>
                             <p class="text-muted">Add Attached files here.</p>
+
+                            <div th:each="lessonAttachment, iterStat : ${currentlessonAttachments}">
+                                <div class="d-flex align-items-center mb-2">
+                                    <span th:text="${lessonAttachment.attachmentId.name}">File name</span>
+
+                                    <!-- Nút xoá (ẩn input id để xác định xoá file nào) -->
+                                    <input type="hidden" name="notDeleteLessonAttachmentIds" th:value="${lessonAttachment.id}" />
+                                    <button type="button" class="btn btn-sm btn-danger ms-2"
+                                            onclick="this.closest('div').remove();">
+                                        Xoá
+                                    </button>
+                                </div>
+                            </div>
+
                             <div class="dropzone">
                                 <div class="fallback">
                                     <input type="file" th:field="*{lessonAttachments}" multiple="multiple" accept=".pdf,.png,.jpg,.jpeg,.docx,.xlsx">
@@ -114,8 +130,8 @@
                 <!-- ACTION BUTTONS -->
                 <div class="text-end mb-4">
                     <button type="submit" class="btn btn-danger w-sm">Delete</button>
-                    <button type="submit" class="btn btn-secondary w-sm">Draft</button>
-                    <button type="submit" class="btn btn-success w-sm">Create</button>
+<!--                    <button type="submit" class="btn btn-secondary w-sm">Draft</button>-->
+                    <button type="submit" class="btn btn-success w-sm">Update</button>
                 </div>
             </div>
 

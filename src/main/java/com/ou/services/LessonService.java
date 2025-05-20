@@ -21,9 +21,9 @@ public interface LessonService {
     List<Lesson> getLessonsByUploadUser(Integer userId, Map<String, String> params);
 
     // Update operation
-    Lesson updateLesson(Lesson lesson) throws Exception;
+    public Lesson updateLesson(Lesson lesson, List<Long> notDeleteLessonAttachmentIds) throws Exception;
 
-    // Delete operation
+        // Delete operation
     boolean deleteLesson(Integer id) throws Exception;
 
     // Count methods for pagination

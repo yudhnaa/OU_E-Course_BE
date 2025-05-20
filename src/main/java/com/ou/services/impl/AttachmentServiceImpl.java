@@ -1,8 +1,7 @@
 package com.ou.services.impl;
 
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 import com.ou.exceptions.NotFoundException;
+import com.ou.mappers.CloudinaryHelper;
 import com.ou.pojo.Attachment;
 import com.ou.repositories.AttachmentRepository;
 import com.ou.services.AttachmentService;
@@ -29,8 +28,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     private LocalizationService localizationService;
 
     @Autowired
-    private Cloudinary cloudinary;
-    
+    private CloudinaryHelper cloudinaryHelper;
     @Override
     public Attachment addAttachment(Attachment attachment) throws IOException {
         // Validate attachment input
@@ -43,8 +41,9 @@ public class AttachmentServiceImpl implements AttachmentService {
 
         // Upload file to Cloudinary if provided
         if (attachment.getFile() != null && !attachment.getFile().isEmpty()) {
-            String cloudinaryLink = uploadFileToCloudinary(attachment.getFile());
-            attachment.setLink(cloudinaryLink);
+            Map<String, String> imageUrl = cloudinaryHelper.uploadFile(attachment.getFile());
+            attachment.setLink(imageUrl.get("url"));
+            attachment.setPublicId(imageUrl.get("publicId"));
         } else if (attachment.getLink() == null || attachment.getLink().trim().isEmpty()) {
             throw new IllegalArgumentException(localizationService.getMessage("attachment.link.empty", LocaleContextHolder.getLocale()));
         }
@@ -98,55 +97,61 @@ public class AttachmentServiceImpl implements AttachmentService {
                 ));
     }
     
-    @Override
-    public Attachment updateAttachment(Attachment attachment) {
-        // Validate attachment input
-        if (attachment == null) {
-            throw new IllegalArgumentException(localizationService.getMessage("attachment.null", LocaleContextHolder.getLocale()));
-        }
-        if (attachment.getId() == null) {
-            throw new IllegalArgumentException(localizationService.getMessage("attachment.id.null", LocaleContextHolder.getLocale()));
-        }
-        if (attachment.getName() == null || attachment.getName().trim().isEmpty()) {
-            throw new IllegalArgumentException(localizationService.getMessage("attachment.name.empty", LocaleContextHolder.getLocale()));
-        }
-        
-        // Check if attachment exists
-        Attachment existingAttachment = getAttachmentById(attachment.getId());
-        
-        // Upload new file if provided
-        MultipartFile file = attachment.getFile();
-        if (file != null && !file.isEmpty()) {
-            try {
-                String cloudinaryLink = uploadFileToCloudinary(file);
-                attachment.setLink(cloudinaryLink);
-            } catch (IOException e) {
-                throw new RuntimeException(localizationService.getMessage("cloudinary.upload.error", LocaleContextHolder.getLocale()), e);
-            }
-        } else if (attachment.getLink() == null || attachment.getLink().trim().isEmpty()) {
-            // Keep existing link if new link is not provided
-            attachment.setLink(existingAttachment.getLink());
-        }
-
-        // Check for name uniqueness if name is changed
-        if (!attachment.getName().equals(existingAttachment.getName())) {
-            Optional<Attachment> attachmentWithSameName = attachmentRepository.getAttachmentByName(attachment.getName());
-            if (attachmentWithSameName.isPresent() && !attachmentWithSameName.get().getId().equals(attachment.getId())) {
-                throw new IllegalArgumentException(localizationService.getMessage("attachment.name.duplicate", LocaleContextHolder.getLocale()));
-            }
-        }
-        
-        return attachmentRepository.updateAttachment(attachment);
-    }
+//    @Override
+//    public Attachment updateAttachment(Attachment attachment) {
+//        // Validate attachment input
+//        if (attachment == null) {
+//            throw new IllegalArgumentException(localizationService.getMessage("attachment.null", LocaleContextHolder.getLocale()));
+//        }
+//        if (attachment.getId() == null) {
+//            throw new IllegalArgumentException(localizationService.getMessage("attachment.id.null", LocaleContextHolder.getLocale()));
+//        }
+//        if (attachment.getName() == null || attachment.getName().trim().isEmpty()) {
+//            throw new IllegalArgumentException(localizationService.getMessage("attachment.name.empty", LocaleContextHolder.getLocale()));
+//        }
+//
+//        // Check if attachment exists
+//        Attachment existingAttachment = getAttachmentById(attachment.getId());
+//
+//        // Upload new file if provided
+//        MultipartFile file = attachment.getFile();
+//        if (file != null && !file.isEmpty()) {
+//            try {
+//
+//                Map<String, String> imageUrl = cloudinaryHelper.uploadFile(file);
+//                attachment.setLink(imageUrl.get("url"));
+//                attachment.setPublicId(imageUrl.get("publicId"));
+//
+//
+//            } catch (IOException e) {
+//                throw new RuntimeException(localizationService.getMessage("cloudinary.upload.error", LocaleContextHolder.getLocale()), e);
+//            }
+//        } else if (attachment.getLink() == null || attachment.getLink().trim().isEmpty()) {
+//            // Keep existing link if new link is not provided
+//            attachment.setLink(existingAttachment.getLink());
+//        }
+//
+//        // Check for name uniqueness if name is changed
+//        if (!attachment.getName().equals(existingAttachment.getName())) {
+//            Optional<Attachment> attachmentWithSameName = attachmentRepository.getAttachmentByName(attachment.getName());
+//            if (attachmentWithSameName.isPresent() && !attachmentWithSameName.get().getId().equals(attachment.getId())) {
+//                throw new IllegalArgumentException(localizationService.getMessage("attachment.name.duplicate", LocaleContextHolder.getLocale()));
+//            }
+//        }
+//
+//        return attachmentRepository.updateAttachment(attachment);
+//    }
     
     @Override
-    public boolean deleteAttachment(Integer id) {
+    public boolean deleteAttachment(Integer id) throws IOException {
         if (id == null) {
             throw new IllegalArgumentException(localizationService.getMessage("attachment.id.null", LocaleContextHolder.getLocale()));
         }
-        
+
         // Check if attachment exists before attempting to delete
-        getAttachmentById(id);
+        Attachment cur = getAttachmentById(id);
+
+        cloudinaryHelper.deleteFile(cur.getPublicId());
         
         return attachmentRepository.deleteAttachment(id);
     }
@@ -159,15 +164,5 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Override
     public long countSearchResults(Map<String, String> filters) {
         return attachmentRepository.countSearchResults(filters);
-    }
-
-    private String uploadFileToCloudinary(MultipartFile file) throws IOException {
-        try {
-            Map res = cloudinary.uploader().upload(file.getBytes(),
-                    ObjectUtils.asMap("resource_type", "auto"));
-            return res.get("secure_url").toString();
-        } catch (IOException ex) {
-            throw new IOException(localizationService.getMessage("cloudinary.upload.error", LocaleContextHolder.getLocale()));
-        }
     }
 }

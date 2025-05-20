@@ -23,7 +23,7 @@ import java.util.Set;
 
 /**
  *
- * @author ADMIN
+ * @author yudhna
  */
 @Entity
 @Table(name = "exercise_score_status")
@@ -119,5 +119,5 @@ public class ExerciseScoreStatus implements Serializable {
     public String toString() {
         return "com.ou.pojo.ExerciseScoreStatus[ id=" + id + " ]";
     }
-    
+
 }

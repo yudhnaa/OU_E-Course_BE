@@ -58,6 +58,23 @@ public class LessonAttachmentRepositoryImpl implements LessonAttachmentRepositor
     }
 
     @Override
+    public List<LessonAttachment> getLessonAttachmentsByLesson(Integer lessonId) {
+        Session session = factory.getObject().getCurrentSession();
+        try {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<LessonAttachment> query = builder.createQuery(LessonAttachment.class);
+
+            Root<LessonAttachment> root = query.from(LessonAttachment.class);
+            query.select(root).where(builder.equal(root.get("lessonId").get("id"), lessonId));
+
+            return session.createQuery(query).getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Collections.emptyList();
+        }
+    }
+
+    @Override
     public LessonAttachment updateLessonAttachment(LessonAttachment lessonAttachment) {
         Session session = factory.getObject().getCurrentSession();
         try {

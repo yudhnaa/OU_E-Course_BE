@@ -1,12 +1,11 @@
 package com.ou.services.impl;
 
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
-import com.ou.exceptions.NotFoundException;
+import com.ou.mappers.CloudinaryHelper;
 import com.ou.pojo.Course;
 import com.ou.repositories.CourseRepository;
 import com.ou.services.CourseService;
 import com.ou.services.LocalizationService;
+import com.ou.utils.ValidateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
@@ -16,8 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Service
 @Transactional
@@ -27,10 +24,10 @@ public class CourseServiceImpl implements CourseService {
     private CourseRepository courseRepository;
 
     @Autowired
-    private Cloudinary cloudinary;
+    private LocalizationService localizationService;
 
     @Autowired
-    private LocalizationService localizationService;
+    private CloudinaryHelper cloudinaryHelper;
 
 
     @Override
@@ -57,8 +54,9 @@ public class CourseServiceImpl implements CourseService {
 
         //Upload image to Cloudinary if provided
         if (!course.getImageFile().isEmpty()){
-            String imageFileUrl = uploadImageToCloudinary(course.getImageFile());
-            course.setImage(imageFileUrl);
+            Map<String, String> imageUrl = cloudinaryHelper.uploadFile(course.getImageFile());
+            course.setImage(imageUrl.get("url"));
+            course.setPublicId(imageUrl.get("publicId"));
         }
         
         return courseRepository.addCourse(course);
@@ -86,11 +84,17 @@ public class CourseServiceImpl implements CourseService {
             throw new IllegalArgumentException(localizationService.getMessage("course.invalidData", LocaleContextHolder.getLocale()));
         }
 
-        //Upload image to Cloudinary if provided
+        //Upload and delete image to Cloudinary if provided
         if (!course.getImageFile().isEmpty()){
-            String imageFileUrl = uploadImageToCloudinary(course.getImageFile());
-            course.setImage(imageFileUrl);
+            Map<String, String> imageUrl = cloudinaryHelper.uploadFile(course.getImageFile());
+            course.setImage(imageUrl.get("url"));
+            course.setPublicId(imageUrl.get("publicId"));
+
+            if (course.getPublicId() != null) {
+                cloudinaryHelper.deleteFile(course.getPublicId());
+            }
         }
+
 
         // not allow to update dateAdded
         course.setDateAdded(courseRepository.getCourseById(course.getId()).get().getDateAdded());
@@ -129,7 +133,7 @@ public class CourseServiceImpl implements CourseService {
     @Transactional(readOnly = true)
     public List<Course> getCourses(Map<String, String> params) {
         // Validate pagination parameters if provided
-        validatePaginationParams(params);
+        ValidateUtils.validatePaginationParams(params);
         return courseRepository.getCourses(params);
     }
 
@@ -142,8 +146,8 @@ public class CourseServiceImpl implements CourseService {
     @Override
     @Transactional(readOnly = true)
     public List<Course> searchCourses(Map<String, String> filters, Map<String, String> params) {
-        // Validate pagination parameters if provided
-        validatePaginationParams(params);
+        // Validate pagination params
+        ValidateUtils.validatePaginationParams(params);
         
         // Validate filter parameters
         validateFilterParams(filters);
@@ -176,8 +180,8 @@ public class CourseServiceImpl implements CourseService {
             throw new IllegalArgumentException("Category ID cannot be null");
         }
         
-        // Validate pagination parameters if provided
-        validatePaginationParams(params);
+        // Validate pagination params
+        ValidateUtils.validatePaginationParams(params);
         
         return courseRepository.getCoursesByCategory(categoryId, params);
     }
@@ -198,8 +202,8 @@ public class CourseServiceImpl implements CourseService {
             throw new IllegalArgumentException("User ID cannot be null");
         }
         
-        // Validate pagination parameters if provided
-        validatePaginationParams(params);
+        // Validate pagination params
+        ValidateUtils.validatePaginationParams(params);
         
         return courseRepository.getCoursesCreatedByUser(userId, params);
     }
@@ -268,35 +272,7 @@ public class CourseServiceImpl implements CourseService {
         // If only one date is set or none are set, consider it valid
         return true;
     }
-    
-    private void validatePaginationParams(Map<String, String> params) {
-        if (params == null) {
-            return;
-        }
-        
-        if (params.containsKey("page")) {
-            try {
-                int page = Integer.parseInt(params.get("page"));
-                if (page < 1) {
-                    throw new IllegalArgumentException("Page number must be greater than 0");
-                }
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Invalid page number format");
-            }
-        }
-        
-        if (params.containsKey("pageSize")) {
-            try {
-                int pageSize = Integer.parseInt(params.get("pageSize"));
-                if (pageSize < 1) {
-                    throw new IllegalArgumentException("Page size must be greater than 0");
-                }
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Invalid page size format");
-            }
-        }
-    }
-    
+
     private void validateFilterParams(Map<String, String> filters) {
         if (filters == null) {
             return;
@@ -312,19 +288,6 @@ public class CourseServiceImpl implements CourseService {
                     throw new IllegalArgumentException("Invalid " + field + " format");
                 }
             }
-        }
-        
-        // Add other filter validations as needed
-        // For example: date format validation for dateStart and dateEnd
-    }
-
-    private String uploadImageToCloudinary(MultipartFile file) throws IOException {
-        try {
-            Map res = cloudinary.uploader().upload(file.getBytes(),
-                    ObjectUtils.asMap("resource_type", "auto"));
-            return res.get("secure_url").toString();
-        } catch (IOException ex) {
-            throw  new IOException(localizationService.getMessage("cloudinary.upload.error", LocaleContextHolder.getLocale()));
         }
     }
 }
