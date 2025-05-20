@@ -157,8 +157,9 @@ public class LessonRepositoryImpl implements LessonRepository {
 
         query.where(builder.equal(root.get("courseId").get("id"), courseId));
         query.select(builder.count(root));
-        
-        return session.createQuery(query).getSingleResult();
+
+        long res = session.createQuery(query).getSingleResult();
+        return res;
     }
 
     @Override

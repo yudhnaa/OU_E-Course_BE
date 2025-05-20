@@ -228,36 +228,21 @@
                                 </div>
                                 <div class="col-sm-6">
                                     <ul class="pagination pagination-separated justify-content-center justify-content-sm-end mb-sm-0">
-
-                                        <!-- Previous page -->
                                         <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                                            <a class="page-link"
-                                               th:if="${currentPage > 1}"
-                                               th:href="@{'/admin/course/{courseId}/lessons'(page=${currentPage - 1}, courseId=${course.Id})}">
+                                            <a th:if="${currentPage > 1}"
+                                               th:href="@{'/admin/course/{courseId}/lessons?page=' + (${currentPage} - 1)(courseId=${course.id})}"
+                                               class="page-link">
                                                 <i class="mdi mdi-chevron-left"></i>
                                             </a>
-                                            <a class="page-link" th:if="${currentPage == 1}">
+                                            <a th:unless="${currentPage > 1}" href="#" class="page-link disabled">
                                                 <i class="mdi mdi-chevron-left"></i>
                                             </a>
                                         </li>
-
-                                        <!-- Page numbers -->
-                                        <li class="page-item"
-                                            th:each="page : ${#numbers.sequence(1, totalPages)}"
-                                            th:classappend="${page == currentPage} ? 'active' : ''">
-                                            <a class="page-link"
-                                               th:href="@{'/admin/course/{courseId}/lessons'(page=${page}, courseId=${course.Id})}"
-                                               th:text="${page}"></a>
+                                        <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}" th:classappend="${page == currentPage} ? 'active'">
+                                            <a th:href="@{'/admin/course/{courseId}/lessons?page=' + ${page}(courseId=${course.Id})}" class="page-link" th:text="${page}"></a>
                                         </li>
-
-                                        <!-- Next page -->
                                         <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                                            <a class="page-link"
-                                               th:if="${currentPage < totalPages}"
-                                               th:href="@{'/admin/course/{courseId}/lessons'(page=${currentPage + 1}, courseId=${course.Id})}">
-                                                <i class="mdi mdi-chevron-right"></i>
-                                            </a>
-                                            <a class="page-link" th:if="${currentPage == totalPages}">
+                                            <a th:href="@{'/admin/course/{courseId}/lessons?page=' + (${currentPage} + 1)(courseId=${course.id})}" class="page-link">
                                                 <i class="mdi mdi-chevron-right"></i>
                                             </a>
                                         </li>
@@ -270,8 +255,6 @@
                     </div>
                     <!--end col-->
                 </div>
-
-
                 <!--        end tab-pane-->
             </div>
         </div>

@@ -68,7 +68,7 @@ public class LessonController {
         params.put("page", String.valueOf(pagination.getCurrentPage()));
 
         // Get the lessons for the course
-        List<Lesson> lessons = lessonService.getLessons(params);
+        List<Lesson> lessons = lessonService.getLessonsByCourse(course.get().getId(), params);
         if (lessons.isEmpty()) {
             // If no lessons are found, redirect to the course list with an error message
             redirectAttributes.addFlashAttribute("msg_error", localizationService.getMessage("lesson.notFound", LocaleContextHolder.getLocale()));
@@ -250,5 +250,44 @@ public class LessonController {
         // Redirect to the course page with a success message
         redirectAttributes.addFlashAttribute("msg_success", localizationService.getMessage("lesson.update.success", LocaleContextHolder.getLocale()));
         return "redirect:/admin/course/" + courseId + "/lesson/" + lessonId;
+    }
+
+    @PostMapping("/course/{courseId}/lesson/{lessonId}/delete")
+    public String deleteLesson(
+            Model model,
+            @PathVariable("courseId") Integer courseId,
+            @PathVariable("lessonId") Integer lessonId,
+            RedirectAttributes redirectAttributes
+    ) throws Exception {
+
+        // Get the course by ID
+        Optional<Course> course = courseService.getCourseById(courseId);
+        if (course.isEmpty()) {
+            // If the course is not found, redirect to the course list with an error message
+            redirectAttributes.addFlashAttribute("msg_error", localizationService.getMessage("course.notFound", LocaleContextHolder.getLocale()));
+            return "redirect:/admin/course";
+        }
+
+        // Get the lesson by ID
+        Optional<Lesson> lesson = lessonService.getLessonById(lessonId);
+        if (lesson.isEmpty()) {
+            // If the lesson is not found, redirect to the course list with an error message
+            redirectAttributes.addFlashAttribute("msg_error", localizationService.getMessage("lesson.notFound", LocaleContextHolder.getLocale()));
+            return "redirect:/admin/course/" + courseId + "/lessons";
+        }
+
+        // Delete the lesson
+        boolean deleted = lessonService.deleteLesson(lessonId);
+
+        // Check if the lesson was deleted successfully
+        if (!deleted) {
+            // If the lesson deletion failed, redirect to the update lesson view with an error message
+            redirectAttributes.addFlashAttribute("msg_error", localizationService.getMessage("lesson.delete.error", LocaleContextHolder.getLocale()));
+            return "redirect:/admin/course/" + courseId + "/lesson/" + lessonId;
+        }
+
+        // Redirect to the course page with a success message
+        redirectAttributes.addFlashAttribute("msg_success", localizationService.getMessage("lesson.delete.success", LocaleContextHolder.getLocale()));
+        return "redirect:/admin/course/" + courseId + "/lessons";
     }
 }
