@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -23,7 +23,7 @@ public class StudentDto implements Serializable {
     @Size(min = 1, max = 50)
     private String firstName;
     @NotNull
-    private Date birthday;
+    private LocalDateTime birthday;
     @NotNull
     @Size(min = 1, max = 50)
     private String username;
@@ -41,7 +41,7 @@ public class StudentDto implements Serializable {
     public StudentDto() {
     }
 
-    public StudentDto(Integer id, String lastName, String firstName, Date birthday, String username, String password, String avatar, String email, Integer userRoleIdId, String userRoleIdName) {
+    public StudentDto(Integer id, String lastName, String firstName, LocalDateTime birthday, String username, String password, String avatar, String email, Integer userRoleIdId, String userRoleIdName) {
         this.id = id;
         this.lastName = lastName;
         this.firstName = firstName;
@@ -75,7 +75,7 @@ public class StudentDto implements Serializable {
         return avatar;
     }
 
-    public Date getBirthday() {
+    public LocalDateTime getBirthday() {
         return birthday;
     }
 
@@ -120,7 +120,7 @@ public class StudentDto implements Serializable {
         this.avatar = avatar;
     }
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(LocalDateTime birthday) {
         this.birthday = birthday;
     }
 
