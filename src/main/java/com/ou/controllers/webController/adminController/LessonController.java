@@ -63,7 +63,8 @@ public class LessonController {
         }
 
         // pagination
-        long total = lessonService.countLessonsByCourse(course.get().getId());
+       long total = lessonService.countLessonsByCourse(course.get().getId(), params);
+
         Pagination pagination = paginationHelper.getPagination(params, total);
         params.put("page", String.valueOf(pagination.getCurrentPage()));
 
@@ -72,7 +73,7 @@ public class LessonController {
         if (lessons.isEmpty()) {
             // If no lessons are found, redirect to the course list with an error message
             redirectAttributes.addFlashAttribute("msg_error", localizationService.getMessage("lesson.notFound", LocaleContextHolder.getLocale()));
-            return "redirect:/admin/courses";
+            return "redirect:/admin/course/"+ courseId +"/lessons";
         }
         List<LessonDto> lessonDtos = lessons.stream().map(l -> lessonMapper.toDto(l)).collect(Collectors.toList());
 
@@ -81,10 +82,11 @@ public class LessonController {
         model.addAttribute("course", course.get());
 
         model.addAttribute("currentPage", pagination.getCurrentPage());
-        model.addAttribute("totalPages", pagination.getTotalPages());
+        model.addAttribute("totalPages", pagination.getTotalPages() > 0 ? pagination.getTotalPages() : 1 );
         model.addAttribute("startIndex", pagination.getStartIndex());
         model.addAttribute("endIndex", pagination.getEndIndex());
         model.addAttribute("totalItems", total);
+        model.addAttribute("filterName", params.getOrDefault("name", " "));
 
         return "dashboard/admin/lesson/lesson_list";
     }

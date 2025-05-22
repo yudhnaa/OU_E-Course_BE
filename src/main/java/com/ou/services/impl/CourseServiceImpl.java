@@ -1,6 +1,6 @@
 package com.ou.services.impl;
 
-import com.ou.mappers.CloudinaryHelper;
+import com.ou.helpers.CloudinaryHelper;
 import com.ou.pojo.Course;
 import com.ou.repositories.CourseRepository;
 import com.ou.services.CourseService;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -137,8 +136,8 @@ public class CourseServiceImpl implements CourseService {
         return courseRepository.getCourses(params);
     }
 
-    @Override
     @Transactional(readOnly = true)
+    @Override
     public long countCourses() {
         return courseRepository.countCourses();
     }

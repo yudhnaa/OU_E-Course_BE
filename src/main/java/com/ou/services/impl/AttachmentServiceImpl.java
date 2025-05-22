@@ -1,7 +1,7 @@
 package com.ou.services.impl;
 
 import com.ou.exceptions.NotFoundException;
-import com.ou.mappers.CloudinaryHelper;
+import com.ou.helpers.CloudinaryHelper;
 import com.ou.pojo.Attachment;
 import com.ou.repositories.AttachmentRepository;
 import com.ou.services.AttachmentService;
@@ -10,12 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 @Transactional

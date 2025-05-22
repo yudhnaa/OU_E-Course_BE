@@ -48,7 +48,14 @@ public class CourseController{
 
     @GetMapping("/courses")
     public String index(Model model, @RequestParam Map<String, String> params) {
-        long totalItems = courseService.countCourses();
+
+        long totalItems;
+        if (params.get("name") != null) {
+            totalItems = courseService.countSearchResults(params);
+        }
+        else
+            totalItems = courseService.countCourses();
+
         Pagination pagination = paginationHelper.getPagination(params, totalItems);
 
         params.put("page", String.valueOf(pagination.getCurrentPage()));
@@ -58,10 +65,11 @@ public class CourseController{
         model.addAttribute("courses", courses);
 
         model.addAttribute("currentPage", pagination.getCurrentPage());
-        model.addAttribute("totalPages", pagination.getTotalPages());
+        model.addAttribute("totalPages", pagination.getTotalPages() > 0 ? pagination.getTotalPages() : 1);
         model.addAttribute("startIndex", pagination.getStartIndex());
         model.addAttribute("endIndex", pagination.getEndIndex());
         model.addAttribute("totalItems", totalItems);
+        model.addAttribute("filterName", params.getOrDefault("name", " "));
 
         return "dashboard/admin/course/course_list";
     }
@@ -97,7 +105,7 @@ public class CourseController{
 
         model.addAttribute("totalItems", totalCourseStudents);
         model.addAttribute("currentPage", pagination.getCurrentPage());
-        model.addAttribute("totalPages", pagination.getTotalPages());
+        model.addAttribute("totalPages", totalCourseStudents > 0 ? totalCourseStudents : 1);
         model.addAttribute("startIndex", pagination.getStartIndex());
         model.addAttribute("endIndex", pagination.getEndIndex());
 

@@ -14,6 +14,7 @@
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/controllers/webController/WebExceptionHandler.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/controllers/webController/adminController/CourseController.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/controllers/webController/adminController/CourseStudentController.java
+/Users/yudhna/E_Course/Backend/src/main/java/com/ou/controllers/webController/adminController/LecturerController.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/controllers/webController/adminController/LessonController.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/controllers/webController/adminController/StudentController.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/controllers/webController/adminController/TestController.java
@@ -26,6 +27,7 @@
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/ExerciseAttachmentDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/ExerciseAttemptDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/ExerciseDto.java
+/Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/LecturerDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/LessonAttachmentDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/LessonDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/LessonStudentDto.java
@@ -46,9 +48,11 @@
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/formBean/CourseStudentForm.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/formatters/CourseFormatter.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/formatters/DateTimeFormatter.java
+/Users/yudhna/E_Course/Backend/src/main/java/com/ou/formatters/LessonFormatter.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/formatters/UserFormatter.java
-/Users/yudhna/E_Course/Backend/src/main/java/com/ou/helpers/Course_1.java
+/Users/yudhna/E_Course/Backend/src/main/java/com/ou/helpers/CloudinaryHelper.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/helpers/PaginationHelper.java
+/Users/yudhna/E_Course/Backend/src/main/java/com/ou/mappers/LecturerMapper.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/mappers/LessonMapper.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/pojo/Admin.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/pojo/Attachment.java
@@ -176,3 +180,4 @@
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/services/impl/UserServiceImpl.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/services/impl/WritingAnswerServiceImpl.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/utils/Pagination.java
+/Users/yudhna/E_Course/Backend/src/main/java/com/ou/utils/ValidateUtils.java

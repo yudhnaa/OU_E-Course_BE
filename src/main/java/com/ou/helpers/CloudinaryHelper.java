@@ -1,4 +1,4 @@
-package com.ou.mappers;
+package com.ou.helpers;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;

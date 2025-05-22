@@ -24,7 +24,6 @@
         <input type="hidden" th:value="${authUser.id}" id="userUploadId" name="userUploadId" />
 
         <div class="row">
-
             <!-- Danger Alert -->
             <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${msg_error}">
                 <b th:text="${msg_error}">Dismissible danger Alert </b>
@@ -36,6 +35,9 @@
                 <b th:text="${msg_success}"></b>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
+        </div>
+
+        <div class="row">
 
             <!-- LEFT -->
             <div class="col-lg-8">

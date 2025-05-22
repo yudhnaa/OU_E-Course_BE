@@ -14,7 +14,7 @@
 <body>
 <div layout:fragment="content">
     <div th:replace="~{partials/page-title :: page-title('Create Lesson','Course')}"></div>
-    <form id="courseForm"
+    <form id="lessonForm"
           th:action="@{/admin/course/{courseId}/lesson/{lessonId}/update(courseId=${course.id},lessonId=${lesson.id})}"
           th:object="${lesson}"
           method="post"
@@ -26,7 +26,6 @@
         <input type="hidden" th:value="${authUser.id}" id="userUploadId" name="userUploadId" />
 
         <div class="row">
-
             <!-- Danger Alert -->
             <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${msg_error}">
                 <b th:text="${msg_error}">Dismissible danger Alert </b>
@@ -38,12 +37,30 @@
                 <b th:text="${msg_success}"></b>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
+        </div>
 
+        <div class="row">
             <!-- LEFT -->
             <div class="col-lg-8">
                 <!-- LESSON INFO -->
                 <div class="card">
                     <div class="card-body">
+                        <!-- Image -->
+                        <div class="mb-3">
+                            <label class="form-label" for="lesson-thumbnail-img">Thumbnail Image</label>
+                            <div class="d-flex align-items-center">
+                                <img th:src="${lesson.image}"
+                                     id="lesson-image-preview"
+                                     class="img-fluid avatar-xl mw-100 h-auto d-block rounded border"
+                                     alt="Lesson Image">
+
+                                <input class="ms-3"
+                                       th:field="*{thumbnailImage}"
+                                       id="lesson-thumbnail-img"
+                                       type="file"
+                                       accept="image/png, image/jpeg, image/gif">
+                            </div>
+                        </div>
                         <!-- Name -->
                         <div class="mb-3">
                             <label class="form-label" for="lesson-title-input">Lesson Name</label>
@@ -53,7 +70,6 @@
                         <!-- Thumbnail -->
                         <div class="mb-3">
                             <label class="form-label" for="lesson-thumbnail-img">Thumbnail Image</label>
-                            <input class="form-control" th:field="*{thumbnailImage}" id="lesson-thumbnail-img" type="file" accept="image/png, image/jpeg, image/gif">
                         </div>
 
                         <!-- Description -->
@@ -78,7 +94,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>`
                 <!-- end card -->
 
                 <!-- ATTACHMENTS -->
@@ -103,25 +119,7 @@
                                 </div>
                             </div>
 
-                            <div class="dropzone">
-                                <div class="fallback">
-                                    <input type="file" th:field="*{lessonAttachments}" multiple="multiple" accept=".pdf,.png,.jpg,.jpeg,.docx,.xlsx">
-                                </div>
-                                <div class="dz-message needsclick">
-                                    <div class="mb-3">
-                                        <i class="display-4 text-muted ri-upload-cloud-2-fill"></i>
-                                    </div>
-
-                                    <h5>Drop files here or click to upload.</h5>
-                                </div>
-                            </div>
-
-                            <ul class="list-unstyled mb-0" id="dropzone-preview">
-                                <li class="mt-2" id="dropzone-preview-list">
-
-                                </li>
-                            </ul>
-                            <!-- end dropzon-preview -->
+                            <input type="file" th:field="*{lessonAttachments}" multiple="multiple" accept=".pdf,.png,.jpg,.jpeg,.docx,.xlsx">
                         </div>
                     </div>
                 </div>
@@ -130,7 +128,7 @@
                 <!-- ACTION BUTTONS -->
                 <div class="text-end mb-4">
                     <!-- Update Button -->
-                    <button type="submit" class="btn btn-success w-sm">Update</button>
+                    <button type="submit" id="submitBtn" class="btn btn-success w-sm">Update</button>
                 </div>
             </div>
 
@@ -183,8 +181,6 @@
 
 <th:block layout:fragment="pagejs">
 
-    <!-- dropzone js -->
-    <script th:src="@{/assets/libs/dropzone/dropzone-min.js}"></script>
     <!-- project-create init -->
     <script th:src="@{/assets/js/lesson-detail.init.js}"></script>
 

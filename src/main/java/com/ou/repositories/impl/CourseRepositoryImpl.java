@@ -68,6 +68,13 @@ public class CourseRepositoryImpl implements CourseRepository {
         CriteriaQuery<Course> query = builder.createQuery(Course.class);
         Root<Course> root = query.from(Course.class);
         query.select(root);
+
+
+        List<Predicate> predicates =  buildSearchPredicates(builder, root, params);
+        // Apply predicates if any
+        if (!predicates.isEmpty()) {
+            query.where(builder.and(predicates.toArray(new Predicate[0])));
+        }
         
         Query<Course> q = session.createQuery(query);
         
@@ -82,7 +89,8 @@ public class CourseRepositoryImpl implements CourseRepository {
         
         return q.getResultList();
     }
-    
+
+
     @Override
     @Transactional(readOnly = true)
     public long countCourses() {
@@ -90,6 +98,7 @@ public class CourseRepositoryImpl implements CourseRepository {
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Long> query = builder.createQuery(Long.class);
         Root<Course> root = query.from(Course.class);
+
         query.select(builder.count(root));
         return session.createQuery(query).getSingleResult();
     }
@@ -140,36 +149,36 @@ public class CourseRepositoryImpl implements CourseRepository {
         query.select(builder.count(root));
         return session.createQuery(query).getSingleResult();
     }
-    
+
     private List<Predicate> buildSearchPredicates(CriteriaBuilder builder, Root<Course> root, Map<String, String> filters) {
         List<Predicate> predicates = new ArrayList<>();
-        
+
         if (filters != null) {
             if (filters.containsKey("name")) {
                 predicates.add(builder.like(root.get("name"), String.format("%%%s%%", filters.get("name"))));
             }
-            
+
             if (filters.containsKey("description")) {
                 predicates.add(builder.like(root.get("description"), String.format("%%%s%%", filters.get("description"))));
             }
-            
+
             if (filters.containsKey("categoryId")) {
                 predicates.add(builder.equal(root.get("categoryId").get("id"), Integer.valueOf(filters.get("categoryId"))));
             }
-            
+
             if (filters.containsKey("createdByUserId")) {
                 predicates.add(builder.equal(root.get("createdByUserId").get("id"), Integer.valueOf(filters.get("createdByUserId"))));
             }
-            
+
             if (filters.containsKey("dateStart")) {
                 predicates.add(builder.greaterThanOrEqualTo(root.get("dateStart"), filters.get("dateStart")));
             }
-            
+
             if (filters.containsKey("dateEnd")) {
                 predicates.add(builder.lessThanOrEqualTo(root.get("dateEnd"), filters.get("dateEnd")));
             }
         }
-        
+
         return predicates;
     }
 

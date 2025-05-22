@@ -2,6 +2,7 @@ package com.ou.repositories.impl;
 
 import com.ou.configs.WebApplicationSettings;
 import com.ou.pojo.CourseStudent;
+import com.ou.pojo.Student;
 import com.ou.pojo.User;
 import com.ou.repositories.CourseStudentRepository;
 import jakarta.persistence.NoResultException;
@@ -147,12 +148,15 @@ public class CourseStudentRepositoryImpl implements CourseStudentRepository {
         
         if (filters != null) {
             if (filters.containsKey("name")) {
-                Join<CourseStudent, User> studentJoin = root.join("studentId");
+                Join<CourseStudent, Student> studentJoin = root.join("studentId", JoinType.LEFT);
+
+                Join<Student, User> userJoin =  studentJoin.join("userId", JoinType.LEFT);
+
                 String keyword = "%" + filters.get("name") + "%";
                 predicates.add(
                         builder.or(
-                                builder.like(studentJoin.get("firstName"), keyword),
-                                builder.like(studentJoin.get("lastName"), keyword)
+                                builder.like(userJoin.get("firstName"), keyword),
+                                builder.like(userJoin.get("lastName"), keyword)
                         )
                 );
             }

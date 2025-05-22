@@ -1,7 +1,7 @@
 package com.ou.services.impl;
 
 import com.ou.exceptions.NotFoundException;
-import com.ou.mappers.CloudinaryHelper;
+import com.ou.helpers.CloudinaryHelper;
 import com.ou.pojo.LessonAttachment;
 import com.ou.repositories.LessonAttachmentRepository;
 import com.ou.services.AttachmentService;

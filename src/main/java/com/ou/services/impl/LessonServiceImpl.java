@@ -1,8 +1,6 @@
 package com.ou.services.impl;
 
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
-import com.ou.mappers.CloudinaryHelper;
+import com.ou.helpers.CloudinaryHelper;
 import com.ou.pojo.Attachment;
 import com.ou.pojo.Lesson;
 import com.ou.pojo.LessonAttachment;
@@ -13,12 +11,10 @@ import com.ou.services.LessonService;
 import com.ou.services.LocalizationService;
 import com.ou.utils.ValidateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -152,7 +148,7 @@ public class LessonServiceImpl implements LessonService {
             throw new Exception("Cannot update lesson without ID");
         }
         
-        Optional<Lesson> existingLesson = lessonRepository.getLessonById(lesson.getId());
+        Optional<Lesson> existingLesson = this.getLessonById(lesson.getId());
         if (existingLesson.isEmpty()) {
             throw new Exception("Lesson with ID " + lesson.getId() + " not found");
         }
@@ -174,14 +170,19 @@ public class LessonServiceImpl implements LessonService {
         }
 
         if (!lesson.getThumbnailImage().isEmpty()){
-            Map<String, String> imageUrl = cloudinaryHelper.uploadFile(lesson.getThumbnailImage());
-            lesson.setImage(imageUrl.get("url"));
-            lesson.setPublicId(imageUrl.get("publicId"));
-
             // Delete old image if it exists
             if (lesson.getPublicId() != null) {
                 cloudinaryHelper.deleteFile(lesson.getPublicId());
             }
+
+            Map<String, String> imageUrl = cloudinaryHelper.uploadFile(lesson.getThumbnailImage());
+            lesson.setImage(imageUrl.get("url"));
+            lesson.setPublicId(imageUrl.get("publicId"));
+        } else {
+            // If no new image is provided, keep the old one
+            Lesson existingLessonData = existingLesson.get();
+            lesson.setImage(existingLessonData.getImage());
+            lesson.setPublicId(existingLessonData.getPublicId());
         }
         Lesson newLesson = lessonRepository.updateLesson(lesson);
 
@@ -262,11 +263,11 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     @Transactional(readOnly = true)
-    public long countLessonsByCourse(Integer courseId) {
+    public long countLessonsByCourse(Integer courseId, Map<String, String> params) {
         if (courseId == null || courseId <= 0) {
             throw new IllegalArgumentException("Invalid course ID");
         }
-        return lessonRepository.countLessonsByCourse(courseId);
+        return lessonRepository.countLessonsByCourse(courseId, params);
     }
 
     @Override

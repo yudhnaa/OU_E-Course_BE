@@ -221,6 +221,7 @@
               <div class="d-flex align-items-center mb-4">
                 <h5 class="card-title flex-grow-1">Details</h5>
               </div>
+
               <div class="row">
                 <!-- Danger Alert -->
                 <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${msg_error}">
@@ -233,7 +234,9 @@
                   <b th:text="${msg_success}"></b>
                   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
+              </div>
 
+              <div class="row">
                 <div class="col-lg-12">
                   <div class="mx-5 my-2">
                     <form id="courseForm" th:action="@{'/admin/course/' + ${course.id}}" th:object="${course}" method="post" enctype="multipart/form-data">
@@ -268,10 +271,10 @@
 
                       <div class="col-md-6">
                           <label for="courseImage" class="form-label">Image</label>
-                          <input type="file" th:field="*{imageFile}" class="form-control" id="imageFile" accept="image/*">
                           <div class="mt-2">
-                            <img th:if="*{image}" th:src="*{image}" alt="Course Image" class="img-thumbnail" style="max-height: 100px;">
+                            <img th:if="*{image}" th:src="*{image}" id="courseImage" alt="Course Image" class="img-thumbnail" style="max-height: 100px;">
                           </div>
+                        <input type="file" th:field="*{imageFile}" class="form-control mt-3" id="imageFile" accept="image/*">
                         </div>
 <!--                        <div class="col-md-6">-->
 <!--                          <label for="createdByAdminId" class="form-label">Created By (Admin)</label>-->
@@ -391,22 +394,33 @@
 
 
             <ul class="pagination pagination-separated justify-content-center justify-content-sm-end mb-sm-0">
+              <!-- Previous button -->
               <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                <a th:href="@{/admin/course/{id}(id=${course.id}, page=${currentPage - 1}, name=${filterName})} + '#course-team'"
+                <a th:if="${currentPage > 1}"
+                   th:href="@{/admin/course/{id}(id=${course.id}, page=${currentPage - 1}, name=${filterName})} + '#course-team'"
                    class="page-link">Previous</a>
+                <a th:unless="${currentPage > 1}" href="#" class="page-link disabled">Previous</a>
               </li>
 
-              <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}" th:classappend="${page == currentPage} ? 'active'">
+              <!-- Page numbers -->
+              <li class="page-item"
+                  th:each="page : ${#numbers.sequence(1, totalPages)}"
+                  th:classappend="${page == currentPage} ? 'active'">
                 <a th:href="@{/admin/course/{id}(id=${course.id}, page=${page}, name=${filterName})} + '#course-team'"
-                   class="page-link" th:text="${page}"></a>
+                   class="page-link"
+                   th:text="${page}"></a>
               </li>
 
+              <!-- Next button -->
               <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                <a th:href="@{/admin/course/{id}(id=${course.id}, page=${currentPage + 1}, name=${filterName})} + '#course-team'"
+                <a th:if="${currentPage < totalPages}"
+                   th:href="@{/admin/course/{id}(id=${course.id}, page=${currentPage + 1}, name=${filterName})} + '#course-team'"
                    class="page-link">Next</a>
+                <a th:unless="${currentPage < totalPages}" href="#" class="page-link disabled">Next</a>
               </li>
             </ul>
-            </div>
+
+          </div>
           </div>
         </div>
         <!-- end tab pane -->
