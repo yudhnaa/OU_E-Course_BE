@@ -1,18 +1,17 @@
 package com.ou.controllers.webController.adminController;
 
+import com.ou.exceptions.NotFoundException;
 import com.ou.formBean.CourseStudentForm;
 import com.ou.helpers.PaginationHelper;
 import com.ou.pojo.Category;
 import com.ou.pojo.Course;
 import com.ou.pojo.CourseRate;
 import com.ou.pojo.CourseStudent;
-import com.ou.services.CategoryService;
-import com.ou.services.CourseRateService;
-import com.ou.services.CourseService;
-import com.ou.services.CourseStudentService;
+import com.ou.services.*;
 import com.ou.utils.Pagination;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -44,10 +43,16 @@ public class CourseController{
 
     @Autowired
     private CourseRateService courseRateService;
+    @Autowired
+    private LocalizationService localizationService;
 
 
     @GetMapping("/courses")
-    public String index(Model model, @RequestParam Map<String, String> params) {
+    public String index(
+            Model model,
+            @RequestParam Map<String, String> params,
+            RedirectAttributes redirectAttributes
+    ) {
 
         long totalItems;
         if (params.get("name") != null) {
@@ -61,6 +66,11 @@ public class CourseController{
         params.put("page", String.valueOf(pagination.getCurrentPage()));
 
         List<Course> courses = courseService.getCourses(params);
+
+        if (courses.isEmpty()) {
+            redirectAttributes.addFlashAttribute("msg_error", "No courses found.");
+            return "redirect:/admin/courses";
+        }
 
         model.addAttribute("courses", courses);
 
@@ -81,7 +91,7 @@ public class CourseController{
     ) throws Exception {
 
         Course course = courseService.getCourseById(id)
-                .orElseThrow(() -> new Exception("Course not found"));
+                .orElseThrow(() -> new NotFoundException(localizationService.getMessage("course.notFound", LocaleContextHolder.getLocale())));
 
         List<Category> categories = categoryService.getCategories(params);
 

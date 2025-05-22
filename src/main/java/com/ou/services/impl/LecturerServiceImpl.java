@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -15,7 +17,52 @@ public class LecturerServiceImpl implements LecturerService {
     private LecturerRepository lecturerRepositoryImpl;
 
     @Override
+    public Lecturer addLecturer(Lecturer lecturer) {
+        return lecturerRepositoryImpl.addLecturer(lecturer);
+    }
+
+    @Override
+    public List<Lecturer> getLecturers(Map<String, String> params) {
+        return lecturerRepositoryImpl.getLecturers(params);
+    }
+
+    @Override
     public Optional<Lecturer> getLecturerById(Integer id) {
         return lecturerRepositoryImpl.getLecturerById(id);
+    }
+
+    @Override
+    public Optional<Lecturer> getLecturerByUserId(Integer userId) {
+        return lecturerRepositoryImpl.getLecturerByUserId(userId);
+    }
+
+    @Override
+    public List<Lecturer> getActiveLecturers(Map<String, String> params) {
+        return lecturerRepositoryImpl.getActiveLecturers(params);
+    }
+
+    @Override
+    public Lecturer updateLecturer(Lecturer lecturer) {
+        return lecturerRepositoryImpl.updateLecturer(lecturer);
+    }
+
+    @Override
+    public boolean deleteLecturer(Integer id) {
+        return lecturerRepositoryImpl.deleteLecturer(id);
+    }
+
+    @Override
+    public long countLecturers() {
+        return lecturerRepositoryImpl.countLecturers();
+    }
+
+    @Override
+    public long countActiveLecturers() {
+        return lecturerRepositoryImpl.countActiveLecturers();
+    }
+
+    @Override
+    public long countSearchResults(Map<String, String> filters) {
+        return lecturerRepositoryImpl.countSearchResults(filters);
     }
 }

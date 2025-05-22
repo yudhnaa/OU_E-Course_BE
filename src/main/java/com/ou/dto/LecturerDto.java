@@ -19,13 +19,13 @@ public class LecturerDto implements Serializable {
     private String userIdAvatar;
     private String userIdPublicId;
     private String userIdEmail;
+    private String userRoleIdName;
     private Long countCourse;
-    private Long countLesson;
 
     public LecturerDto() {
     }
 
-    public LecturerDto(Integer id, Integer userIdId, String userIdLastName, String userIdFirstName, String userIdUsername, String userIdAvatar, String userIdPublicId, String userIdEmail, Long countCourse, Long countLesson) {
+    public LecturerDto(Integer id, Integer userIdId, String userIdLastName, String userIdFirstName, String userIdUsername, String userIdAvatar, String userIdPublicId, String userIdEmail, Long countCourse, Long countLesson, String userRoleIdName) {
         this.id = id;
         this.userIdId = userIdId;
         this.userIdLastName = userIdLastName;
@@ -35,7 +35,7 @@ public class LecturerDto implements Serializable {
         this.userIdPublicId = userIdPublicId;
         this.userIdEmail = userIdEmail;
         this.countCourse = countCourse;
-        this.countLesson = countLesson;
+        this.userRoleIdName = userRoleIdName;
     }
 
     @Override
@@ -51,8 +51,7 @@ public class LecturerDto implements Serializable {
                 Objects.equals(this.userIdAvatar, entity.userIdAvatar) &&
                 Objects.equals(this.userIdPublicId, entity.userIdPublicId) &&
                 Objects.equals(this.userIdEmail, entity.userIdEmail) &&
-                Objects.equals(this.countCourse, entity.countCourse) &&
-                Objects.equals(this.countLesson, entity.countLesson);
+                Objects.equals(this.countCourse, entity.countCourse);
     }
 
     public Long getCountCourse() {
@@ -63,12 +62,12 @@ public class LecturerDto implements Serializable {
         this.countCourse = countCourse;
     }
 
-    public Long getCountLesson() {
-        return countLesson;
+    public String getUserRoleIdName() {
+        return userRoleIdName;
     }
 
-    public void setCountLesson(Long countLesson) {
-        this.countLesson = countLesson;
+    public void setUserRoleIdName(String userRoleIdName) {
+        this.userRoleIdName = userRoleIdName;
     }
 
     public Integer getId() {
@@ -151,7 +150,6 @@ public class LecturerDto implements Serializable {
                 "userIdAvatar = " + userIdAvatar + ", " +
                 "userIdPublicId = " + userIdPublicId + ", " +
                 "userIdEmail = " + userIdEmail + ", " +
-                "countCourse = " + countCourse + ", " +
-                "countLesson = " + countLesson + ")";
+                "countCourse = " + countCourse + ")";
     }
 }
