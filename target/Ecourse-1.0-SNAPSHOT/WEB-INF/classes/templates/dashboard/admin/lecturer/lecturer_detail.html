@@ -44,6 +44,21 @@
                 </div>
             </div>
             <!--end card-->
+
+            <div class="row">
+                <!-- Danger Alert -->
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${msg_error}">
+                    <b th:text="${msg_error}">Dismissible danger Alert </b>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+                <!-- Success Alert -->
+                <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${msg_success}">
+                    <b th:text="${msg_success}"></b>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+
             <div class="card">
                 <div class="card-body">
                     <div class="d-flex align-items-center mb-4">
@@ -109,9 +124,17 @@
                 <div class="card-body p-4">
                     <div class="tab-content">
                         <div class="tab-pane active" id="personalDetails" role="tabpanel">
-                            <form th:object="${lecturer}" th:action="@{/admin/lecturer/update}" method="post">
+                            <form th:object="${lecturer}"
+                                  th:action="@{/admin/lecturer/{lecturerId}/update(lecturerId=${lecturer.id})}"
+                                  method="post"
+                                  enctype="multipart/form-data">
+
                                 <input type="hidden" th:field="*{id}"/>
                                 <input type="hidden" th:field="*{userId.id}"/>
+                                <input type="hidden" th:field="*{userId.userRoleId.id}"/>
+                                <input type="hidden" th:field="*{userId.username}"/>
+                                <input type="file" th:field="*{userId.avatarFile}" id="imagePicker" class="d-none">
+
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="mb-3">
@@ -159,11 +182,10 @@
                                     </div>
                                     <!--end col-->
                                     <div class="col-lg-6">
-                                        <div class="mb-3">
-                                            <label for="websiteInput1" class="form-label">Website</label>
-                                            <input type="text" class="form-control" id="websiteInput1"
-                                                   placeholder="www.example.com" value="www.dhthanh.com"/>
+                                        <div class="mb-3 d-block">
+                                            <label class="form-label">Is active</label>
                                         </div>
+                                            <input type="checkbox" class="checkboxes" th:field="*{isActive}"/>
                                     </div>
                                     <!--end col-->
                                     <div class="col-lg-12">
@@ -180,15 +202,24 @@
 
                         <!--end tab-pane-->
                         <div class="tab-pane" id="changePassword" role="tabpanel">
-                            <form th:object="${lecturer}" th:action="@{/admin/lecturer/update}" method="post">
+                            <form th:object="${user}"
+                                  th:action="@{/admin/lecturer/{lecturerId}/updatePassword(lecturerId=${lecturer.id})}"
+                                  method="post">
                                 <input type="hidden" th:field="*{id}"/>
-                                <input type="hidden" th:field="*{userId.id}"/>
+                                <input type="hidden" th:field="*{lastName}"/>
+                                <input type="hidden" th:field="*{firstName}"/>
+                                <input type="hidden" th:field="*{birthday}"/>
+                                <input type="hidden" th:field="*{username}"/>
+                                <input type="hidden" th:field="*{email}"/>
+                                <input type="hidden" th:field="*{userRoleId.id}"/>
+
+
+
                                 <div class="row g-2">
                                     <div class="col-lg-4">
                                         <div>
-                                            <label class="form-label">New
-                                                Password*</label>
-                                            <input type="password" class="form-control" th:field="*{userId.password}"
+                                            <label class="form-label">New Password*</label>
+                                            <input type="password" class="form-control" th:field="*{password}"
                                                    placeholder="Enter new password">
                                         </div>
                                     </div>
@@ -197,15 +228,14 @@
                                         <div>
                                             <label class="form-label">Confirm
                                                 Password*</label>
-                                            <input type="password" class="form-control" th:field="*{userId.password}"
-                                                   placeholder="Confirm password">
+                                            <input type="password" class="form-control" placeholder="Confirm password">
                                         </div>
                                     </div>
                                     <!--end col-->
                                     <div class="col-lg-12">
                                         <div class="text-end">
-                                            <button type="submit" class="btn btn-primary">Change
-                                                Password
+                                            <button type="submit" class="btn btn-primary">
+                                                Change Password
                                             </button>
                                         </div>
                                     </div>

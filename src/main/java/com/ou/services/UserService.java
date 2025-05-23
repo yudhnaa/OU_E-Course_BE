@@ -8,6 +8,7 @@ import com.ou.exceptions.NotFoundException;
 import com.ou.pojo.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -24,7 +25,7 @@ public interface UserService {
     User getUserById(int id);
 
     // Add a new user
-    User addUser(User user);
+    User addUser(User user) throws IOException;
 
     // Update an existing user
     User updateUser(User user);

@@ -4,27 +4,15 @@
  */
 package com.ou.pojo;
 
-import jakarta.persistence.Basic;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.NamedQueries;
-import jakarta.persistence.NamedQuery;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Set;
 
 /**
@@ -65,8 +53,8 @@ public class User implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "birthday")
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime birthday;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date birthday;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
@@ -101,6 +89,9 @@ public class User implements Serializable {
     @ManyToOne(optional = false)
     private UserRole userRoleId;
 
+    @Transient
+    private MultipartFile avatarFile;
+
     public User() {
     }
 
@@ -108,7 +99,7 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public User(Integer id, String lastName, String firstName, LocalDateTime birthday, String username, String password, String email) {
+    public User(Integer id, String lastName, String firstName, Date birthday, String username, String password, String email) {
         this.id = id;
         this.lastName = lastName;
         this.firstName = firstName;
@@ -116,6 +107,14 @@ public class User implements Serializable {
         this.username = username;
         this.password = password;
         this.email = email;
+    }
+
+    public MultipartFile getAvatarFile() {
+        return avatarFile;
+    }
+
+    public void setAvatarFile(MultipartFile avatarFile) {
+        this.avatarFile = avatarFile;
     }
 
     public Integer getId() {
@@ -142,11 +141,11 @@ public class User implements Serializable {
         this.firstName = firstName;
     }
 
-    public LocalDateTime getBirthday() {
+    public Date getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(LocalDateTime birthday) {
+    public void setBirthday(Date birthday) {
         this.birthday = birthday;
     }
 

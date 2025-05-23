@@ -3,6 +3,7 @@ package com.ou.services.impl;
 import com.ou.pojo.Lecturer;
 import com.ou.repositories.LecturerRepository;
 import com.ou.services.LecturerService;
+import com.ou.services.LocalizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,8 @@ import java.util.Optional;
 public class LecturerServiceImpl implements LecturerService {
     @Autowired
     private LecturerRepository lecturerRepositoryImpl;
+    @Autowired
+    private LocalizationService localizationService;
 
     @Override
     public Lecturer addLecturer(Lecturer lecturer) {
@@ -43,7 +46,11 @@ public class LecturerServiceImpl implements LecturerService {
 
     @Override
     public Lecturer updateLecturer(Lecturer lecturer) {
-        return lecturerRepositoryImpl.updateLecturer(lecturer);
+        try {
+            return lecturerRepositoryImpl.updateLecturer(lecturer);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
