@@ -1,12 +1,11 @@
 package com.ou.controllers.webController.adminController;
 
 import com.ou.exceptions.NotFoundException;
+import com.ou.formBean.CourseLecturerForm;
 import com.ou.formBean.CourseStudentForm;
 import com.ou.helpers.PaginationHelper;
-import com.ou.pojo.Category;
-import com.ou.pojo.Course;
-import com.ou.pojo.CourseRate;
-import com.ou.pojo.CourseStudent;
+import com.ou.mappers.LecturerMapper;
+import com.ou.pojo.*;
 import com.ou.services.*;
 import com.ou.utils.Pagination;
 import jakarta.validation.Valid;
@@ -22,8 +21,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-
-import static com.ou.configs.WebApplicationSettings.PAGE_SIZE;
+import java.util.stream.Collectors;
 
 @RequestMapping(path = "/admin")
 @Controller
@@ -45,6 +43,12 @@ public class CourseController{
     private CourseRateService courseRateService;
     @Autowired
     private LocalizationService localizationService;
+    @Autowired
+    private CourseLecturerService courseLecturerService;
+    @Autowired
+    private LecturerService lecturerService;
+    @Autowired
+    private LecturerMapper lecturerMapper;
 
 
     @GetMapping("/courses")
@@ -113,6 +117,16 @@ public class CourseController{
 
         Pagination pagination = paginationHelper.getPagination(params, totalCourseStudents);
 
+        List<CourseLecturer> courseLecturers = courseLecturerService.getCourseLecturersByCourse(course.getId(), params);
+        CourseLecturerForm courseLecturerForm = new CourseLecturerForm();
+        courseLecturerForm.setCourseLecturers(courseLecturers);
+
+        courseLecturerForm.setLecturers(lecturerService.getLecturers(null).stream()
+                .map(lecturer ->
+                        lecturerMapper.toDto(lecturer)).collect(Collectors.toList()));
+
+        courseLecturerForm.setCountCurrentLecturers(lecturerService.countLecturersByCourse(course.getId()));
+
         model.addAttribute("totalItems", totalCourseStudents);
         model.addAttribute("currentPage", pagination.getCurrentPage());
         model.addAttribute("totalPages", totalCourseStudents > 0 ? totalCourseStudents : 1);
@@ -129,6 +143,9 @@ public class CourseController{
 
         model.addAttribute("filterName", searchName.isEmpty() ? null : searchName);
 
+        model.addAttribute("courseLecturerForm", courseLecturerForm);
+
+
         return "dashboard/admin/course/course_detail";
     }
 
@@ -136,7 +153,7 @@ public class CourseController{
     @PostMapping("/course/{id}")
     public String updateCourse(Model model,
                                @PathVariable("id") int id,
-                               @Valid @ModelAttribute("course") Course course,
+                               @ModelAttribute("course") Course course,
                                BindingResult bindingResult,
                                RedirectAttributes redirectAttributes
     ) throws Exception {
@@ -156,6 +173,28 @@ public class CourseController{
         }
 
         return "redirect:/admin/course/" + id;
+    }
+
+    @PostMapping("/course/{courseId}/updateLecture")
+    public String updateCourseLecturer(
+            @PathVariable("courseId") int courseId,
+            @ModelAttribute CourseLecturerForm form,
+            RedirectAttributes redirectAttributes
+    ) throws Exception {
+
+        if (form.getCourseLecturers() == null){
+            redirectAttributes.addFlashAttribute("msg_error", localizationService.getMessage("courseLecturer.update.error", LocaleContextHolder.getLocale()));
+            return "redirect:/admin/course/" + courseId + "#course-details";
+        }
+
+        Boolean isSuccess =  courseLecturerService.updateCourseLecturer(form.getCourseLecturers());
+
+        if (!isSuccess)
+            redirectAttributes.addFlashAttribute("msg_error", "Failed to add course lecturers.");
+        else
+            redirectAttributes.addFlashAttribute("msg_success", "Course lecturers added successfully.");
+
+        return "redirect:/admin/course/" + courseId + "#course-details";
     }
 
     @PostMapping("/course/{courseId}/add-members")

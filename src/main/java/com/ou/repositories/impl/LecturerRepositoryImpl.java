@@ -171,6 +171,20 @@ public class LecturerRepositoryImpl implements LecturerRepository {
 
     @Override
     @Transactional(readOnly = true)
+    public long countLecturersByCourse(Integer courseId) {
+        Session session = factory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Long> query = builder.createQuery(Long.class);
+        Root<Lecturer> root = query.from(Lecturer.class);
+
+        query.where(builder.equal(root.get("id"), courseId));
+
+        query.select(builder.count(root));
+        return session.createQuery(query).getSingleResult();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public long countActiveLecturers() {
         Session session = factory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();

@@ -64,6 +64,11 @@ public class LecturerServiceImpl implements LecturerService {
     }
 
     @Override
+    public long countLecturersByCourse(Integer courseId) {
+        return lecturerRepositoryImpl.countLecturersByCourse(courseId);
+    }
+
+    @Override
     public long countActiveLecturers() {
         return lecturerRepositoryImpl.countActiveLecturers();
     }

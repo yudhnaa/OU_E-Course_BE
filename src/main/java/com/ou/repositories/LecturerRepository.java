@@ -26,6 +26,7 @@ public interface LecturerRepository {
 
     // Count methods for pagination
     long countLecturers();
+    long countLecturersByCourse(Integer courseId);
     long countActiveLecturers();
     long countSearchResults(Map<String, String> filters);
 }
