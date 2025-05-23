@@ -142,7 +142,15 @@ INSERT INTO lesson_student (is_learn, learned_at, lesson_id, student_id) VALUES
 
 -- Sample data for exercise
 INSERT INTO exercise (name, duration_minutes, max_score, created_by_user_id, course_id, lesson_id) VALUES
-    ('Quiz 1', 30, 100.00, 1, 1, 1);
+    ('Quiz 2', 30, 100.00, 1, 1, 1),
+    ('Quiz 3', 30, 100.00, 1, 1, 1),
+    ('Quiz 4', 30, 100.00, 1, 1, 1),
+    ('Quiz 5', 30, 100.00, 1, 1, 1),
+    ('Quiz 6', 30, 100.00, 1, 1, 1),
+    ('Quiz 7', 30, 100.00, 1, 1, 1),
+    ('Quiz 8', 30, 100.00, 1, 1, 1),
+    ('Quiz 9', 30, 100.00, 1, 1, 1),
+    ('Quiz 10', 30, 100.00, 1, 1, 1);
 
 -- Sample data for exercise_attachment
 INSERT INTO exercise_attachment (exercise_id, attachment_id) VALUES

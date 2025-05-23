@@ -15,7 +15,6 @@ public class StudentController {
 
     @GetMapping("/students")
     public String index() {
-
         return "dashboard/admin/student/student_list";
     }
 }

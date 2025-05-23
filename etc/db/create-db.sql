@@ -260,7 +260,7 @@ CREATE TABLE exercise_attempt(
     FOREIGN KEY (score_by_user_id) REFERENCES lecturer(id) ON DELETE RESTRICT
 );
 
---lecturer co the tao bai tap
+-- lecturer co the tao bai tap
 CREATE TABLE test (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name NVARCHAR(100) NOT NULL,

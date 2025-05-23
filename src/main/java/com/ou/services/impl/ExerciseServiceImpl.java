@@ -67,7 +67,7 @@ public class ExerciseServiceImpl implements ExerciseService {
 
     @Override
     public long countExercisesByCourse(Integer courseId) {
-        return 0;
+        return exerciseRepositoryImpl.countExercisesByCourse(courseId);
     }
 
     @Override

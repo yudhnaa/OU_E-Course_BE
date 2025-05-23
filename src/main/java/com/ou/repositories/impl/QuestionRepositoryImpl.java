@@ -28,27 +28,45 @@ public class QuestionRepositoryImpl implements QuestionRepository {
 
     @Override
     public Question getQuestionById(Integer id) {
-        return null;
+        Session session = factory.getObject().getCurrentSession();
+        return session.get(Question.class, id);
     }
 
     @Override
     public Question addQuestion(Question question) {
-        return null;
+        Session session = factory.getObject().getCurrentSession();
+        session.persist(question);
+        return question;
     }
 
     @Override
     public Question updateQuestion(Question question) {
-        return null;
+        Session session = factory.getObject().getCurrentSession();
+        session.merge(question);
+        return question;
     }
 
     @Override
     public boolean deleteQuestion(Integer id) {
+        Session session = factory.getObject().getCurrentSession();
+        Question question = session.get(Question.class, id);
+        if (question != null) {
+            session.delete(question);
+            return true;
+        }
         return false;
     }
 
     @Override
     public List<Question> getQuestionsByExercise(Integer exerciseId) {
-        return List.of();
+        Session session = factory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Question> query = builder.createQuery(Question.class);
+        Root<Question> root = query.from(Question.class);
+        query.select(root)
+                .where(builder.equal(root.get("exerciseId").get("id"), exerciseId));
+
+        return session.createQuery(query).getResultList();
     }
 
     @Override
