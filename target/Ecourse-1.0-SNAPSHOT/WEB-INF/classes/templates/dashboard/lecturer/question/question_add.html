@@ -24,7 +24,7 @@
     </div>
 
     <div class="container">
-        <form th:action="@{'/course/' + ${courseId} + '/exercises/exercise/' + ${exerciseId} + '/question/add'}"
+        <form th:action="@{'/course/' + ${courseId} + '/lessons/' + ${lessonId} + '/exercises/exercise/' + ${exerciseId} + '/question/add'}"
               th:object="${question}"
               method="post">
 
@@ -56,7 +56,7 @@
 
             <div class="text-end">
                 <button type="submit" class="btn btn-primary">Create Question</button>
-                <a th:href="@{'/course/' + ${courseId} + '/exercises/exercise/' + ${exerciseId}}" class="btn btn-secondary">Back</a>
+                <a th:href="@{'/course/' + ${courseId} + '/lessons/' + ${lessonId} + '/exercises/exercise/' + ${exerciseId}}" class="btn btn-secondary">Back</a>
             </div>
         </form>
     </div>

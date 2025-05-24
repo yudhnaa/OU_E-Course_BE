@@ -42,7 +42,7 @@ public class ExerciseServiceImpl implements ExerciseService {
 
     @Override
     public List<Exercise> getExercisesByLesson(Integer lessonId, Map<String, String> params) {
-        return List.of();
+        return exerciseRepositoryImpl.getExercisesByLesson(lessonId, params);
     }
 
     @Override
@@ -72,7 +72,7 @@ public class ExerciseServiceImpl implements ExerciseService {
 
     @Override
     public long countExercisesByLesson(Integer lessonId) {
-        return 0;
+        return exerciseRepositoryImpl.countExercisesByLesson(lessonId);
     }
 
     @Override

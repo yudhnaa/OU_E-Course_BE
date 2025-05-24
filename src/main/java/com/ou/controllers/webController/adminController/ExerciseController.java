@@ -22,7 +22,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/course/{courseId}/exercises")
+@RequestMapping("/course/{courseId}/lessons/{lessonId}/exercises")
 public class ExerciseController {
     @Autowired
     private ExerciseService exerciseService;
@@ -42,10 +42,14 @@ public class ExerciseController {
     @Autowired
     private QuestionTypeService questionTypeService;
 
+    @Autowired
+    private LessonService lessonService;
+
 
     @GetMapping
     public String getExercises(Model model,
                                @PathVariable("courseId") Integer courseId,
+                               @PathVariable("lessonId") Integer lessonId,
                                @RequestParam Map<String, String> params) {
         Optional<Course> course = courseService.getCourseById(courseId);
 
@@ -54,7 +58,13 @@ public class ExerciseController {
             return "dashboard/lecturer/exercise/exercise";
         }
 
-        long totalExercises = exerciseService.countExercisesByCourse(courseId);
+        Optional<Lesson> lesson = lessonService.getLessonById(lessonId);
+        if (lesson.isEmpty()) {
+            model.addAttribute("msg_error", "Lesson not found.");
+            return "dashboard/lecturer/exercise/exercise";
+        }
+
+        long totalExercises = exerciseService.countExercisesByLesson(lessonId);
 
         if(totalExercises == 0){
             model.addAttribute("msg_error", "No exercises found for this course.");
@@ -63,7 +73,7 @@ public class ExerciseController {
 
         Pagination pagination = paginationHelper.getPagination(params, totalExercises);
 
-        List<Exercise> exercises = exerciseService.getExercisesByCourse(courseId,params);
+        List<Exercise> exercises = exerciseService.getExercisesByLesson(lessonId,params);
 
         Map<Integer, String> lecturerNames = exercises.stream().collect(
                 Collectors.toMap(
@@ -81,6 +91,7 @@ public class ExerciseController {
         model.addAttribute("exercises", exercises);
         model.addAttribute("lecturerNames", lecturerNames);
         model.addAttribute("courseId", courseId);
+        model.addAttribute("lessonId", lessonId);
         model.addAttribute("courseName", course.get().getName());
         model.addAttribute("currentPage", pagination.getCurrentPage());
         model.addAttribute("totalPages", pagination.getTotalPages());
@@ -92,6 +103,7 @@ public class ExerciseController {
     @GetMapping("/exercise/{exerciseId}")
     public String getExerciseDetails(Model model,
                                      @PathVariable("courseId") Integer courseId,
+                                     @PathVariable("lessonId") Integer lessonId,
                                      @PathVariable("exerciseId") Integer exerciseId) throws Exception {
         Optional<Exercise> exercise = exerciseService.getExerciseById(exerciseId);
 
@@ -107,13 +119,21 @@ public class ExerciseController {
             return "dashboard/lecturer/exercise/exercise";
         }
 
+        Optional<Lesson> lesson = lessonService.getLessonById(lessonId);
+        if (lesson.isEmpty()) {
+            model.addAttribute("msg_error", "Lesson not found.");
+            return "dashboard/lecturer/exercise/exercise";
+        }
+
         List<Question> questions = questionService.getQuestionsByExercise(exerciseId);
         List<QuestionType> questionTypes = questionTypeService.getAllQuestionTypes();
 
         model.addAttribute("exercise", exercise.get());
         model.addAttribute("creator", creator.orElse(null));
         model.addAttribute("courseId", courseId);
+        model.addAttribute("lessonId", lessonId);
         model.addAttribute("course", course.get());
+        model.addAttribute("lesson", lesson.get());
         model.addAttribute("questions", questions);
         model.addAttribute("questionTypes", questionTypes);
         return "dashboard/lecturer/exercise/exercise_detail"; // Return the name of the view to render
@@ -121,6 +141,7 @@ public class ExerciseController {
 
     @PostMapping("/exercise/{exerciseId}/update")
     public String updateExercise(@PathVariable("courseId") Integer courseId,
+                                 @PathVariable("lessonId") Integer lessonId,
                                  @PathVariable("exerciseId") Integer exerciseId,
                                  @Valid @ModelAttribute("exercise") Exercise exerciseUpdate,
                                  BindingResult result,
@@ -138,7 +159,7 @@ public class ExerciseController {
         if (result.hasErrors()) {
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.exercise", result);
             redirectAttributes.addFlashAttribute("exercise", exerciseUpdate);
-            return "redirect:/course/" + courseId + "/exercises/exercise/" + exerciseId + "#exercise-detail";
+            return "redirect:/course/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId + "#exercise-detail";
         }
 
         try {
@@ -147,11 +168,12 @@ public class ExerciseController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("msg_error", "Error: " + e.getMessage());
         }
-        return "redirect:/course/" + courseId + "/exercises/exercise/" + exerciseId;
+        return "redirect:/course/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId;
     }
 
     @PostMapping("/exercise/{exerciseId}/delete")
     public String deleteExercise(@PathVariable("courseId") Integer courseId,
+                                 @PathVariable("lessonId") Integer lessonId,
                                  @PathVariable("exerciseId") Integer exerciseId,
                                  RedirectAttributes redirectAttributes) {
         try {
@@ -163,7 +185,7 @@ public class ExerciseController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("msg_error", "Error: " + e.getMessage());
         }
-        return "redirect:/course/" + courseId + "/exercises";
+        return "redirect:/course/" + courseId + "/lessons/" + lessonId + "/exercises";
     }
 
 }

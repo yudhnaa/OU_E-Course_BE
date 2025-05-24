@@ -8,6 +8,7 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.ou.formatters.CourseFormatter;
 import com.ou.formatters.ExerciseFormatter;
+import com.ou.formatters.LessonFormatter;
 import com.ou.formatters.QuestionTypeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -116,5 +117,6 @@ public class WebAppContextConfigs implements WebMvcConfigurer {
         registry.addFormatter(new CourseFormatter());
         registry.addFormatter(new ExerciseFormatter());
         registry.addFormatter(new QuestionTypeFormatter());
+        registry.addFormatter(new LessonFormatter());
     }
 }
