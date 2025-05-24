@@ -87,14 +87,18 @@ public class LecturerController {
     @GetMapping("/lecturer/{id}")
     public String courseDetail(Model model,
                                @PathVariable("id") int id,
-                               @RequestParam Map<String, String> params
+                               @RequestParam Map<String, String> params,
+                               RedirectAttributes redirectAttributes
     ) throws Exception {
 
-        Lecturer lecturer = lecturerService.getLecturerById(id)
-                .orElseThrow(() -> new NotFoundException(localizationService.getMessage("lecturer.notFound", LocaleContextHolder.getLocale())));
+        Optional<Lecturer> lecturer = lecturerService.getLecturerById(id);
+        if (lecturer.isEmpty()){
+            redirectAttributes.addFlashAttribute("msg_error", localizationService.getMessage("lecturer.notFound", LocaleContextHolder.getLocale()));
+            return "redirect:/admin/lecturers";
+        }
 
         model.addAttribute("lecturer", lecturer);
-        model.addAttribute("user", lecturer.getUserId());
+        model.addAttribute("user", lecturer.get().getUserId());
 
         return "dashboard/admin/lecturer/lecturer_detail";
     }

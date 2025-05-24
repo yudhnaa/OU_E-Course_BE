@@ -61,8 +61,7 @@ public class CourseController{
         long totalItems;
         if (params.get("name") != null) {
             totalItems = courseService.countSearchResults(params);
-        }
-        else
+        } else
             totalItems = courseService.countCourses();
 
         Pagination pagination = paginationHelper.getPagination(params, totalItems);

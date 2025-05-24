@@ -25,21 +25,21 @@
     <div class="card">
         <div class="card-body">
             <div class="d-flex align-items-center">
-                <h6 class="card-title mb-3 flex-grow-1">Search lecturers</h6>
+                <h6 class="card-title mb-3 flex-grow-1">Search Students</h6>
             </div>
 
             <div class="row gy-3 align-items-center">
                 <div class="col-md-9 col-sm-12">
                     <div class="search-box">
                         <input type="text" class="form-control search bg-light border-light"
-                               id="searchLessons" autocomplete="off" placeholder="Search lecturers...">
+                               id="searchStudents" autocomplete="off" placeholder="Search students...">
                         <i class="ri-search-line search-icon"></i>
                     </div>
                 </div>
                 <div class="col-md-3 col-sm-12 d-flex justify-content-end gap-2 flex-wrap">
                     <a class="btn btn-primary mt-2 mt-md-0">
                         <i class="ri-add-line align-bottom me-1"></i>
-                        New Lecturer
+                        New student
                     </a>
                 </div>
             </div>
@@ -52,10 +52,10 @@
                 <div id="teamlist">
                     <div class="team-list grid-view-filter row" id="team-member-list">
                         <!-- team member-->
-                        <div class="col" th:each="lecturer : ${lecturers}">
+                        <div class="col" th:each="student : ${students}">
                             <div class="card team-box">
                                 <div class="team-cover">
-                                    <img alt="" class="img-fluid" th:src="${lecturer.userIdAvatar}">
+                                    <img alt="" class="img-fluid" th:src="${student.userIdAvatar}">
                                 </div>
                                 <div class="card-body p-4">
                                     <div class="row align-items-center team-row">
@@ -88,25 +88,26 @@
                                         <div class="col-lg-4 col">
                                             <div class="team-profile-img">
                                                 <div class="avatar-lg img-thumbnail rounded-circle flex-shrink-0">
-                                                    <img alt="" class="member-img img-fluid d-block rounded-circle" th:src="${lecturer.userIdAvatar}">
+                                                    <img alt="" class="member-img img-fluid d-block rounded-circle" th:src="${student.userIdAvatar}">
                                                 </div>
                                                 <div class="team-content">
-                                                    <a aria-controls="member-overview" class="member-name" th:href="@{/admin/lecturer/{lecturerId}(lecturerId=${lecturer.id})}">
-                                                        <h5 class="fs-16 mb-1" th:text="${lecturer.userIdFirstName} + ' ' +${lecturer.userIdLastName}">Nancy Martino</h5>
+                                                    <a aria-controls="member-overview" class="member-name" th:href="@{/admin/student/{lecturerId}(lecturerId=${student.id})}">
+                                                        <h5 class="fs-16 mb-1" th:text="${student.userIdFirstName} + ' ' +${student.userIdLastName}">Nancy Martino</h5>
                                                     </a>
-                                                    <p class="text-muted member-designation mb-0" th:text="${lecturer.userRoleIdName}"></p>
+                                                    <p class="text-muted member-designation mb-0" th:text="${student.userRoleIdName}"></p>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-lg-4 col">
                                             <div class="row text-muted text-center">
-                                                <h5 class="mb-1 projects-num" th:text="${lecturer.countCourse}"></h5>
+<!--                                                <h5 class="mb-1 projects-num" th:text="${student.countCourse}"></h5>-->
+                                                <h5 class="mb-1 projects-num">Some Number</h5>
                                                 <p class="text-muted mb-0">Courses</p>
                                             </div>
                                         </div>
                                         <div class="col-lg-2 col">
                                             <div class="text-end">
-                                                <a class="btn btn-light view-btn" th:href="@{/admin/lecturer/{lecturerId}(lecturerId=${lecturer.id})}">View Profile</a>
+                                                <a class="btn btn-light view-btn" th:href="@{/admin/student/{lecturerId}(lecturerId=${student.id})}">View Profile</a>
                                             </div>
                                         </div>
                                     </div>
@@ -131,7 +132,7 @@
                             <!-- Previous -->
                             <li class="page-item" th:classappend="${currentPage <= 1} ? 'disabled'">
                                 <a class="page-link"
-                                   th:href="@{/admin/lecturers(page=${currentPage - 1}, name=${filterName})}"
+                                   th:href="@{/admin/students(page=${currentPage - 1}, name=${filterName})}"
                                    tabindex="-1">
                                     <i class="mdi mdi-chevron-left"></i>
                                 </a>
@@ -142,14 +143,14 @@
                                 th:each="page : ${#numbers.sequence(1, totalPages)}"
                                 th:classappend="${page == currentPage} ? 'active'">
                                 <a class="page-link"
-                                   th:href="@{/admin/lecturers(page=${page}, name=${filterName})}"
+                                   th:href="@{/admin/students(page=${page}, name=${filterName})}"
                                    th:text="${page}">1</a>
                             </li>
 
                             <!-- Next -->
                             <li class="page-item" th:classappend="${currentPage >= totalPages} ? 'disabled'">
                                 <a class="page-link"
-                                   th:href="@{/admin/lecturers(page=${currentPage + 1}, name=${filterName})}"
+                                   th:href="@{/admin/students(page=${currentPage + 1}, name=${filterName})}"
                                    tabindex="-1">
                                     <i class="mdi mdi-chevron-right"></i>
                                 </a>
@@ -199,7 +200,7 @@
 </th:block>
 <th:block layout:fragment="pagejs">
     <!-- team init js -->
-    <script th:src="@{/assets/js/lecturer-list-init.js}"></script>
+    <script th:src="@{/assets/js/student-list-init.js}"></script>
 </th:block>
 </body>
 </html>

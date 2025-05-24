@@ -1,7 +1,10 @@
 package com.ou.controllers.restController;
 
 import com.ou.dto.StudentDto;
+import com.ou.mappers.StudentMapper;
+import com.ou.pojo.Student;
 import com.ou.pojo.User;
+import com.ou.services.StudentService;
 import com.ou.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +26,10 @@ public class RestStudentController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private StudentMapper studentMapper;
+    @Autowired
+    private StudentService studentService;
 
     @GetMapping(value = "/course/students/add", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<StudentDto>> getStudentsNotInCourse(
@@ -41,10 +48,10 @@ public class RestStudentController {
             params.remove("courseId");
         }
 
-        List<User> students = userService.searchUsers(filters, null);
+        List<Student> students = studentService.searchStudents(filters, null);
 
         List<StudentDto> studentDtos = students.stream()
-                .map(s -> StudentDto.toDTO(s))
+                .map(s -> studentMapper.toDto(s))
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(studentDtos, HttpStatus.OK);
