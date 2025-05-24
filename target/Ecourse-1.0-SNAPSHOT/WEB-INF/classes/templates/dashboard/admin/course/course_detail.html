@@ -1,477 +1,645 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
 
 <th:block layout:fragment="pagetitle">
-  <!--page title-->
-  <div th:replace="partials/title-meta :: title-meta('Course Detail')"></div>
+    <!--page title-->
+    <div th:replace="partials/title-meta :: title-meta('Course Detail')"></div>
 </th:block>
 
 <head>
-  <!-- Sweet Alert css-->
-  <link th:href="@{/assets/libs/sweetalert2/sweetalert2.min.css}" rel="stylesheet" type="text/css" />
+    <!-- Sweet Alert css-->
+    <link th:href="@{/assets/libs/sweetalert2/sweetalert2.min.css}" rel="stylesheet" type="text/css"/>
 </head>
 
 <body>
 <div layout:fragment="content">
-  <div class="row">
-    <div class="col-lg-12">
-      <div class="card mt-n4 mx-n4 border-0">
-        <div class="bg-soft-primary">
-          <div class="card-body pb-0 px-4">
-            <div class="row mb-3">
-              <div class="col-md">
-                <div class="row align-items-center g-3">
-                  <div class="col-md-auto">
-                    <div class="avatar-md">
-                      <div class="avatar-title bg-white rounded-circle">
-                        <img th:src="${course.image}" alt="" class="avatar-xs">
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-md">
-                    <div>
-                      <h4 class="fw-bold" th:text="${course.name}"></h4>
-                      <div class="hstack gap-3 flex-wrap">
-                        <div>
-                          <i class="ri-building-line align-bottom me-1"></i>
-                          <span th:text="${course.categoryId.name}"></span>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card mt-n4 mx-n4 border-0">
+                <div class="bg-soft-primary">
+                    <div class="card-body pb-0 px-4">
+                        <div class="row mb-3">
+                            <div class="col-md">
+                                <div class="row align-items-center g-3">
+                                    <div class="col-md-auto">
+                                        <div class="avatar-md">
+                                            <div class="avatar-title bg-white rounded-circle">
+                                                <img th:src="${course.image}" alt="" class="avatar-xs">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md">
+                                        <div>
+                                            <h4 class="fw-bold" th:text="${course.name}"></h4>
+                                            <div class="hstack gap-3 flex-wrap">
+                                                <div>
+                                                    <i class="ri-building-line align-bottom me-1"></i>
+                                                    <span th:text="${course.categoryId.name}"></span>
+                                                </div>
+                                                <div class="vr"></div>
+                                                <div>Create Date : <span class="fw-medium"
+                                                                         th:text="${@dateTimeFormatter.format(course.dateAdded, 'dd-MM-yyyy')}"></span>
+                                                </div>
+                                                <div class="vr"></div>
+                                                <div>Due Date : <span class="fw-medium"
+                                                                      th:text="${@dateTimeFormatter.format(course.dateEnd, 'dd-MM-yyyy')}"></span>
+                                                </div>
+                                                <div class="vr"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-auto">
+                                <div class="hstack gap-1 flex-wrap">
+                                    <button type="button" class="btn py-0 fs-16 favourite-btn active">
+                                        <i class="ri-star-fill"></i>
+                                    </button>
+                                    <button type="button" class="btn py-0 fs-16 text-body">
+                                        <i class="ri-share-line"></i>
+                                    </button>
+                                    <button type="button" class="btn py-0 fs-16 text-body">
+                                        <i class="ri-flag-line"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="vr"></div>
-                        <div>Create Date : <span class="fw-medium" th:text="${@dateTimeFormatter.format(course.dateAdded, 'dd-MM-yyyy')}"></span></div>
-                        <div class="vr"></div>
-                        <div>Due Date : <span class="fw-medium" th:text="${@dateTimeFormatter.format(course.dateEnd, 'dd-MM-yyyy')}"></span></div>
-                        <div class="vr"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-auto">
-                <div class="hstack gap-1 flex-wrap">
-                  <button type="button" class="btn py-0 fs-16 favourite-btn active">
-                    <i class="ri-star-fill"></i>
-                  </button>
-                  <button type="button" class="btn py-0 fs-16 text-body">
-                    <i class="ri-share-line"></i>
-                  </button>
-                  <button type="button" class="btn py-0 fs-16 text-body">
-                    <i class="ri-flag-line"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
 
-            <ul class="nav nav-tabs-custom border-bottom-0" role="tablist">
-              <li class="nav-item">
-                <a class="nav-link active fw-semibold" data-bs-toggle="tab" href="#course-overview" role="tab">
-                  Overview
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link fw-semibold" data-bs-toggle="tab" href="#course-details" role="tab">
-                  Details
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link fw-semibold" data-bs-toggle="tab" href="#course-team" role="tab">
-                  Team
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link fw-semibold" th:href="@{/admin/course/{courseId}/lesson/create(courseId=${course.id})}">
-                  Content Manager
-                </a>
-              </li>
-            </ul>
-          </div>
-          <!-- end card body -->
-        </div>
-      </div>
-      <!-- end card -->
-    </div>
-    <!-- end col -->
-  </div>
-  <!-- end row -->
-  <div class="row">
-    <div class="col-lg-12">
-      <div class="tab-content text-muted">
-        <div class="tab-pane fade show active" id="course-overview" role="tabpanel">
-          <div class="row">
-            <div class="col-xl-9 col-lg-8">
-              <div class="card">
-                <div class="card-body">
-                  <div class="text-muted">
-                    <h6 class="mb-3 fw-semibold text-uppercase">Description</h6>
-                    <p th:text="${course.description}"></p>
-
-                    <div>
-                      <button type="button" class="btn btn-link link-secondary p-0">Read more</button>
-                    </div>
-
-                    <div class="pt-3 border-top border-top-dashed mt-4">
-                      <div class="row">
-
-                        <div class="col-lg-3 col-sm-6">
-                          <div>
-                            <p class="mb-2 text-uppercase fw-medium">Create Date :</p>
-                            <h5 class="fs-15 mb-0" th:text="${#temporals.format(course.dateAdded, 'dd-MM-yyyy')}"></h5>
-                          </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6">
-                          <div>
-                            <p class="mb-2 text-uppercase fw-medium">Due Date :</p>
-                            <h5 class="fs-15 mb-0" th:text="${#temporals.format(course.dateEnd, 'dd-MM-yyyy')}"></h5>
-                          </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6">
-                          <div>
-                            <p class="mb-2 text-uppercase fw-medium">Priority :</p>
-                            <div class="badge bg-success fs-12">High</div>
-                          </div>
-                        </div>
-                        <div class="col-lg-3 col-sm-6">
-                          <div>
-                            <p class="mb-2 text-uppercase fw-medium">Status :</p>
-                            <div class="badge bg-primary fs-12">Inprogess</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- end card body -->
-              </div>
-              <!-- end card -->
-
-              <div class="card">
-                <div class="card-header align-items-center d-flex">
-                  <h4 class="card-title mb-0 flex-grow-1">Comments</h4>
-                  <div class="flex-shrink-0">
-                    <div class="dropdown card-header-dropdown">
-                      <a class="text-reset dropdown-btn" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="text-muted">Recent<i class="mdi mdi-chevron-down ms-1"></i></span>
-                      </a>
-                      <div class="dropdown-menu dropdown-menu-end">
-                        <a class="dropdown-item" href="#">Recent</a>
-                        <a class="dropdown-item" href="#">Top Rated</a>
-                        <a class="dropdown-item" href="#">Previous</a>
-                      </div>
-                    </div>
-                  </div>
-                </div><!-- end card header -->
-
-                <div class="card-body" th:if="${courseRates}">
-                  <div data-simplebar style="height: 300px;" class="px-3 mx-n3 mb-2">
-
-                    <div class="d-flex mb-4" th:each="rate : ${courseRates}">
-                      <div class="flex-shrink-0">
-                        <img th:if="${rate.courseStudentId.studentId != null}"
-                             th:src="${rate.courseStudentId.studentId.userId.avatar}"
-                             alt="Avatar"
-                             class="avatar-xs rounded-circle" />
-
-                        <img th:unless="${rate.courseStudentId.studentId != null}"
-                             src="https://img.freepik.com/free-vector/stationery-store-logo-template-design_23-2149881289.jpg"
-                             alt="Default Avatar"
-                             class="avatar-xs rounded-circle" />
-                      </div>
-
-                      <div class="flex-grow-1 ms-3">
-                        <h5 class="fs-13 mb-1">
-                          <span th:text="${rate.courseStudentId.studentId.userId.username}">Joseph Parker</span>
-                          <small class="text-muted ms-1" th:text="${rate.rate + '/5'}">5/5</small>
-                        </h5>
-
-                        <p class="text-muted mt-2" th:text="${rate.comment}">This course was great!</p>
-
-                        <a href="javascript:void(0);" class="badge text-muted bg-light">
-                          <i class="mdi mdi-reply"></i> Reply
-                        </a>
-                      </div>
-                    </div>
-
-                  </div>
-
-                <!--                  <form class="mt-4">-->
-<!--                    <div class="row g-3">-->
-<!--                      <div class="col-12">-->
-<!--                        <label for="exampleFormControlTextarea1" class="form-label text-body">Leave a Comments</label>-->
-<!--                        <textarea class="form-control bg-light border-light" id="exampleFormControlTextarea1" rows="3" placeholder="Enter your comment..."></textarea>-->
-<!--                      </div>-->
-<!--                      <div class="col-12 text-end">-->
-<!--                        <button type="button" class="btn btn-ghost-primary btn-icon waves-effect me-1"><i class="ri-attachment-line fs-16"></i></button>-->
-<!--                        <a href="javascript:void(0);" class="btn btn-primary">Post Comments</a>-->
-<!--                      </div>-->
-<!--                    </div>-->
-<!--                  </form>-->
-                </div>
-                <!-- end card body -->
-              </div>
-              <!-- end card -->
-            </div>
-            <!-- ene col -->
-          </div>
-          <!-- end row -->
-        </div>
-        <!-- end tab pane -->
-
-        <div class="tab-pane fade" id="course-details" role="tabpanel">
-          <div class="card">
-            <div class="card-body">
-              <div class="d-flex align-items-center mb-4">
-                <h5 class="card-title flex-grow-1">Details</h5>
-              </div>
-              <div class="row">
-                <!-- Danger Alert -->
-                <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${msg_error}">
-                  <b th:text="${msg_error}">Dismissible danger Alert </b>
-                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-
-                <!-- Success Alert -->
-                <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${msg_success}">
-                  <b th:text="${msg_success}"></b>
-                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-
-                <div class="col-lg-12">
-                  <div class="mx-5 my-2">
-                    <form id="courseForm" th:action="@{'/admin/course/' + ${course.id}}" th:object="${course}" method="post" enctype="multipart/form-data">
-                      <input type="hidden" th:field="*{id}" />
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                          <label for="courseName" class="form-label">Name</label>
-                          <input type="text" th:field="*{name}" class="form-control" id="courseName" placeholder="Course Name" required>
-                        </div>
-                        <div class="col-md-6">
-                          <label for="courseCategory" class="form-label">Category</label>
-                          <select th:field="*{categoryId.id}" class="form-select" id="courseCategory" required>
-                            <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}" th:selected="${cat.id} == ${course.categoryId?.id}"></option>
-                          </select>
-                        </div>
-                        <div class="col-md-12">
-                          <label for="courseDescription" class="form-label">Description</label>
-                          <textarea th:field="*{description}" class="form-control" id="courseDescription" rows="10" placeholder="Course Description"></textarea>
-                        </div>
-                      <div class="col-md-4">
-                        <label for="dateAdded" class="form-label">Date Added</label>
-                        <input type="datetime-local" th:field="*{dateAdded}" class="form-control" id="dateAdded" readonly/>
-                      </div>
-                      <div class="col-md-4">
-                        <label for="dateStart" class="form-label">Start Date</label>
-                        <input type="datetime-local" th:field="*{dateStart}" class="form-control" id="dateStart"/>
-                      </div>
-                      <div class="col-md-4">
-                        <label for="dateEnd" class="form-label">End Date</label>
-                        <input type="datetime-local" th:field="*{dateEnd}" class="form-control" id="dateEnd"/>
-                      </div>
-
-                      <div class="col-md-6">
-                          <label for="courseImage" class="form-label">Image</label>
-                          <input type="file" th:field="*{imageFile}" class="form-control" id="imageFile" accept="image/*">
-                          <div class="mt-2">
-                            <img th:if="*{image}" th:src="*{image}" alt="Course Image" class="img-thumbnail" style="max-height: 100px;">
-                          </div>
-                        </div>
-<!--                        <div class="col-md-6">-->
-<!--                          <label for="createdByAdminId" class="form-label">Created By (Admin)</label>-->
-<!--                          <select th:field="*{createdByAdminId.id}" class="form-select" id="createdByAdminId">-->
-<!--                            <option th:each="admin : ${admins}" th:value="${admin.id}" th:text="${admin.name}" th:selected="${admin.id} == ${course.createdByAdminId?.id}"></option>-->
-<!--                          </select>-->
-<!--                        </div>-->
-
-                      </div>
-                    <div class="col-12 text-end">
-                      <button type="button" class="btn btn-danger" id="custom-sa-warning">Remove</button>
-                      <button type="submit" class="btn btn-primary">Save</button>
-                    </div>
-                    </form>
-
-
-                    <form id="deleteCourseForm"
-                          th:action="@{/admin/course/{id}/delete(id=${course.id})}"
-                          method="post"
-                          style="display: inline;">
-                    </form>
-                    <!-- Course Management Form End -->
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- end tab pane -->
-        <div class="tab-pane fade" id="course-team" role="tabpanel">
-          <div class="row g-4 mb-3">
-            <div class="col-sm">
-              <div class="d-flex">
-                <div class="search-box me-2">
-                  <input type="text" id="searchStudentInput" class="form-control" placeholder="Search student...">
-                  <i class="ri-search-line search-icon"></i>
-                </div>
-              </div>
-            </div>
-            <div class="col-sm-auto">
-              <div>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#inviteMembersModal"><i class="ri-share-line me-1 align-bottom"></i> Invite Member</button>
-              </div>
-            </div>
-          </div>
-          <!-- end row -->
-
-          <div class="team-list list-view-filter" >
-            <div class="team-list list-view-filter">
-              <div th:each="student : ${courseStudents}" class="card team-box">
-                <div class="card-body px-4">
-                  <div class="row align-items-center team-row">
-                    <div class="col team-settings">
-                      <div class="row align-items-center">
-                        <div class="col text-end dropdown">
-                          <a href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="ri-more-fill fs-17"></i>
-                          </a>
-                          <ul class="dropdown-menu dropdown-menu-end">
-                            <li>
-                              <form th:action="@{/admin/course/{courseId}/student/{studentId}/delete(courseId=${course.id}, studentId=${student.id})}"
-                                    method="post"
-                                    style="display: inline">
-                                <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Are you sure?')">
-                                  <i class="ri-delete-bin-5-fill me-2 align-bottom"></i> Delete
-                                </button>
-                              </form>
+                        <ul class="nav nav-tabs-custom border-bottom-0" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active fw-semibold" data-bs-toggle="tab" href="#course-overview"
+                                   role="tab">
+                                    Overview
+                                </a>
                             </li>
-                          </ul>
-                        </div>
-                      </div>
+                            <li class="nav-item">
+                                <a class="nav-link fw-semibold" data-bs-toggle="tab" href="#course-details" role="tab">
+                                    Details
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link fw-semibold" data-bs-toggle="tab" href="#course-team" role="tab">
+                                    Team
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link fw-semibold"
+                                   th:href="@{/admin/course/{courseId}/lessons(courseId=${course.id})}">
+                                    Content Manager
+                                </a>
+                            </li>
+                        </ul>
                     </div>
-                    <div class="col-lg-4 col">
-                      <div class="team-profile-img">
-                        <div class="avatar-lg img-thumbnail rounded-circle">
-                          <img th:src="${student.studentId.userId.avatar}" alt="" class="img-fluid d-block rounded-circle" />
-                        </div>
-                        <div class="team-content">
-                          <a href="#" class="d-block">
-                            <h5 class="fs-16 mb-1" th:text="${student.studentId.userId.firstName} + ' ' + ${student.studentId.userId.lastName} "></h5>
-                          </a>
-                          <p class="text-muted mb-0" th:text="${student.studentId.userId.userRoleId.name}"></p>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-lg-4 col">
-                      <div class="row text-muted text-center">
-                        <div class="col-6 border-end border-end-dashed">
-                          <h5 class="mb-1">xxxx</h5>
-                          <p class="text-muted mb-0">Hours</p>
-                        </div>
-                        <div class="col-6">
-                          <h5 class="mb-1">xxx %</h5>
-                          <p class="text-muted mb-0">Complete</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-lg-2 col">
-                      <div class="text-end">
-                        <a th:href="@{'/student/profile/' + ${student.id}}" class="btn btn-light view-btn">View Profile</a>
-                      </div>
-                    </div>
-                  </div>
+                    <!-- end card body -->
                 </div>
-              </div>
             </div>
-            <!--end card-->
-          </div>
-          <!-- end team list -->
-
-          <div class="row g-0 text-center text-sm-start align-items-center mb-3">
-            <div class="col-sm-6">
-              <div>
-                <p class="mb-sm-0" th:text="|Showing ${startIndex} to ${endIndex} of ${totalItems} entries|"></p>
-              </div>
-            </div>
-
-
-            <ul class="pagination pagination-separated justify-content-center justify-content-sm-end mb-sm-0">
-              <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                <a th:href="@{/admin/course/{id}(id=${course.id}, page=${currentPage - 1}, name=${filterName})} + '#course-team'"
-                   class="page-link">Previous</a>
-              </li>
-
-              <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}" th:classappend="${page == currentPage} ? 'active'">
-                <a th:href="@{/admin/course/{id}(id=${course.id}, page=${page}, name=${filterName})} + '#course-team'"
-                   class="page-link" th:text="${page}"></a>
-              </li>
-
-              <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                <a th:href="@{/admin/course/{id}(id=${course.id}, page=${currentPage + 1}, name=${filterName})} + '#course-team'"
-                   class="page-link">Next</a>
-              </li>
-            </ul>
-            </div>
-          </div>
+            <!-- end card -->
         </div>
-        <!-- end tab pane -->
-      </div>
+        <!-- end col -->
+    </div>
+    <!-- end row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="tab-content text-muted">
+                <div class="tab-pane fade show active" id="course-overview" role="tabpanel">
+                    <div class="row">
+                        <div class="col-xl-9 col-lg-8">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="text-muted">
+                                        <h6 class="mb-3 fw-semibold text-uppercase">Description</h6>
+                                        <p th:text="${course.description}"></p>
+
+                                        <div>
+                                            <button type="button" class="btn btn-link link-secondary p-0">Read more
+                                            </button>
+                                        </div>
+
+                                        <div class="pt-3 border-top border-top-dashed mt-4">
+                                            <div class="row">
+
+                                                <div class="col-lg-3 col-sm-6">
+                                                    <div>
+                                                        <p class="mb-2 text-uppercase fw-medium">Create Date :</p>
+                                                        <h5 class="fs-15 mb-0"
+                                                            th:text="${#temporals.format(course.dateAdded, 'dd-MM-yyyy')}"></h5>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3 col-sm-6">
+                                                    <div>
+                                                        <p class="mb-2 text-uppercase fw-medium">Due Date :</p>
+                                                        <h5 class="fs-15 mb-0"
+                                                            th:text="${#temporals.format(course.dateEnd, 'dd-MM-yyyy')}"></h5>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3 col-sm-6">
+                                                    <div>
+                                                        <p class="mb-2 text-uppercase fw-medium">Priority :</p>
+                                                        <div class="badge bg-success fs-12">High</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3 col-sm-6">
+                                                    <div>
+                                                        <p class="mb-2 text-uppercase fw-medium">Status :</p>
+                                                        <div class="badge bg-primary fs-12">Inprogess</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- end card body -->
+                            </div>
+                            <!-- end card -->
+
+                            <div class="card">
+                                <div class="card-header align-items-center d-flex">
+                                    <h4 class="card-title mb-0 flex-grow-1">Comments</h4>
+                                    <div class="flex-shrink-0">
+                                        <div class="dropdown card-header-dropdown">
+                                            <a class="text-reset dropdown-btn" href="#" data-bs-toggle="dropdown"
+                                               aria-haspopup="true" aria-expanded="false">
+                                                <span class="text-muted">Recent<i class="mdi mdi-chevron-down ms-1"></i></span>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                <a class="dropdown-item" href="#">Recent</a>
+                                                <a class="dropdown-item" href="#">Top Rated</a>
+                                                <a class="dropdown-item" href="#">Previous</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div><!-- end card header -->
+
+                                <div class="card-body" th:if="${courseRates}">
+                                    <div data-simplebar style="height: 300px;" class="px-3 mx-n3 mb-2">
+
+                                        <div class="d-flex mb-4" th:each="rate : ${courseRates}">
+                                            <div class="flex-shrink-0">
+                                                <img th:if="${rate.courseStudentId.studentId != null}"
+                                                     th:src="${rate.courseStudentId.studentId.userId.avatar}"
+                                                     alt="Avatar"
+                                                     class="avatar-xs rounded-circle"/>
+
+                                                <img th:unless="${rate.courseStudentId.studentId != null}"
+                                                     src="https://img.freepik.com/free-vector/stationery-store-logo-template-design_23-2149881289.jpg"
+                                                     alt="Default Avatar"
+                                                     class="avatar-xs rounded-circle"/>
+                                            </div>
+
+                                            <div class="flex-grow-1 ms-3">
+                                                <h5 class="fs-13 mb-1">
+                                                    <span th:text="${rate.courseStudentId.studentId.userId.username}">Joseph Parker</span>
+                                                    <small class="text-muted ms-1"
+                                                           th:text="${rate.rate + '/5'}">5/5</small>
+                                                </h5>
+
+                                                <p class="text-muted mt-2" th:text="${rate.comment}">This course was
+                                                    great!</p>
+
+                                                <a href="javascript:void(0);" class="badge text-muted bg-light">
+                                                    <i class="mdi mdi-reply"></i> Reply
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <!--                  <form class="mt-4">-->
+                                    <!--                    <div class="row g-3">-->
+                                    <!--                      <div class="col-12">-->
+                                    <!--                        <label for="exampleFormControlTextarea1" class="form-label text-body">Leave a Comments</label>-->
+                                    <!--                        <textarea class="form-control bg-light border-light" id="exampleFormControlTextarea1" rows="3" placeholder="Enter your comment..."></textarea>-->
+                                    <!--                      </div>-->
+                                    <!--                      <div class="col-12 text-end">-->
+                                    <!--                        <button type="button" class="btn btn-ghost-primary btn-icon waves-effect me-1"><i class="ri-attachment-line fs-16"></i></button>-->
+                                    <!--                        <a href="javascript:void(0);" class="btn btn-primary">Post Comments</a>-->
+                                    <!--                      </div>-->
+                                    <!--                    </div>-->
+                                    <!--                  </form>-->
+                                </div>
+                                <!-- end card body -->
+                            </div>
+                            <!-- end card -->
+                        </div>
+                        <!-- ene col -->
+                    </div>
+                    <!-- end row -->
+                </div>
+                <!-- end tab pane -->
+
+                <div class="tab-pane fade" id="course-details" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-4">
+                                <h5 class="card-title flex-grow-1">Details</h5>
+                            </div>
+
+                            <div class="row">
+                                <!-- Danger Alert -->
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert"
+                                     th:if="${msg_error}">
+                                    <b th:text="${msg_error}">Dismissible danger Alert </b>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                </div>
+
+                                <!-- Success Alert -->
+                                <div class="alert alert-success alert-dismissible fade show" role="alert"
+                                     th:if="${msg_success}">
+                                    <b th:text="${msg_success}"></b>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="mx-5 my-2">
+                                        <form id="courseForm" th:action="@{'/admin/course/' + ${course.id}}"
+                                              th:object="${course}" method="post" enctype="multipart/form-data">
+                                            <input type="hidden" th:field="*{id}"/>
+                                            <div class="row g-3">
+                                                <div class="col-md-6">
+                                                    <label for="courseName" class="form-label">Name</label>
+                                                    <input type="text" th:field="*{name}" class="form-control"
+                                                           id="courseName" placeholder="Course Name" required>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="courseCategory" class="form-label">Category</label>
+                                                    <select th:field="*{categoryId.id}" class="form-select"
+                                                            id="courseCategory" required>
+                                                        <option th:each="cat : ${categories}" th:value="${cat.id}"
+                                                                th:text="${cat.name}"
+                                                                th:selected="${cat.id} == ${course.categoryId?.id}"></option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <label for="courseDescription"
+                                                           class="form-label">Description</label>
+                                                    <textarea th:field="*{description}" class="form-control"
+                                                              id="courseDescription" rows="10"
+                                                              placeholder="Course Description"></textarea>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="dateAdded" class="form-label">Date Added</label>
+                                                    <input type="datetime-local" th:field="*{dateAdded}"
+                                                           class="form-control" id="dateAdded" readonly/>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="dateStart" class="form-label">Start Date</label>
+                                                    <input type="datetime-local" th:field="*{dateStart}"
+                                                           class="form-control" id="dateStart"/>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="dateEnd" class="form-label">End Date</label>
+                                                    <input type="datetime-local" th:field="*{dateEnd}"
+                                                           class="form-control" id="dateEnd"/>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <label for="courseImage" class="form-label">Image</label>
+                                                    <div class="mt-2">
+                                                        <img th:if="*{image}" th:src="*{image}" id="courseImage"
+                                                             alt="Course Image" class="img-thumbnail"
+                                                             style="max-height: 100px;">
+                                                    </div>
+                                                    <input type="file" th:field="*{imageFile}" class="form-control mt-3"
+                                                           id="imageFile" accept="image/*">
+                                                </div>
+                                                <!--                        <div class="col-md-6">-->
+                                                <!--                          <label for="createdByAdminId" class="form-label">Created By (Admin)</label>-->
+                                                <!--                          <select th:field="*{createdByAdminId.id}" class="form-select" id="createdByAdminId">-->
+                                                <!--                            <option th:each="admin : ${admins}" th:value="${admin.id}" th:text="${admin.name}" th:selected="${admin.id} == ${course.createdByAdminId?.id}"></option>-->
+                                                <!--                          </select>-->
+                                                <!--                        </div>-->
+
+                                            </div>
+                                            <div class="col-12 text-end">
+                                                <button type="button" class="btn btn-danger" id="custom-sa-warning">
+                                                    Remove
+                                                </button>
+                                                <button type="submit" class="btn btn-primary">Save</button>
+                                            </div>
+                                        </form>
+
+
+                                        <form id="deleteCourseForm"
+                                              th:action="@{/admin/course/{id}/delete(id=${course.id})}"
+                                              method="post"
+                                              style="display: inline;">
+                                        </form>
+                                        <!-- Course Management Form End -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-4">
+                                <h5 class="card-title flex-grow-1">Lecturer</h5>
+                                <button class="btn btn-success" type="button" onclick="addLecturer()">Add Lecturer</button>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="mx-5 my-2">
+
+
+
+                                        <form th:action="@{/admin/course/{courseId}/updateLecture(courseId=${course.id})}"
+                                              th:object="${courseLecturerForm}"
+                                              method="post">
+
+                                            <template id="selec-lecturer-template">
+                                                <select class="form-select">
+                                                    <option th:each="lect : *{lecturers}"
+                                                            th:value="${lect.id}"
+                                                            th:text="${lect.userIdFirstName + ' ' + lect.userIdLastName}">
+                                                    </option>
+                                                </select>
+                                            </template>
+
+
+                                            <div class="row g-3" id="lecturer-list">
+                                                <div class="col-md-6 mb-2" th:each="cl, itemStat : *{courseLecturers}">
+                                                    <div class="input-group">
+                                                        <!-- Hidden ID (nếu có) -->
+                                                        <input type="hidden" th:field="*{courseLecturers[__${itemStat.index}__].id}" />
+
+                                                        <!-- Course ID -->
+                                                        <input type="hidden" th:field="*{courseLecturers[__${itemStat.index}__].courseId.id}"/>
+
+                                                        <!-- Lecturer ID -->
+                                                        <select class="form-select" th:field="*{courseLecturers[__${itemStat.index}__].lecturerId.id}">
+                                                            <option th:each="lect : *{lecturers}"
+                                                                    th:value="${lect.id}"
+                                                                    th:text="${lect.userIdFirstName + ' ' + lect.userIdLastName}">
+                                                            </option>
+                                                        </select>
+
+                                                        <button class="btn btn-danger" type="button" onclick="removeLecturer(this)">Remove</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <button class="btn btn-primary" type="submit">Update</button>
+                                        </form>
+
+
+                                        <!-- Course Management Form End -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- end tab pane -->
+                <div class="tab-pane fade" id="course-team" role="tabpanel">
+                    <div class="row g-4 mb-3">
+                        <div class="col-sm">
+                            <div class="d-flex">
+                                <div class="search-box me-2">
+                                    <input type="text" id="searchStudentInput" class="form-control"
+                                           placeholder="Search student...">
+                                    <i class="ri-search-line search-icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-auto">
+                            <div>
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#inviteMembersModal"><i
+                                        class="ri-share-line me-1 align-bottom"></i> Invite Member
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end row -->
+
+                    <div class="team-list list-view-filter">
+                        <div class="team-list list-view-filter">
+                            <div th:each="student : ${courseStudents}" class="card team-box">
+                                <div class="card-body px-4">
+                                    <div class="row align-items-center team-row">
+                                        <div class="col team-settings">
+                                            <div class="row align-items-center">
+                                                <div class="col text-end dropdown">
+                                                    <a href="javascript:void(0);" data-bs-toggle="dropdown"
+                                                       aria-expanded="false">
+                                                        <i class="ri-more-fill fs-17"></i>
+                                                    </a>
+                                                    <ul class="dropdown-menu dropdown-menu-end">
+                                                        <li>
+                                                            <form th:action="@{/admin/course/{courseId}/student/{studentId}/delete(courseId=${course.id}, studentId=${student.id})}"
+                                                                  method="post"
+                                                                  style="display: inline">
+                                                                <button type="submit" class="dropdown-item text-danger"
+                                                                        onclick="return confirm('Are you sure?')">
+                                                                    <i class="ri-delete-bin-5-fill me-2 align-bottom"></i>
+                                                                    Delete
+                                                                </button>
+                                                            </form>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col">
+                                            <div class="team-profile-img">
+                                                <div class="avatar-lg img-thumbnail rounded-circle">
+                                                    <img th:src="${student.studentId.userId.avatar}" alt=""
+                                                         class="img-fluid d-block rounded-circle"/>
+                                                </div>
+                                                <div class="team-content">
+                                                    <a href="#" class="d-block">
+                                                        <h5 class="fs-16 mb-1"
+                                                            th:text="${student.studentId.userId.firstName} + ' ' + ${student.studentId.userId.lastName} "></h5>
+                                                    </a>
+                                                    <p class="text-muted mb-0"
+                                                       th:text="${student.studentId.userId.userRoleId.name}"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col">
+                                            <div class="row text-muted text-center">
+                                                <div class="col-6 border-end border-end-dashed">
+                                                    <h5 class="mb-1">xxxx</h5>
+                                                    <p class="text-muted mb-0">Hours</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <h5 class="mb-1">xxx %</h5>
+                                                    <p class="text-muted mb-0">Complete</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-2 col">
+                                            <div class="text-end">
+                                                <a th:href="@{'/student/profile/' + ${student.id}}"
+                                                   class="btn btn-light view-btn">View Profile</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--end card-->
+                    </div>
+                    <!-- end team list -->
+
+                    <div class="row g-0 text-center text-sm-start align-items-center mb-3">
+                        <div class="col-sm-6">
+                            <div>
+                                <p class="mb-sm-0"
+                                   th:text="|Showing ${startIndex} to ${endIndex} of ${totalItems} entries|"></p>
+                            </div>
+                        </div>
+
+
+                        <ul class="pagination pagination-separated justify-content-center justify-content-sm-end mb-sm-0">
+                            <!-- Previous button -->
+                            <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                                <a th:if="${currentPage > 1}"
+                                   th:href="@{/admin/course/{id}(id=${course.id}, page=${currentPage - 1}, name=${filterName})} + '#course-team'"
+                                   class="page-link">Previous</a>
+                                <a th:unless="${currentPage > 1}" href="#" class="page-link disabled">Previous</a>
+                            </li>
+
+                            <!-- Page numbers -->
+                            <li class="page-item"
+                                th:each="page : ${#numbers.sequence(1, totalPages)}"
+                                th:classappend="${page == currentPage} ? 'active'">
+                                <a th:href="@{/admin/course/{id}(id=${course.id}, page=${page}, name=${filterName})} + '#course-team'"
+                                   class="page-link"
+                                   th:text="${page}"></a>
+                            </li>
+
+                            <!-- Next button -->
+                            <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                                <a th:if="${currentPage < totalPages}"
+                                   th:href="@{/admin/course/{id}(id=${course.id}, page=${currentPage + 1}, name=${filterName})} + '#course-team'"
+                                   class="page-link">Next</a>
+                                <a th:unless="${currentPage < totalPages}" href="#" class="page-link disabled">Next</a>
+                            </li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+            <!-- end tab pane -->
+        </div>
     </div>
     <!-- end col -->
-  <!-- end row -->
+    <!-- end row -->
 </div>
 
 
 <th:block layout:fragment="modal">
-  <div class="modal fade" id="inviteMembersModal" tabindex="-1" aria-labelledby="inviteMembersModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <form class="modal-content border-0" id="addMembersForm" method="post" th:action="@{'/admin/course/' + ${course.id} + '/add-members'}">
-        <div class="modal-content border-0">
-          <div class="modal-header p-3 ps-4 bg-soft-primary">
-            <h5 class="modal-title" id="inviteMembersModalLabel">Members</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body p-4">
-            <div class="search-box mb-3">
-              <input type="text" id="searchStudent" class="form-control bg-light border-light" placeholder="Search here...">
-              <i class="ri-search-line search-icon"></i>
-            </div>
+    <div class="modal fade" id="inviteMembersModal" tabindex="-1" aria-labelledby="inviteMembersModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form class="modal-content border-0" id="addMembersForm" method="post"
+                  th:action="@{'/admin/course/' + ${course.id} + '/add-members'}">
+                <div class="modal-content border-0">
+                    <div class="modal-header p-3 ps-4 bg-soft-primary">
+                        <h5 class="modal-title" id="inviteMembersModalLabel">Members</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div class="search-box mb-3">
+                            <input type="text" id="searchStudent" class="form-control bg-light border-light"
+                                   placeholder="Search here...">
+                            <i class="ri-search-line search-icon"></i>
+                        </div>
 
-            <div class="mb-4 d-flex align-items-center">
-              <div class="me-2">
-                <h5 class="mb-0 fs-13">Members :</h5>
-              </div>
-            </div>
-            <div class="mx-n4 px-4" data-simplebar style="max-height: 225px;">
-  <!--            hidden form for binding student list-->
-                <div class="vstack gap-3" id="membersInputs">
+                        <div class="mb-4 d-flex align-items-center">
+                            <div class="me-2">
+                                <h5 class="mb-0 fs-13">Members :</h5>
+                            </div>
+                        </div>
+                        <div class="mx-n4 px-4" data-simplebar style="max-height: 225px;">
+                            <!--            hidden form for binding student list-->
+                            <div class="vstack gap-3" id="membersInputs">
 
-                    <!-- Hidden input sẽ được thêm bằng JS -->
+                                <!-- Hidden input sẽ được thêm bằng JS -->
 
+                            </div>
+                            <!-- end list -->
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light w-xs" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary w-xs">Invite</button>
+                    </div>
                 </div>
-              <!-- end list -->
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-light w-xs" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary w-xs">Invite</button>
-          </div>
+            </form>
+            <!-- end modal-content -->
         </div>
-      </form>
-      <!-- end modal-content -->
+        <!-- modal-dialog -->
     </div>
-    <!-- modal-dialog -->
-  </div>
 </th:block>
 
 <th:block layout:fragment="pagejs">
 
 
-  <!-- Sweet Alerts js -->
-  <script th:src="@{/assets/libs/sweetalert2/sweetalert2.min.js}"></script>
+    <!-- Sweet Alerts js -->
+    <script th:src="@{/assets/libs/sweetalert2/sweetalert2.min.js}"></script>
 
-  <script th:src="@{/assets/js/pages/course-detail.init.js}"></script>
+    <script th:src="@{/assets/js/course-detail.init.js}"></script>
 
+    <script th:inline="javascript">
+        // Render giảng viên sang HTML option
+        const lecturerOptions = /*[[${courseLecturerForm.lecturers}]]*/ [];
+        const lecturerSelectHtml = lecturerOptions.map(lect =>
+            `<option value="${lect.id}">${lect.userIdFirstName} ${lect.userIdLastName}</option>`
+        ).join('');
 
-<!--  &lt;!&ndash; Sweet alert init js&ndash;&gt;-->
-<!--  <script th:src="@{/assets/js/pages/sweetalerts.init.js}"></script>-->
+        let lecturerIndex = /*[[${courseLecturerForm.countCurrentLecturers}]]*/ 0;
+
+        const courseId = /*[[${course.id}]]*/ 0;
+
+        function addLecturer() {
+            const container = document.getElementById("lecturer-list");
+
+            // Tạo phần tử div chứa form control
+            const wrapper = document.createElement("div");
+            wrapper.className = "col-md-6 mb-2";
+
+            // Nội dung HTML cần thêm
+            wrapper.innerHTML = `
+        <div class="input-group">
+            <input type="hidden" name="courseLecturers[${lecturerIndex}].id" />
+            <input type="hidden" name="courseLecturers[${lecturerIndex}].courseId.id" value="${courseId}" />
+
+            <select class="form-select" name="courseLecturers[${lecturerIndex}].lecturerId.id">
+                <option value="">-- Select Lecturer --</option>
+                ${lecturerSelectHtml}
+            </select>
+
+            <button class="btn btn-danger" type="button" onclick="removeLecturer(this)">Remove</button>
+        </div>`;
+
+            // Thêm vào DOM
+            container.appendChild(wrapper);
+
+            // Tăng index để tránh trùng lặp
+            lecturerIndex++;
+        }
+
+        function removeLecturer(button) {
+            const row = button.closest(".col-md-6");
+            if (row) row.remove();
+        }
+
+    </script>
+
 
 </th:block>
+
+
 </body>
 
 </html>

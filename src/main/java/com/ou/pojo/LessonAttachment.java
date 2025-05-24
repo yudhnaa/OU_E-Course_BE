@@ -4,22 +4,14 @@
  */
 package com.ou.pojo;
 
-import jakarta.persistence.Basic;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.NamedQueries;
-import jakarta.persistence.NamedQuery;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.Serializable;
 
 /**
  *
- * @author ADMIN
+ * @author yudhna
  */
 @Entity
 @Table(name = "lesson_attachment")
@@ -40,6 +32,8 @@ public class LessonAttachment implements Serializable {
     @JoinColumn(name = "lesson_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Lesson lessonId;
+
+
 
     public LessonAttachment() {
     }
@@ -96,5 +90,5 @@ public class LessonAttachment implements Serializable {
     public String toString() {
         return "com.ou.pojo.LessonAttachment[ id=" + id + " ]";
     }
-    
+
 }

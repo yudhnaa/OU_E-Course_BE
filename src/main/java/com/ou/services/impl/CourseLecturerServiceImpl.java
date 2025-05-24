@@ -1,16 +1,17 @@
 package com.ou.services.impl;
 
+import com.ou.pojo.Course;
 import com.ou.pojo.CourseLecturer;
+import com.ou.pojo.Lecturer;
 import com.ou.repositories.CourseLecturerRepository;
 import com.ou.services.CourseLecturerService;
+import com.ou.services.LocalizationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Transactional
@@ -18,6 +19,8 @@ public class CourseLecturerServiceImpl implements CourseLecturerService {
 
     @Autowired
     private CourseLecturerRepository courseLecturerRepository;
+    @Autowired
+    private LocalizationService localizationService;
 
     @Override
     public CourseLecturer addCourseLecturer(CourseLecturer courseLecturer) throws Exception {
@@ -33,6 +36,46 @@ public class CourseLecturerServiceImpl implements CourseLecturerService {
         }
         
         return courseLecturerRepository.addCourseLecturer(courseLecturer);
+    }
+
+    @Override
+    public Boolean updateCourseLecturer(List<CourseLecturer> courseLecturer) throws Exception {
+
+        boolean isSuccess = false;
+
+        List<CourseLecturer> currentCourseLecturers = courseLecturerRepository
+                .getCourseLecturersByCourse(courseLecturer.get(0).getCourseId().getId(), null);
+
+        // Remove existing assignments that are not in the new list
+        for (CourseLecturer existing : currentCourseLecturers) {
+            boolean exists = courseLecturer.stream()
+                    .anyMatch(item -> item.getId().equals(existing.getId()));
+            if (!exists) {
+                courseLecturerRepository.deleteCourseLecturer(existing.getId());
+                isSuccess = true;
+            }
+        }
+
+        for (CourseLecturer item : courseLecturer) {
+            // Validate the lecturer assignment before saving
+            if (!validateCourseLecturerAssignment(item)) {
+                throw new Exception(localizationService.getMessage("courseLecturer.invalidData", LocaleContextHolder.getLocale()));
+            }
+
+            // Check if lecturer is already assigned to this course
+            boolean isAssigned = isLecturerAssignedToCourse(item.getLecturerId().getId(), item.getCourseId().getId());
+            if (isAssigned) {
+                continue;
+            }
+            else {
+                CourseLecturer addedCourseLecturer = courseLecturerRepository.addCourseLecturer(item);
+                if (addedCourseLecturer != null) {
+                    isSuccess = true;
+                }
+            }
+        }
+
+        return isSuccess;
     }
 
     @Override

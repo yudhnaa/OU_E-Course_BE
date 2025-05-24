@@ -1,8 +1,12 @@
 package com.ou.repositories.impl;
 
 
+import com.ou.pojo.ExerciseAttachment;
 import com.ou.pojo.LessonAttachment;
 import com.ou.repositories.LessonAttachmentRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -23,7 +27,7 @@ public class LessonAttachmentRepositoryImpl implements LessonAttachmentRepositor
     public LessonAttachment createLessonAttachment(LessonAttachment lessonAttachment) {
         Session session = factory.getObject().getCurrentSession();
         try {
-            session.save(lessonAttachment);
+            session.persist(lessonAttachment);
             return lessonAttachment;
         } catch (Exception e) {
             e.printStackTrace();
@@ -54,10 +58,27 @@ public class LessonAttachmentRepositoryImpl implements LessonAttachmentRepositor
     }
 
     @Override
+    public List<LessonAttachment> getLessonAttachmentsByLesson(Integer lessonId) {
+        Session session = factory.getObject().getCurrentSession();
+        try {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<LessonAttachment> query = builder.createQuery(LessonAttachment.class);
+
+            Root<LessonAttachment> root = query.from(LessonAttachment.class);
+            query.select(root).where(builder.equal(root.get("lessonId").get("id"), lessonId));
+
+            return session.createQuery(query).getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Collections.emptyList();
+        }
+    }
+
+    @Override
     public LessonAttachment updateLessonAttachment(LessonAttachment lessonAttachment) {
         Session session = factory.getObject().getCurrentSession();
         try {
-            session.update(lessonAttachment);
+            session.merge(lessonAttachment);
             return lessonAttachment;
         } catch (Exception e) {
             e.printStackTrace();
@@ -78,6 +99,24 @@ public class LessonAttachmentRepositoryImpl implements LessonAttachmentRepositor
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    @Override
+    public long countLessonAttachmentsByLesson(Integer lessonId) {
+        Session session = factory.getObject().getCurrentSession();
+        try {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Long> query = builder.createQuery(Long.class);
+
+            Root<LessonAttachment> root = query.from(LessonAttachment.class);
+            query.select(builder.count(root));
+            query.where(builder.equal(root.get("lessonId").get("id"), lessonId));
+
+            return session.createQuery(query).getSingleResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
         }
     }
 }

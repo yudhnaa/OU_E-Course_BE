@@ -1,0 +1,190 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<th:block layout:fragment="pagetitle">
+    <!--page title-->
+    <div th:replace="~{partials/title-meta :: title-meta('Create Lesson')}"></div>
+</th:block>
+
+<head>
+    <!-- Plugins css -->
+    <link th:href="@{/assets/libs/dropzone/dropzone.css}" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div th:replace="~{partials/page-title :: page-title('Create Lesson','Course')}"></div>
+    <form id="lessonForm"
+          th:action="@{/admin/course/{courseId}/lesson/{lessonId}/update(courseId=${course.id},lessonId=${lesson.id})}"
+          th:object="${lesson}"
+          method="post"
+          enctype="multipart/form-data">
+
+        <input type="hidden" th:field="*{id}"/>
+
+        <!-- Hidden userUploadId -->
+        <input type="hidden" th:value="${authUser.id}" id="userUploadId" name="userUploadId" />
+
+        <div class="row">
+            <!-- Danger Alert -->
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${msg_error}">
+                <b th:text="${msg_error}">Dismissible danger Alert </b>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <!-- Success Alert -->
+            <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${msg_success}">
+                <b th:text="${msg_success}"></b>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- LEFT -->
+            <div class="col-lg-8">
+                <!-- LESSON INFO -->
+                <div class="card">
+                    <div class="card-body">
+                        <!-- Image -->
+                        <div class="mb-3">
+                            <label class="form-label" for="lesson-thumbnail-img">Thumbnail Image</label>
+                            <div class="d-flex align-items-center">
+                                <img th:src="${lesson.image}"
+                                     id="lesson-image-preview"
+                                     class="img-fluid avatar-xl mw-100 h-auto d-block rounded border"
+                                     alt="Lesson Image">
+
+                                <input class="ms-3"
+                                       th:field="*{thumbnailImage}"
+                                       id="lesson-thumbnail-img"
+                                       type="file"
+                                       accept="image/png, image/jpeg, image/gif">
+                            </div>
+                        </div>
+                        <!-- Name -->
+                        <div class="mb-3">
+                            <label class="form-label" for="lesson-title-input">Lesson Name</label>
+                            <input type="text" th:field="*{name}" class="form-control" id="lesson-title-input" placeholder="Enter lesson name">
+                        </div>
+
+                        <!-- Thumbnail -->
+                        <div class="mb-3">
+                            <label class="form-label" for="lesson-thumbnail-img">Thumbnail Image</label>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3">
+                            <label class="form-label" for="lessonDescription">Lesson Description</label>
+                            <textarea th:field="*{description}" class="form-control" id="lessonDescription" rows="10" placeholder="Lesson Description"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Embed link -->
+                <div class="card" id="video-link-container">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Embed link</h5>
+                    </div>
+                    <div class="card-body">
+                        <div>
+                            <!-- Textbox nhập link video, ẩn mặc định -->
+                            <div style="margin-top: 10px;">
+                                <label for="video-link" class="form-label">Embed Video Link</label>
+                                <input type="text" th:field="*{embedLink}" class="form-control" id="video-link" placeholder="Enter embed video URL">
+                            </div>
+                        </div>
+                    </div>
+                </div>`
+                <!-- end card -->
+
+                <!-- ATTACHMENTS -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Attached files</h5>
+                    </div>
+                    <div class="card-body">
+                        <div>
+                            <p class="text-muted">Add Attached files here.</p>
+
+                            <div th:each="lessonAttachment, iterStat : ${currentlessonAttachments}">
+                                <div class="d-flex align-items-center mb-2">
+                                    <span th:text="${lessonAttachment.attachmentId.name}">File name</span>
+
+                                    <!-- Nút xoá (ẩn input id để xác định xoá file nào) -->
+                                    <input type="hidden" name="notDeleteLessonAttachmentIds" th:value="${lessonAttachment.id}" />
+                                    <button type="button" class="btn btn-sm btn-danger ms-2"
+                                            onclick="this.closest('div').remove();">
+                                        Xoá
+                                    </button>
+                                </div>
+                            </div>
+
+                            <input type="file" th:field="*{lessonAttachments}" multiple="multiple" accept=".pdf,.png,.jpg,.jpeg,.docx,.xlsx">
+                        </div>
+                    </div>
+                </div>
+                <!-- end card -->
+
+                <!-- ACTION BUTTONS -->
+                <div class="text-end mb-4">
+                    <!-- Update Button -->
+                    <button type="submit" id="submitBtn" class="btn btn-success w-sm">Update</button>
+                </div>
+            </div>
+
+            <!-- RIGHT -->
+            <div class="col-lg-4">
+                <!-- Course selection -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Lesson</h5>
+                    </div>
+                    <div class="card-body">
+                        <label for="lesson-type" class="form-label">Lesson Type</label>
+                        <select th:field="*{lessonTypeId.id}" class="form-select" id="lesson-type">
+                            <option th:each="type : ${lessonTypes}" th:value="${type.id}" th:text="${type.name}"></option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Course</h5>
+                    </div>
+                    <div class="card-body">
+                        <label for="courseSelect" class="form-label">Course</label>
+                        <select th:field="*{courseId}" class="form-select" id="courseSelect">
+                            <option th:value="${course.id}" th:text="${course.name}"
+                                    selected></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!-- Delete Button -->
+    <div class="row">
+        <div class="col-lg-8 ">
+            <div class="mb-4 text-end">
+                <form th:action="@{/admin/course/{courseId}/lesson/{lessonId}/delete(courseId=${course.id},lessonId=${lesson.id})}"
+                      method="post" style="display: inline;">
+                    <input type="hidden" name="_method" value="delete" />
+                    <button type="submit" class="btn btn-danger w-sm">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+
+<th:block layout:fragment="pagejs">
+
+    <!-- project-create init -->
+    <script th:src="@{/assets/js/lesson-detail.init.js}"></script>
+
+</th:block>
+</body>
+
+</html>

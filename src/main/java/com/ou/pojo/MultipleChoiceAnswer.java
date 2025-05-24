@@ -22,7 +22,7 @@ import java.io.Serializable;
 
 /**
  *
- * @author ADMIN
+ * @author yudhna
  */
 @Entity
 @Table(name = "multiple_choice_answer")
@@ -121,5 +121,5 @@ public class MultipleChoiceAnswer implements Serializable {
     public String toString() {
         return "com.ou.pojo.MultipleChoiceAnswer[ id=" + id + " ]";
     }
-    
+
 }

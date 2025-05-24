@@ -32,7 +32,7 @@ public class LessonRepositoryImpl implements LessonRepository {
     @Override
     public Lesson addLesson(Lesson lesson) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.save(lesson);
+        session.persist(lesson);
         session.flush(); // Ensure ID is generated and available
         return lesson;
     }
@@ -40,7 +40,7 @@ public class LessonRepositoryImpl implements LessonRepository {
     @Override
     public Lesson updateLesson(Lesson lesson) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.update(lesson);
+        session.merge(lesson);
         return lesson;
     }
 
@@ -128,8 +128,13 @@ public class LessonRepositoryImpl implements LessonRepository {
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Lesson> query = builder.createQuery(Lesson.class);
         Root<Lesson> root = query.from(Lesson.class);
-        
-        query.where(builder.equal(root.get("courseId").get("id"), courseId));
+
+        // Build predicates
+        List<Predicate> predicates = buildSearchPredicates(builder, root, params);
+
+        predicates.add(builder.equal(root.get("courseId").get("id"), courseId));
+
+        query.where(builder.and(predicates.toArray(new Predicate[0])));
         
         Query<Lesson> q = session.createQuery(query);
         
@@ -147,13 +152,21 @@ public class LessonRepositoryImpl implements LessonRepository {
 
     @Override
     @Transactional(readOnly = true)
-    public long countLessonsByCourse(Integer courseId) {
+    public long countLessonsByCourse(Integer courseId, Map<String, String> params) {
         Session session = sessionFactory.getObject().getCurrentSession();
+
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Long> query = builder.createQuery(Long.class);
         Root<Lesson> root = query.from(Lesson.class);
-        query.where(builder.equal(root.get("courseId").get("id"), courseId));
+
+        // Build predicates
+        List<Predicate> predicates = buildSearchPredicates(builder, root, params);
+
+        predicates.add(builder.equal(root.get("courseId").get("id"), courseId));
+
+        query.where(builder.and(predicates.toArray(new Predicate[0])));
         query.select(builder.count(root));
+
         return session.createQuery(query).getSingleResult();
     }
 
@@ -275,36 +288,36 @@ public class LessonRepositoryImpl implements LessonRepository {
         query.select(builder.count(root));
         return session.createQuery(query).getSingleResult();
     }
-    
+
     private List<Predicate> buildSearchPredicates(CriteriaBuilder builder, Root<Lesson> root, Map<String, String> filters) {
         List<Predicate> predicates = new ArrayList<>();
-        
+
         if (filters != null) {
             if (filters.containsKey("name")) {
                 predicates.add(builder.like(root.get("name"), String.format("%%%s%%", filters.get("name"))));
             }
-            
+
             if (filters.containsKey("description")) {
                 predicates.add(builder.like(root.get("description"), String.format("%%%s%%", filters.get("description"))));
             }
-            
+
             if (filters.containsKey("embedLink")) {
                 predicates.add(builder.like(root.get("embedLink"), String.format("%%%s%%", filters.get("embedLink"))));
             }
-            
+
             if (filters.containsKey("courseId")) {
                 predicates.add(builder.equal(root.get("courseId").get("id"), Integer.valueOf(filters.get("courseId"))));
             }
-            
+
             if (filters.containsKey("lessonTypeId")) {
                 predicates.add(builder.equal(root.get("lessonTypeId").get("id"), Integer.valueOf(filters.get("lessonTypeId"))));
             }
-            
+
             if (filters.containsKey("userUploadId")) {
                 predicates.add(builder.equal(root.get("userUploadId").get("id"), Integer.valueOf(filters.get("userUploadId"))));
             }
         }
-        
+
         return predicates;
     }
 }

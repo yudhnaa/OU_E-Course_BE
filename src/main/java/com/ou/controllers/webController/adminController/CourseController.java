@@ -1,18 +1,16 @@
 package com.ou.controllers.webController.adminController;
 
+import com.ou.exceptions.NotFoundException;
+import com.ou.formBean.CourseLecturerForm;
 import com.ou.formBean.CourseStudentForm;
 import com.ou.helpers.PaginationHelper;
-import com.ou.pojo.Category;
-import com.ou.pojo.Course;
-import com.ou.pojo.CourseRate;
-import com.ou.pojo.CourseStudent;
-import com.ou.services.CategoryService;
-import com.ou.services.CourseRateService;
-import com.ou.services.CourseService;
-import com.ou.services.CourseStudentService;
+import com.ou.mappers.LecturerMapper;
+import com.ou.pojo.*;
+import com.ou.services.*;
 import com.ou.utils.Pagination;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,8 +21,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-
-import static com.ou.configs.WebApplicationSettings.PAGE_SIZE;
+import java.util.stream.Collectors;
 
 @RequestMapping(path = "/admin")
 @Controller
@@ -44,23 +41,49 @@ public class CourseController{
 
     @Autowired
     private CourseRateService courseRateService;
+    @Autowired
+    private LocalizationService localizationService;
+    @Autowired
+    private CourseLecturerService courseLecturerService;
+    @Autowired
+    private LecturerService lecturerService;
+    @Autowired
+    private LecturerMapper lecturerMapper;
 
 
     @GetMapping("/courses")
-    public String index(Model model, @RequestParam Map<String, String> params) {
-        long totalItems = courseService.countCourses();
+    public String index(
+            Model model,
+            @RequestParam Map<String, String> params,
+            RedirectAttributes redirectAttributes
+    ) {
+
+        long totalItems;
+        if (params.get("name") != null) {
+            totalItems = courseService.countSearchResults(params);
+        }
+        else
+            totalItems = courseService.countCourses();
+
         Pagination pagination = paginationHelper.getPagination(params, totalItems);
 
         params.put("page", String.valueOf(pagination.getCurrentPage()));
 
         List<Course> courses = courseService.getCourses(params);
 
+        if (courses.isEmpty()) {
+            redirectAttributes.addFlashAttribute("msg_error", "No courses found.");
+            return "redirect:/admin/courses";
+        }
+
         model.addAttribute("courses", courses);
+
         model.addAttribute("currentPage", pagination.getCurrentPage());
-        model.addAttribute("totalPages", pagination.getTotalPages());
+        model.addAttribute("totalPages", pagination.getTotalPages() > 0 ? pagination.getTotalPages() : 1);
         model.addAttribute("startIndex", pagination.getStartIndex());
         model.addAttribute("endIndex", pagination.getEndIndex());
         model.addAttribute("totalItems", totalItems);
+        model.addAttribute("filterName", params.getOrDefault("name", " "));
 
         return "dashboard/admin/course/course_list";
     }
@@ -72,7 +95,7 @@ public class CourseController{
     ) throws Exception {
 
         Course course = courseService.getCourseById(id)
-                .orElseThrow(() -> new Exception("Course not found"));
+                .orElseThrow(() -> new NotFoundException(localizationService.getMessage("course.notFound", LocaleContextHolder.getLocale())));
 
         List<Category> categories = categoryService.getCategories(params);
 
@@ -94,9 +117,19 @@ public class CourseController{
 
         Pagination pagination = paginationHelper.getPagination(params, totalCourseStudents);
 
+        List<CourseLecturer> courseLecturers = courseLecturerService.getCourseLecturersByCourse(course.getId(), params);
+        CourseLecturerForm courseLecturerForm = new CourseLecturerForm();
+        courseLecturerForm.setCourseLecturers(courseLecturers);
+
+        courseLecturerForm.setLecturers(lecturerService.getLecturers(null).stream()
+                .map(lecturer ->
+                        lecturerMapper.toDto(lecturer)).collect(Collectors.toList()));
+
+        courseLecturerForm.setCountCurrentLecturers(lecturerService.countLecturersByCourse(course.getId()));
+
         model.addAttribute("totalItems", totalCourseStudents);
         model.addAttribute("currentPage", pagination.getCurrentPage());
-        model.addAttribute("totalPages", pagination.getTotalPages());
+        model.addAttribute("totalPages", totalCourseStudents > 0 ? totalCourseStudents : 1);
         model.addAttribute("startIndex", pagination.getStartIndex());
         model.addAttribute("endIndex", pagination.getEndIndex());
 
@@ -110,6 +143,9 @@ public class CourseController{
 
         model.addAttribute("filterName", searchName.isEmpty() ? null : searchName);
 
+        model.addAttribute("courseLecturerForm", courseLecturerForm);
+
+
         return "dashboard/admin/course/course_detail";
     }
 
@@ -117,7 +153,7 @@ public class CourseController{
     @PostMapping("/course/{id}")
     public String updateCourse(Model model,
                                @PathVariable("id") int id,
-                               @Valid @ModelAttribute("course") Course course,
+                               @ModelAttribute("course") Course course,
                                BindingResult bindingResult,
                                RedirectAttributes redirectAttributes
     ) throws Exception {
@@ -137,6 +173,28 @@ public class CourseController{
         }
 
         return "redirect:/admin/course/" + id;
+    }
+
+    @PostMapping("/course/{courseId}/updateLecture")
+    public String updateCourseLecturer(
+            @PathVariable("courseId") int courseId,
+            @ModelAttribute CourseLecturerForm form,
+            RedirectAttributes redirectAttributes
+    ) throws Exception {
+
+        if (form.getCourseLecturers() == null){
+            redirectAttributes.addFlashAttribute("msg_error", localizationService.getMessage("courseLecturer.update.error", LocaleContextHolder.getLocale()));
+            return "redirect:/admin/course/" + courseId + "#course-details";
+        }
+
+        Boolean isSuccess =  courseLecturerService.updateCourseLecturer(form.getCourseLecturers());
+
+        if (!isSuccess)
+            redirectAttributes.addFlashAttribute("msg_error", "Failed to add course lecturers.");
+        else
+            redirectAttributes.addFlashAttribute("msg_success", "Course lecturers added successfully.");
+
+        return "redirect:/admin/course/" + courseId + "#course-details";
     }
 
     @PostMapping("/course/{courseId}/add-members")

@@ -67,7 +67,7 @@ public class TestRepositoryImpl implements TestRepository {
     @Override
     public Test updateTest(Test test) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.update(test);
+        session.merge(test);
         return test;
     }
 

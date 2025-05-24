@@ -6,6 +6,8 @@ package com.ou.configs;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.ou.formatters.CourseFormatter;
+import com.ou.formatters.UserFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.LocaleResolver;
@@ -39,27 +42,26 @@ import java.util.Locale;
     "com.ou.repositories",
     "com.ou.services",
     "com.ou.formatters",
-    "com.ou.helpers"
+    "com.ou.helpers",
+    "com.ou.mappers",
 
 })
 public class WebAppContextConfigs implements WebMvcConfigurer {
+
+    @Autowired
+    private CourseFormatter courseFormatter;
+
+    @Autowired
+    private UserFormatter userFormatter;
+
+
     @Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
 
         configurer.enable();
     }
 
-    /*
-     * This method configures the message source for internationalization (i18n).
-     * It sets the base name for the message properties files and the default encoding.
-     */
-    @Bean
-    public MessageSource messageSource() {
-        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setBasenames("messages");
-        messageSource.setDefaultEncoding("UTF-8");
-        return messageSource;
-    }
+
 
     /*
      * This method configures the LocaleResolver for handling locale changes.
@@ -106,5 +108,11 @@ public class WebAppContextConfigs implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/assets/**").addResourceLocations("classpath:/static/assets/");
+    }
+
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addFormatter(userFormatter);
+        registry.addFormatter(courseFormatter);
     }
 }

@@ -113,8 +113,8 @@ VALUES
 
 
 -- Sample data for attachment
-INSERT INTO attachment (name, link, description) VALUES
-    ('Intro PDF', '/files/intro.pdf', 'Introduction material');
+INSERT INTO attachment (name, link, description, public_id) VALUES
+    ('Intro PDF', '/files/intro.pdf', 'Introduction material', 'dfdsdnbsahdfvddhsfvsdhgf');
 
 -- Sample data for lesson_type
 INSERT INTO lesson_type (name, description) VALUES

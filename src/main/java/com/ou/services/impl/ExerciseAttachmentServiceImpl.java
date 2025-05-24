@@ -1,9 +1,13 @@
 package com.ou.services.impl;
 
 import com.ou.pojo.ExerciseAttachment;
+import com.ou.pojo.Lesson;
 import com.ou.repositories.ExerciseAttachmentRepository;
 import com.ou.services.ExerciseAttachmentService;
+import com.ou.services.LessonService;
+import com.ou.services.LocalizationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +21,10 @@ public class ExerciseAttachmentServiceImpl implements ExerciseAttachmentService 
 
     @Autowired
     private ExerciseAttachmentRepository exerciseAttachmentRepository;
+    @Autowired
+    private LocalizationService localizationService;
+    @Autowired
+    private LessonService lessonService;
 
     @Override
     public ExerciseAttachment createExerciseAttachment(ExerciseAttachment exerciseAttachment) {
@@ -142,6 +150,22 @@ public class ExerciseAttachmentServiceImpl implements ExerciseAttachmentService 
             throw new IllegalArgumentException("Invalid attachment ID");
             
         return exerciseAttachmentRepository.countExerciseAttachmentsByAttachment(attachmentId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long countExerciseAttachmentsByLesson(Integer lessonId) {
+        if (lessonId == null || lessonId <= 0)
+            throw new IllegalArgumentException(localizationService.getMessage("exerciseAttachment.invalid.id", LocaleContextHolder.getLocale()));
+
+        // Check if the lesson exists
+        Optional<Lesson> existingLesson = lessonService.getLessonById(lessonId);
+        //Optional<ExerciseAttachment> exerciseAttachmentRepository.getExerciseAttachmentById(lessonId);
+        if (existingLesson.isEmpty()) {
+            throw new IllegalArgumentException(localizationService.getMessage("exerciseAttachment.notFound", LocaleContextHolder.getLocale()));
+        }
+
+        return exerciseAttachmentRepository.countExerciseAttachmentsByLesson(lessonId);
     }
 
     @Override

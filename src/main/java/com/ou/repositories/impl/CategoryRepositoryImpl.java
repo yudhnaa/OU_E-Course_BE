@@ -29,7 +29,7 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     @Override
     public Category addCategory(Category category) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.save(category);
+        session.persist(category);
         session.flush(); // Ensure ID is generated and available
         return category;
     }
@@ -37,7 +37,7 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     @Override
     public Category updateCategory(Category category) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.update(category);
+        session.merge(category);
         return category;
     }
 

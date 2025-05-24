@@ -30,7 +30,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User addUser(User user) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.save(user);
+        session.persist(user);
         session.flush(); // Ensure ID is generated and available
         return user;
     }
@@ -38,7 +38,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User updateUser(User user) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.update(user);
+        session.merge(user);
         return user;
     }
 

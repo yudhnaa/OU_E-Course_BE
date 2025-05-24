@@ -32,7 +32,7 @@ public class ExerciseAttemptRepositoryImpl implements ExerciseAttemptRepository 
     @Override
     public ExerciseAttempt addExerciseAttempt(ExerciseAttempt exerciseAttempt) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.save(exerciseAttempt);
+        session.persist(exerciseAttempt);
         session.flush(); // Ensure ID is generated and available
         return exerciseAttempt;
     }
@@ -40,7 +40,7 @@ public class ExerciseAttemptRepositoryImpl implements ExerciseAttemptRepository 
     @Override
     public ExerciseAttempt updateExerciseAttempt(ExerciseAttempt exerciseAttempt) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.update(exerciseAttempt);
+        session.merge(exerciseAttempt);
         return exerciseAttempt;
     }
 

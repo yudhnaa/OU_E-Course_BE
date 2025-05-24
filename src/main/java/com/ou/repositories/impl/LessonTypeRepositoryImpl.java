@@ -25,7 +25,7 @@ public class LessonTypeRepositoryImpl implements LessonTypeRepository {
     @Override
     public LessonType createLessonType(LessonType lessonType) {
         Session session = factory.getObject().getCurrentSession();
-        session.save(lessonType);
+        session.persist(lessonType);
         session.flush(); // Ensure ID is generated and available
         return lessonType;
     }
@@ -66,7 +66,7 @@ public class LessonTypeRepositoryImpl implements LessonTypeRepository {
     @Override
     public LessonType updateLessonType(LessonType lessonType) {
         Session session = factory.getObject().getCurrentSession();
-        session.update(lessonType);
+        session.merge(lessonType);
         return lessonType;
     }
 

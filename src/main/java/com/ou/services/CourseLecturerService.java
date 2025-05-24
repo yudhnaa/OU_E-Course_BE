@@ -8,6 +8,7 @@ import java.util.Optional;
 public interface CourseLecturerService {
     // Create operations
     CourseLecturer addCourseLecturer(CourseLecturer courseLecturer) throws Exception;
+    Boolean updateCourseLecturer(List<CourseLecturer> courseLecturer) throws Exception;
 
     // Read operations with pagination
     List<CourseLecturer> getCourseLecturers(Map<String, String> params);

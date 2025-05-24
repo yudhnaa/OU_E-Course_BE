@@ -26,5 +26,6 @@ public interface ExerciseAttachmentService {
     long countExerciseAttachments();
     long countExerciseAttachmentsByExercise(Integer exerciseId);
     long countExerciseAttachmentsByAttachment(Integer attachmentId);
+    long countExerciseAttachmentsByLesson(Integer lessonId);
     long countSearchResults(Map<String, String> filters);
 }

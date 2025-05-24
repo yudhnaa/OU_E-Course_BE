@@ -4,7 +4,9 @@ import com.ou.pojo.User;
 import com.ou.repositories.UserRepository;
 import com.ou.services.LocalizationService;
 import com.ou.services.UserDetailService;
+import jakarta.servlet.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,6 +26,10 @@ public class UserDetailServiceImpl implements UserDetailService {
     private UserRepository userRepo;
     @Autowired
     private LocalizationService localizationService;
+
+    @Qualifier("springSecurityFilterChain")
+    @Autowired
+    private Filter filter;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

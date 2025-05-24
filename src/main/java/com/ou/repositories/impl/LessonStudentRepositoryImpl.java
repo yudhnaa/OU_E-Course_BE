@@ -21,7 +21,7 @@ public class LessonStudentRepositoryImpl implements LessonStudentRepository {
     public LessonStudent updateLessonStudent(LessonStudent lessonStudent) {
         Session session = factory.getObject().getCurrentSession();
         try {
-            session.update(lessonStudent);
+            session.merge(lessonStudent);
             return lessonStudent;
         } catch (Exception e) {
             e.printStackTrace();

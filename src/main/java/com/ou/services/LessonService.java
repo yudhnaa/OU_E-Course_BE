@@ -21,14 +21,14 @@ public interface LessonService {
     List<Lesson> getLessonsByUploadUser(Integer userId, Map<String, String> params);
 
     // Update operation
-    Lesson updateLesson(Lesson lesson) throws Exception;
+    public Lesson updateLesson(Lesson lesson, List<Long> notDeleteLessonAttachmentIds) throws Exception;
 
-    // Delete operation
+        // Delete operation
     boolean deleteLesson(Integer id) throws Exception;
 
     // Count methods for pagination
     long countLessons(String locale);
-    long countLessonsByCourse(Integer courseId);
+    long countLessonsByCourse(Integer courseId, Map<String, String> params);
     long countLessonsByType(Integer typeId);
     long countLessonsByUploadUser(Integer userId);
     long countSearchResults(Map<String, String> filters);
