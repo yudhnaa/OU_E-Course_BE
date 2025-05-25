@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 <th:block layout:fragment="pagetitle" >
-    <div th:replace="partials/title-meta :: title-meta('Test')"></div>
+    <div th:replace="partials/title-meta :: title-meta('Exercise')"></div>
 </th:block>
 <head>
-
 </head>
 <body>
 <div layout:fragment="content">
@@ -20,6 +19,15 @@
     <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${msg_success}">
         <b th:text="${msg_success}"></b>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div class="text-start mt-3">
+        <input class="form-control flex-grow-1" type="text" id="search-box" placeholder="Search...">
+
+        <a th:href="@{'/course/' + ${courseId} + '/lessons/' + ${lessonId} + '/exercises/exercise/add'}"
+           class="btn btn-primary">
+            <i class="ri-add-line align-bottom me-1"></i> Add Exercise
+        </a>
     </div>
 
     <!-- Hiển thị danh sách exercises -->
@@ -129,6 +137,29 @@
                 });
             });
         });
+
+        // Xử lý sự kiện nhập vào ô tìm kiếm
+        document.addEventListener("DOMContentLoaded", () => {
+            let debounceTimeout;
+            const searchBox = document.getElementById("search-box");
+
+            searchBox.addEventListener("input", (event) => {
+                clearTimeout(debounceTimeout);
+                debounceTimeout = setTimeout(() => {
+                    const query = event.target.value.toLowerCase();
+                    const url = new URL(window.location.href);
+
+                    if(query) {
+                        url.searchParams.set("name", query);
+                    } else {
+                        url.searchParams.delete("name");
+                    }
+                    window.location.href = url.toString();
+                }, 1000);
+            });
+
+        })
+
     </script>
 </th:block>
 </body>

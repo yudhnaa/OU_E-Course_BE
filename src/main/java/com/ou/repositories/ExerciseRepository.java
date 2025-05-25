@@ -9,7 +9,6 @@ public interface ExerciseRepository {
     // Create operations
     Exercise createExercise(Exercise exercise);
 
-    // Read operations with pagination
     List<Exercise> getExercises(Map<String, String> params);
     List<Exercise> searchExercises(Map<String, String> filters, Map<String, String> params);
 

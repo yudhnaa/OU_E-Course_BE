@@ -60,4 +60,9 @@ public class QuestionServiceImpl implements QuestionService {
         return questionRepository.getQuestionsByTest(testId);
     }
 
+    @Override
+    public List<Question> getQuestionsByCourse(Integer courseId) {
+        return questionRepository.getQuestionsByCourse(courseId);
+    }
+
 }

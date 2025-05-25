@@ -1,14 +1,8 @@
 package com.ou.controllers.webController.adminController;
 import com.ou.dto.TestDto;
 import com.ou.helpers.PaginationHelper;
-import com.ou.pojo.Course;
-import com.ou.pojo.Lecturer;
-import com.ou.pojo.Question;
-import com.ou.pojo.Test;
-import com.ou.services.CourseService;
-import com.ou.services.LecturerService;
-import com.ou.services.QuestionService;
-import com.ou.services.TestService;
+import com.ou.pojo.*;
+import com.ou.services.*;
 import com.ou.utils.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.beans.PropertyEditorSupport;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.ou.configs.WebApplicationSettings.PAGE_SIZE;
 
@@ -40,6 +35,15 @@ public class TestController {
 
     @Autowired
     private PaginationHelper paginationHelper;
+
+    @Autowired
+    private QuestionService questionService;
+
+    @Autowired
+    private ExerciseService exerciseService;
+
+    @Autowired
+    private TestQuestionService testQuestionService;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -110,10 +114,74 @@ public class TestController {
                               @PathVariable("id") Integer id) {
         Test test = testService.getTestById(id)
                 .orElseThrow(() -> new RuntimeException("Test not found with id " + id));
+        List<Question> questions = questionService.getQuestionsByTest(id);
+        List<Question> allQuestionsInCourse = questionService.getQuestionsByCourse(courseId);
+
+        // Tạo Set để kiểm tra câu hỏi đã tồn tại
+        Set<Integer> existingQuestionIds = questions.stream()
+                .map(Question::getId)
+                .collect(Collectors.toSet());
+
+        List<Exercise> exercises = exerciseService.getExercisesByCourse(courseId,null);
 
         test.setCourseId(new Course(courseId));
         model.addAttribute("test", test);
+        model.addAttribute("courseId", courseId);
+        model.addAttribute("questions", questions);
+        model.addAttribute("allQuestionsInCourse", allQuestionsInCourse);
+        model.addAttribute("existingQuestionIds", existingQuestionIds);
+        model.addAttribute("exercises", exercises);
         return "dashboard/lecturer/testDetail";
+    }
+
+    // Thêm endpoint để xử lý việc thêm multiple questions
+    @PostMapping("/test/{testId}/questions/add-multiple")
+    @ResponseBody
+    public ResponseEntity<?> addMultipleQuestions(
+            @PathVariable("courseId") Integer courseId,
+            @PathVariable("testId") Integer testId,
+            @RequestBody Map<String, List<Integer>> requestBody) {
+
+        try {
+            List<Integer> questionIds = requestBody.get("questionIds");
+
+            if (questionIds == null || questionIds.isEmpty()) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("success", false, "message", "No question IDs provided"));
+            }
+
+            for (Integer questionId : questionIds) {
+                testQuestionService.addQuestionToTest(testId, questionId);
+            }
+
+            return ResponseEntity.ok(Map.of("success", true, "message", "Questions added successfully!"));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("success", false, "message", "Error adding questions: " + e.getMessage()));
+        }
+    }
+
+    // Thêm endpoint để xóa câu hỏi khỏi test
+    @PostMapping("/test/{testId}/question/{questionId}/delete")
+    @ResponseBody
+    public ResponseEntity<?> deleteQuestionFromTest(
+            @PathVariable("courseId") Integer courseId,
+            @PathVariable("testId") Integer testId,
+            @PathVariable("questionId") Integer questionId) {
+
+        try {
+            boolean removed = testQuestionService.removeQuestionFromTest(testId, questionId);
+            if (removed) {
+                return ResponseEntity.ok(Map.of("success", true, "message", "Question removed successfully"));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("success", false, "message", "Question not found in this test"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("success", false, "message", "Error removing question: " + e.getMessage()));
+        }
     }
 
 
@@ -123,9 +191,9 @@ public class TestController {
                              @ModelAttribute("test") Test test,
                              BindingResult result,
                              RedirectAttributes redirectAttributes,
-                             Model model) {
+                             Model model){
         if (result.hasErrors()) {
-            test.setCourseId(new Course(courseId)); // 👈 Thêm dòng này để tránh lỗi bind khi trả về view
+            test.setCourseId(new Course(courseId));
             model.addAttribute("error", "Form has errors.");
             model.addAttribute("test", test);
             return "dashboard/lecturer/testDetail";
@@ -134,12 +202,10 @@ public class TestController {
         try {
             Test existingTest = testService.getTestById(id)
                     .orElseThrow(() -> new RuntimeException("Test not found with id " + id));
-            // Update information
             existingTest.setName(test.getName());
             existingTest.setDescription(test.getDescription());
             existingTest.setDurationMinutes(test.getDurationMinutes());
             existingTest.setMaxScore(test.getMaxScore());
-            // The courseId should now be properly bound thanks to our custom editor
             if (test.getCourseId() != null) {
                 existingTest.setCourseId(test.getCourseId());
             }

@@ -216,7 +216,6 @@ public class QuestionController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("msg_error", "Error deleting question: " + e.getMessage());
         }
-
         return "redirect:/course/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId;
     }
 

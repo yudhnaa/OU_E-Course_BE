@@ -139,6 +139,62 @@ public class ExerciseController {
         return "dashboard/lecturer/exercise/exercise_detail"; // Return the name of the view to render
     }
 
+    @GetMapping("/exercise/add")
+    public String addExercise(Model model,
+                                  @PathVariable("courseId") Integer courseId,
+                                  @PathVariable("lessonId") Integer lessonId) {
+        Optional<Course> course = courseService.getCourseById(courseId);
+        if (course.isEmpty()) {
+            model.addAttribute("msg_error", "Course not found.");
+            return "dashboard/lecturer/exercise/exercise";
+        }
+
+        Optional<Lesson> lesson = lessonService.getLessonById(lessonId);
+        if (lesson.isEmpty()) {
+            model.addAttribute("msg_error", "Lesson not found.");
+            return "dashboard/lecturer/exercise/exercise";
+        }
+
+        model.addAttribute("courseId", courseId);
+        model.addAttribute("lessonId", lessonId);
+        model.addAttribute("exercise", new Exercise());
+        return "dashboard/lecturer/exercise/exercise_add"; // Return the name of the view to render
+    }
+
+    @PostMapping("/exercise/add")
+    public String createExercise(@PathVariable("courseId") Integer courseId,
+                                 @PathVariable("lessonId") Integer lessonId,
+                                 @Valid @ModelAttribute("exercise") Exercise exercise,
+                                 BindingResult result,
+                                 RedirectAttributes redirectAttributes,
+                                 Model model) {
+        Optional<Course> course = courseService.getCourseById(courseId);
+        if (course.isEmpty()) {
+            model.addAttribute("msg_error", "Course not found.");
+            return "dashboard/lecturer/exercise/exercise";
+        }
+        Optional<Lesson> lesson = lessonService.getLessonById(lessonId);
+        if (lesson.isEmpty()) {
+            model.addAttribute("msg_error", "Lesson not found.");
+            return "dashboard/lecturer/exercise/exercise";
+        }
+        if (result.hasErrors()) {
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.exercise", result);
+            redirectAttributes.addFlashAttribute("exercise", exercise);
+            return "redirect:/course/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/add";
+        }
+        try {
+            exercise.setLessonId(lesson.get());
+            // Giả sử bạn có một đối tượng Lecturer với ID 1, thay thế bằng logic lấy ID người dùng thực tế
+            exercise.setCreatedByUserId(new Lecturer(1));
+            exerciseService.createExercise(exercise);
+            redirectAttributes.addFlashAttribute("msg_success", "Exercise created successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("msg_error", "Error creating exercise: " + e.getMessage());
+        }
+        return "redirect:/course/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exercise.getId();
+    }
+
     @PostMapping("/exercise/{exerciseId}/update")
     public String updateExercise(@PathVariable("courseId") Integer courseId,
                                  @PathVariable("lessonId") Integer lessonId,
@@ -147,11 +203,9 @@ public class ExerciseController {
                                  BindingResult result,
                                  RedirectAttributes redirectAttributes,
                                  Model model) throws Exception {
-        // 1. Lấy exercise hiện tại từ database
         Exercise existingExercise = exerciseService.getExerciseById(exerciseId)
                 .orElseThrow(() -> new NotFoundException("Exercise not found"));
 
-        // 2. Copy các trường cần update từ form
         existingExercise.setName(exerciseUpdate.getName());
         existingExercise.setDurationMinutes(exerciseUpdate.getDurationMinutes());
         existingExercise.setMaxScore(exerciseUpdate.getMaxScore());

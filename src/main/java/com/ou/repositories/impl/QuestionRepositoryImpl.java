@@ -1,13 +1,13 @@
 package com.ou.repositories.impl;
 
+import com.ou.pojo.Course;
+import com.ou.pojo.Exercise;
 import com.ou.pojo.Question;
 import com.ou.pojo.TestQuestion;
 import com.ou.repositories.QuestionRepository;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
@@ -91,6 +91,19 @@ public class QuestionRepositoryImpl implements QuestionRepository {
                 .distinct(true);
 
         return session.createQuery(query).getResultList();
+    }
+
+    @Override
+    public List<Question> getQuestionsByCourse(Integer courseId) {
+        Session session = factory.getObject().getCurrentSession();
+
+        String hql = "SELECT q FROM Question q "
+                + "WHERE q.exerciseId.courseId.id = :courseId";
+
+        Query<Question> query = session.createQuery(hql, Question.class);
+        query.setParameter("courseId", courseId);
+
+        return query.getResultList();
     }
 
 

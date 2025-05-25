@@ -9,7 +9,17 @@
     <div layout:fragment="content">
         <div th:replace="~{partials/page-title :: page-title('Test','Admin')}"></div>
 
-        <div th:if="${message}" class="alert alert-info" th:text="${message}"></div>
+        <!-- Danger Alert -->
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${msg_error}">
+            <b th:text="${msg_error}"></b>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Success Alert -->
+        <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${msg_success}">
+            <b th:text="${msg_success}"></b>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
 
 
         <div class="d-flex justify-content-end mb-3" >

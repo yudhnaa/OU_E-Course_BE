@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional
 public class ExerciseRepositoryImpl implements ExerciseRepository {
-
     private static final int PAGE_SIZE = WebApplicationSettings.PAGE_SIZE;
 
     @Autowired
@@ -214,9 +213,14 @@ public class ExerciseRepositoryImpl implements ExerciseRepository {
         Root<Exercise> root = query.from(Exercise.class);
         
         query.where(builder.equal(root.get("lessonId").get("id"), lessonId));
-        
+
+        List<Predicate> predicates = buildSearchPredicates(builder, root, params);
+        if(!predicates.isEmpty()) {
+            query.where(builder.and(predicates.toArray(new Predicate[0])));
+        }
+
         Query<Exercise> q = session.createQuery(query);
-        
+
         // Process pagination parameters
         if (params != null) {
             int page = Integer.parseInt(params.getOrDefault("page", "1"));
@@ -276,4 +280,5 @@ public class ExerciseRepositoryImpl implements ExerciseRepository {
         query.select(builder.count(root));
         return session.createQuery(query).getSingleResult();
     }
+
 }
