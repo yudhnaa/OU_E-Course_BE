@@ -53,7 +53,7 @@ public class CourseServiceImpl implements CourseService {
 
         //Upload image to Cloudinary if provided
         if (!course.getImageFile().isEmpty()){
-            Map<String, String> imageUrl = cloudinaryHelper.uploadFile(course.getImageFile());
+            Map<String, String> imageUrl = cloudinaryHelper.uploadMultipartFile(course.getImageFile());
             course.setImage(imageUrl.get("url"));
             course.setPublicId(imageUrl.get("publicId"));
         }
@@ -85,7 +85,7 @@ public class CourseServiceImpl implements CourseService {
 
         //Upload and delete image to Cloudinary if provided
         if (!course.getImageFile().isEmpty()){
-            Map<String, String> imageUrl = cloudinaryHelper.uploadFile(course.getImageFile());
+            Map<String, String> imageUrl = cloudinaryHelper.uploadMultipartFile(course.getImageFile());
             course.setImage(imageUrl.get("url"));
             course.setPublicId(imageUrl.get("publicId"));
 

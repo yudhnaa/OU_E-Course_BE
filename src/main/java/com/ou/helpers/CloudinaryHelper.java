@@ -8,6 +8,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,9 +21,24 @@ public class CloudinaryHelper {
     @Autowired
     private LocalizationService localizationService;
 
-    public Map<String, String> uploadFile(MultipartFile file) throws IOException {
+    public Map<String, String> uploadMultipartFile(MultipartFile file) throws IOException {
         try {
             Map res = cloudinary.uploader().upload(file.getBytes(),
+                    ObjectUtils.asMap("resource_type", "auto"));
+
+            Map<String, String> resultMap = new HashMap<>();
+            resultMap.put("url", res.get("secure_url").toString());
+            resultMap.put("publicId", res.get("public_id").toString());
+
+            return resultMap;
+        } catch (IOException ex) {
+            throw  new IOException(localizationService.getMessage("cloudinary.upload.error", LocaleContextHolder.getLocale()));
+        }
+    }
+
+    public Map<String, String> uploadFile(File file) throws IOException {
+        try {
+            Map res = cloudinary.uploader().upload(file,
                     ObjectUtils.asMap("resource_type", "auto"));
 
             Map<String, String> resultMap = new HashMap<>();

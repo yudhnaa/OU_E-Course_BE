@@ -69,4 +69,27 @@ public class LessonStudentRepositoryImpl implements LessonStudentRepository {
         query.setParameter("isLearn", isLearn);
         return query.getResultList();
     }
+
+    @Override
+    public boolean isLessonCompleted(Integer lessonId, Integer studentId) {
+        List<LessonStudent> lessonStudents = findByLessonId(lessonId);
+        if (lessonStudents.isEmpty()) {
+            return false;
+        }
+
+        return lessonStudents.stream()
+                .anyMatch(ls -> ls.getStudentId().getId().equals(studentId) && Boolean.TRUE.equals(ls.getIsLearn()));
+    }
+
+    @Override
+    public LessonStudent findByLessonIdAndStudentId(Integer lessonId, Integer studentId) {
+        Session session = factory.getObject().getCurrentSession();
+        Query<LessonStudent> query = session.createQuery(
+                "SELECT ls FROM LessonStudent ls WHERE ls.lessonId.id = :lessonId AND ls.studentId.id = :studentId",
+                LessonStudent.class);
+        query.setParameter("lessonId", lessonId);
+        query.setParameter("studentId", studentId);
+
+        return query.getSingleResult();
+    }
 }

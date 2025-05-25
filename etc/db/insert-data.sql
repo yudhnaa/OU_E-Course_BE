@@ -89,7 +89,7 @@ INSERT INTO course_lecturer (course_id, lecturer_id) VALUES
 
 -- Sample data for course_student
 INSERT INTO course_student (progress, course_id, student_id) VALUES
-    (0.5, 1, 1),
+    (1, 1, 1),
     (0.75, 1, 2),
     (0.25, 1, 3),
     (0.6, 1, 4),

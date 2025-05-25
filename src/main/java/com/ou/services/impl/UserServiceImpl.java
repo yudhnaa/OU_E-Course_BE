@@ -11,15 +11,8 @@ import com.ou.pojo.User;
 import com.ou.repositories.UserRepository;
 import com.ou.services.LocalizationService;
 import com.ou.services.UserService;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.servlet.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -65,7 +58,7 @@ public class UserServiceImpl implements UserService {
         // Handle avatar upload with Cloudinary
         MultipartFile avatarFile = user.getAvatarFile();
         if (avatarFile != null) {
-            Map<String, String> res = cloudinaryHelper.uploadFile(user.getAvatarFile());
+            Map<String, String> res = cloudinaryHelper.uploadMultipartFile(user.getAvatarFile());
             user.setAvatar((String) res.get("url"));
             user.setPublicId((String) res.get("publicId"));
         }
@@ -108,7 +101,7 @@ public class UserServiceImpl implements UserService {
             // Handle avatar upload with Cloudinary - this would be implemented in a separate method
             try {
 
-                Map res = cloudinaryHelper.uploadFile(user.getAvatarFile());
+                Map res = cloudinaryHelper.uploadMultipartFile(user.getAvatarFile());
                 user.setAvatar((String) res.get("url"));
                 user.setPublicId((String) res.get("publicId"));
 

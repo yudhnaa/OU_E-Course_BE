@@ -39,7 +39,7 @@ public class AttachmentServiceImpl implements AttachmentService {
 
         // Upload file to Cloudinary if provided
         if (attachment.getFile() != null && !attachment.getFile().isEmpty()) {
-            Map<String, String> imageUrl = cloudinaryHelper.uploadFile(attachment.getFile());
+            Map<String, String> imageUrl = cloudinaryHelper.uploadMultipartFile(attachment.getFile());
             attachment.setLink(imageUrl.get("url"));
             attachment.setPublicId(imageUrl.get("publicId"));
         } else if (attachment.getLink() == null || attachment.getLink().trim().isEmpty()) {

@@ -12,19 +12,19 @@
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/controllers/webController/IndexController.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/controllers/webController/UserController.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/controllers/webController/WebExceptionHandler.java
-/Users/yudhna/E_Course/Backend/src/main/java/com/ou/controllers/webController/adminController/CourseCertificateController.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/controllers/webController/adminController/CourseController.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/controllers/webController/adminController/CourseStudentController.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/controllers/webController/adminController/LecturerController.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/controllers/webController/adminController/LessonController.java
+/Users/yudhna/E_Course/Backend/src/main/java/com/ou/controllers/webController/adminController/StudentCertificateController.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/controllers/webController/adminController/StudentController.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/controllers/webController/adminController/TestController.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/AttachmentDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/CategoryDto.java
+/Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/CourseCertificateDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/CourseDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/CourseLecturerDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/CourseRateDto.java
-/Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/CourseStudentDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/ExerciseAttachmentDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/ExerciseAttemptDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/ExerciseDto.java
@@ -36,7 +36,6 @@
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/MultipleChoiceAnswerDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/QuestionDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/QuestionTypeDto.java
-/Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/StudentCourseCertificateDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/StudentDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/TestAttemptDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/TestDto.java
@@ -54,6 +53,7 @@
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/formatters/UserFormatter.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/helpers/CloudinaryHelper.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/helpers/PaginationHelper.java
+/Users/yudhna/E_Course/Backend/src/main/java/com/ou/mappers/CourseCertificateMapper.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/mappers/LecturerMapper.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/mappers/LessonMapper.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/mappers/StudentMapper.java

@@ -7,6 +7,7 @@ com/ou/repositories/impl/QuestionRepositoryImpl.class
 com/ou/pojo/CourseCertificate.class
 com/ou/repositories/impl/CourseRateRepositoryImpl.class
 com/ou/dto/MultipleChoiceAnswerDto.class
+com/ou/services/StudentService.class
 com/ou/repositories/impl/UserRepositoryImpl.class
 com/ou/repositories/impl/LessonRepositoryImpl.class
 com/ou/controllers/webController/adminController/LecturerController.class
@@ -15,6 +16,7 @@ com/ou/repositories/CourseStudentRepository.class
 com/ou/repositories/MultipleChoiceAnswerRepository.class
 com/ou/dto/StudentDto.class
 com/ou/pojo/TestAttempt.class
+com/ou/services/impl/StudentServiceImpl.class
 com/ou/repositories/impl/LessonAttachmentRepositoryImpl.class
 com/ou/repositories/impl/WritingAnswerRepositoryImpl.class
 com/ou/controllers/webController/adminController/LessonController.class
@@ -66,12 +68,13 @@ com/ou/repositories/impl/MultipleChoiceAnswerRepositoryImpl.class
 com/ou/dto/AttachmentDto.class
 com/ou/services/QuestionService.class
 com/ou/repositories/QuestionRepository.class
+com/ou/mappers/CourseCertificateMapperImpl.class
 com/ou/repositories/LessonStudentRepository.class
 com/ou/dto/TestAttemptDto.class
 com/ou/repositories/LessonRepository.class
+com/ou/repositories/StudentRepository.class
 com/ou/configs/WebApplicationSettings.class
 com/ou/services/ExampleServiceInterface.class
-com/ou/dto/CourseStudentDto.class
 com/ou/repositories/impl/LecturerRepositoryImpl.class
 com/ou/repositories/impl/CourseStudentRepositoryImpl.class
 com/ou/repositories/impl/AttachmentRepositoryImpl.class
@@ -91,6 +94,7 @@ com/ou/dto/UserDto.class
 com/ou/dto/QuestionDto$MultipleChoiceAnswerDto1.class
 com/ou/configs/WebAppContextConfigs.class
 com/ou/controllers/webController/adminController/TestController$1.class
+com/ou/repositories/impl/StudentRepositoryImpl.class
 com/ou/dto/WritingAnswerDto.class
 com/ou/dto/TestQuestionDto.class
 com/ou/dto/LecturerDto.class
@@ -114,6 +118,7 @@ com/ou/services/WritingAnswerService.class
 com/ou/services/impl/AttachmentServiceImpl.class
 com/ou/dto/LessonStudentDto.class
 com/ou/services/impl/ExampleServiceImpl.class
+com/ou/controllers/webController/adminController/StudentCertificateController.class
 com/ou/dto/LessonTypeDto$LessonDto.class
 com/ou/services/impl/UserServiceImpl.class
 com/ou/dto/LessonAttachmentDto.class
@@ -128,6 +133,7 @@ com/ou/ecourse/JakartaRestConfiguration.class
 com/ou/services/impl/UserDetailServiceImpl.class
 com/ou/services/impl/MultipleChoiceAnswerServiceImpl.class
 com/ou/repositories/impl/QuestionTypeRepositoryImpl.class
+com/ou/formBean/CourseLecturerForm.class
 com/ou/services/UserService.class
 com/ou/mappers/StudentMapper.class
 com/ou/services/LessonAttachmentService.class
@@ -151,6 +157,7 @@ com/ou/services/UserDetailService.class
 com/ou/services/impl/LessonStudentServiceImpl.class
 com/ou/configs/ThymeleafConfigs.class
 com/ou/pojo/Attachment.class
+com/ou/mappers/CourseCertificateMapper.class
 com/ou/pojo/Test.class
 com/ou/pojo/Student.class
 com/ou/repositories/LecturerRepository.class
@@ -163,6 +170,7 @@ com/ou/repositories/impl/CourseRepositoryImpl.class
 com/ou/services/impl/LocalizationServiceImpl.class
 com/ou/services/QuestionTypeService.class
 com/ou/services/impl/CourseRateServiceImpl.class
+com/ou/dto/CourseCertificateDto.class
 com/ou/dto/LessonTypeDto.class
 com/ou/dto/QuestionDto.class
 com/ou/configs/SpringSecurityConfigs.class
@@ -172,7 +180,6 @@ com/ou/repositories/impl/TestRepositoryImpl.class
 com/ou/repositories/CourseRateRepository.class
 com/ou/services/impl/ExerciseScoreStatusServiceImpl.class
 com/ou/pojo/CourseStudent.class
-com/ou/dto/StudentCourseCertificateDto.class
 com/ou/repositories/UserRoleRepository.class
 com/ou/services/TestService.class
 com/ou/pojo/CourseRate.class

@@ -1,13 +1,17 @@
 package com.ou.services.impl;
 
 import com.ou.pojo.CourseStudent;
+import com.ou.pojo.Lesson;
 import com.ou.repositories.CourseStudentRepository;
+import com.ou.services.CourseService;
 import com.ou.services.CourseStudentService;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.ou.services.LessonService;
+import com.ou.services.LessonStudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +22,12 @@ public class CourseStudentServiceImpl implements CourseStudentService {
 
     @Autowired
     private CourseStudentRepository courseStudentRepository;
+    @Autowired
+    private LessonStudentService lessonStudentService;
+    @Autowired
+    private CourseService courseService;
+    @Autowired
+    private LessonService lessonService;
 
     @Override
     public CourseStudent addCourseStudent(CourseStudent courseStudent) throws Exception {
@@ -170,7 +180,7 @@ public class CourseStudentServiceImpl implements CourseStudentService {
     @Override
     public boolean canUpdateProgress(CourseStudent courseStudent, double newProgress) {
         // Progress must be between 0 and 100
-        if (newProgress < 0 || newProgress > 100) {
+        if (newProgress < 0 || newProgress > 1) {
             return false;
         }
         
@@ -179,6 +189,24 @@ public class CourseStudentServiceImpl implements CourseStudentService {
             return false;
         }
         
+        return true;
+    }
+
+    @Override
+    public boolean isCourseCompleted(CourseStudent courseStudent) {
+        List<Lesson> lessons = lessonService.getLessonsByCourse(courseStudent.getCourseId().getId(), null);
+        if (lessons.isEmpty()) {
+            return false;
+        }
+
+        // Check if all lessons are completed
+        // If any lesson is not completed, course is not completed
+        for (Lesson lesson : lessons) {
+            if (!lessonStudentService.isLessonCompleted(lesson.getId(), courseStudent.getStudentId().getId())) {
+                return false;
+            }
+        }
+
         return true;
     }
 }
