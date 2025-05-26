@@ -1,11 +1,9 @@
 package com.ou.controllers.webController.adminController;
 
-import com.ou.controllers.webController.UserController;
+import com.ou.controllers.webController.AuthenticationController;
 import com.ou.dto.StudentDto;
-import com.ou.exceptions.NotFoundException;
 import com.ou.helpers.PaginationHelper;
 import com.ou.mappers.StudentMapper;
-import com.ou.pojo.Lecturer;
 import com.ou.pojo.Student;
 import com.ou.pojo.User;
 import com.ou.services.LocalizationService;
@@ -23,14 +21,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(path = "/admin")
 public class StudentController {
 
     @Autowired
-    private UserController userController;
+    private AuthenticationController authenticationController;
     @Autowired
     private StudentService studentService;
     @Autowired
