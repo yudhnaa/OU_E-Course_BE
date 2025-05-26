@@ -87,79 +87,21 @@ public class LecturerController {
     @GetMapping("/lecturer/{id}")
     public String courseDetail(Model model,
                                @PathVariable("id") int id,
-                               @RequestParam Map<String, String> params
+                               @RequestParam Map<String, String> params,
+                               RedirectAttributes redirectAttributes
     ) throws Exception {
 
-        Lecturer lecturer = lecturerService.getLecturerById(id)
-                .orElseThrow(() -> new NotFoundException(localizationService.getMessage("lecturer.notFound", LocaleContextHolder.getLocale())));
+        Optional<Lecturer> lecturer = lecturerService.getLecturerById(id);
+        if (lecturer.isEmpty()){
+            redirectAttributes.addFlashAttribute("msg_error", localizationService.getMessage("lecturer.notFound", LocaleContextHolder.getLocale()));
+            return "redirect:/admin/lecturers";
+        }
 
         model.addAttribute("lecturer", lecturer);
-        model.addAttribute("user", lecturer.getUserId());
+        model.addAttribute("user", lecturer.get().getUserId());
 
         return "dashboard/admin/lecturer/lecturer_detail";
     }
 
-    @PostMapping("/lecturer/{id}/update")
-    public String updateLecturer(
-            @PathVariable("id") int id,
-            @ModelAttribute("lecturer") Lecturer lecturer,
-            BindingResult bindingResult,
-            RedirectAttributes redirectAttributes
-    ) {
 
-        if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("msg_error", localizationService.getMessage("lecturer.invalidData", LocaleContextHolder.getLocale()));
-            return "redirect:/admin/lecturer/" + id;
-        }
-
-        // Check if the lecturer exists
-        Optional<Lecturer> existingLecturer = lecturerService.getLecturerById(id);
-        if (existingLecturer.isEmpty()) {
-            redirectAttributes.addFlashAttribute("msg_error", localizationService.getMessage("lecturer.notFound", LocaleContextHolder.getLocale()));
-            return "redirect:/admin/lecturers";
-        }
-
-        // Update the lecturer
-        User updatedUser = userService.updateUser(lecturer.getUserId());
-        Lecturer updatedLecturer = lecturerService.updateLecturer(lecturer);
-        if (updatedUser == null || updatedLecturer == null) {
-            redirectAttributes.addFlashAttribute("msg_error", localizationService.getMessage("lecturer.update.error", LocaleContextHolder.getLocale()));
-            return "redirect:/admin/lecturer/" + id;
-        }
-
-        try {
-            lecturerService.updateLecturer(lecturer);
-            redirectAttributes.addFlashAttribute("msg_success", localizationService.getMessage("lecturer.update.success", LocaleContextHolder.getLocale()));
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("msg_error", localizationService.getMessage("lecturer.update.error", LocaleContextHolder.getLocale()));
-        }
-        return "redirect:/admin/lecturer/" + id;
-    }
-
-    @PostMapping("/lecturer/{id}/updatePassword")
-    public String updateLecturerPassword(
-            @PathVariable("id") int id,
-            @ModelAttribute("user") User user,
-            RedirectAttributes redirectAttributes
-    ) {
-        // Check if the lecturer exists
-        Optional<Lecturer> existingLecturer = lecturerService.getLecturerById(id);
-        if (existingLecturer.isEmpty()) {
-            redirectAttributes.addFlashAttribute("msg_error", localizationService.getMessage("lecturer.notFound", LocaleContextHolder.getLocale()));
-            return "redirect:/admin/lecturers";
-        }
-
-        // Update the password
-        try {
-            User updatedUser = userService.updateUser(user);
-
-            if (updatedUser == null)
-                redirectAttributes.addFlashAttribute("msg_error", localizationService.getMessage("lecturer.update.error", LocaleContextHolder.getLocale()));
-
-            redirectAttributes.addFlashAttribute("msg_success", localizationService.getMessage("lecturer.update.success", LocaleContextHolder.getLocale()));
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("msg_error", localizationService.getMessage("lecturer.update.error", LocaleContextHolder.getLocale()));
-        }
-        return "redirect:/admin/lecturer/" + id;
-    }
 }

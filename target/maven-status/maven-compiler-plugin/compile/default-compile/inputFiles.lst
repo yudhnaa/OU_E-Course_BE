@@ -16,14 +16,15 @@
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/controllers/webController/adminController/CourseStudentController.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/controllers/webController/adminController/LecturerController.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/controllers/webController/adminController/LessonController.java
+/Users/yudhna/E_Course/Backend/src/main/java/com/ou/controllers/webController/adminController/StudentCertificateController.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/controllers/webController/adminController/StudentController.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/controllers/webController/adminController/TestController.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/AttachmentDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/CategoryDto.java
+/Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/CourseCertificateDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/CourseDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/CourseLecturerDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/CourseRateDto.java
-/Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/CourseStudentDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/ExerciseAttachmentDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/ExerciseAttemptDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/ExerciseDto.java
@@ -35,7 +36,6 @@
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/MultipleChoiceAnswerDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/QuestionDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/QuestionTypeDto.java
-/Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/StudentCourseCertificateDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/StudentDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/TestAttemptDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/TestDto.java
@@ -45,6 +45,7 @@
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/ecourse/JakartaRestConfiguration.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/ecourse/resources/JakartaEE11Resource.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/exceptions/NotFoundException.java
+/Users/yudhna/E_Course/Backend/src/main/java/com/ou/formBean/CourseLecturerForm.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/formBean/CourseStudentForm.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/formatters/CourseFormatter.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/formatters/DateTimeFormatter.java
@@ -52,8 +53,10 @@
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/formatters/UserFormatter.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/helpers/CloudinaryHelper.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/helpers/PaginationHelper.java
+/Users/yudhna/E_Course/Backend/src/main/java/com/ou/mappers/CourseCertificateMapper.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/mappers/LecturerMapper.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/mappers/LessonMapper.java
+/Users/yudhna/E_Course/Backend/src/main/java/com/ou/mappers/StudentMapper.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/pojo/Admin.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/pojo/Attachment.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/pojo/Category.java
@@ -100,6 +103,7 @@
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/repositories/MultipleChoiceAnswerRepository.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/repositories/QuestionRepository.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/repositories/QuestionTypeRepository.java
+/Users/yudhna/E_Course/Backend/src/main/java/com/ou/repositories/StudentRepository.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/repositories/TestRepository.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/repositories/UserRepository.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/repositories/UserRoleRepository.java
@@ -123,6 +127,7 @@
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/repositories/impl/MultipleChoiceAnswerRepositoryImpl.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/repositories/impl/QuestionRepositoryImpl.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/repositories/impl/QuestionTypeRepositoryImpl.java
+/Users/yudhna/E_Course/Backend/src/main/java/com/ou/repositories/impl/StudentRepositoryImpl.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/repositories/impl/TestRepositoryImpl.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/repositories/impl/UserRepositoryImpl.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/repositories/impl/UserRoleRepositoryImpl.java
@@ -148,6 +153,7 @@
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/services/MultipleChoiceAnswerService.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/services/QuestionService.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/services/QuestionTypeService.java
+/Users/yudhna/E_Course/Backend/src/main/java/com/ou/services/StudentService.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/services/TestService.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/services/UserDetailService.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/services/UserRoleSevice.java
@@ -174,6 +180,7 @@
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/services/impl/MultipleChoiceAnswerServiceImpl.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/services/impl/QuestionServiceImpl.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/services/impl/QuestionTypeServiceImpl.java
+/Users/yudhna/E_Course/Backend/src/main/java/com/ou/services/impl/StudentServiceImpl.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/services/impl/TestServiceImpl.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/services/impl/UserDetailServiceImpl.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/services/impl/UserRoleServiceImpl.java

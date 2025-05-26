@@ -38,4 +38,11 @@ public class LessonStudentServiceImpl implements LessonStudentService {
     public List<LessonStudent> findByLearningStatus(Boolean isLearn) {
         return List.of();
     }
+
+    @Override
+    public boolean isLessonCompleted(Integer lessonId, Integer studentId) {
+        LessonStudent lessonStudent = lessonStudentRepo.findByLessonIdAndStudentId(lessonId, studentId);
+
+        return lessonStudent != null && lessonStudent.getIsLearn() != null && lessonStudent.getIsLearn();
+    }
 }

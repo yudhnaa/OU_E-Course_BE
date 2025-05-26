@@ -62,7 +62,7 @@ public class LessonServiceImpl implements LessonService {
         }
 
         if (!lesson.getThumbnailImage().isEmpty()){
-            Map<String, String> imageUrl = cloudinaryHelper.uploadFile(lesson.getThumbnailImage());
+            Map<String, String> imageUrl = cloudinaryHelper.uploadMultipartFile(lesson.getThumbnailImage());
             lesson.setImage(imageUrl.get("url"));
             lesson.setPublicId(imageUrl.get("publicId"));
         }
@@ -175,7 +175,7 @@ public class LessonServiceImpl implements LessonService {
                 cloudinaryHelper.deleteFile(lesson.getPublicId());
             }
 
-            Map<String, String> imageUrl = cloudinaryHelper.uploadFile(lesson.getThumbnailImage());
+            Map<String, String> imageUrl = cloudinaryHelper.uploadMultipartFile(lesson.getThumbnailImage());
             lesson.setImage(imageUrl.get("url"));
             lesson.setPublicId(imageUrl.get("publicId"));
         } else {

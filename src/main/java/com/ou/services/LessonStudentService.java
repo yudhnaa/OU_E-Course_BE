@@ -10,4 +10,6 @@ public interface LessonStudentService {
     List<LessonStudent> findByLessonId(Integer lessonId);
     List<LessonStudent> findByStudentId(Integer studentId);
     List<LessonStudent> findByLearningStatus(Boolean isLearn);
+
+    boolean isLessonCompleted(Integer lessonId, Integer studentId);
 }

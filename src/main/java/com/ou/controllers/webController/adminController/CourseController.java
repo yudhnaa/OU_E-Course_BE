@@ -61,8 +61,7 @@ public class CourseController{
         long totalItems;
         if (params.get("name") != null) {
             totalItems = courseService.countSearchResults(params);
-        }
-        else
+        } else
             totalItems = courseService.countCourses();
 
         Pagination pagination = paginationHelper.getPagination(params, totalItems);
@@ -129,7 +128,7 @@ public class CourseController{
 
         model.addAttribute("totalItems", totalCourseStudents);
         model.addAttribute("currentPage", pagination.getCurrentPage());
-        model.addAttribute("totalPages", totalCourseStudents > 0 ? totalCourseStudents : 1);
+        model.addAttribute("totalPages", pagination.getTotalPages() > 0 ? pagination.getTotalPages() : 1);
         model.addAttribute("startIndex", pagination.getStartIndex());
         model.addAttribute("endIndex", pagination.getEndIndex());
 
