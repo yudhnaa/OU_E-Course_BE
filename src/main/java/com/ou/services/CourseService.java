@@ -1,6 +1,7 @@
 package com.ou.services;
 
 import com.ou.pojo.Course;
+import com.ou.pojo.User;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
@@ -20,6 +21,7 @@ public interface CourseService {
     Optional<Course> getCourseByName(String name);
     List<Course> getCoursesByCategory(Integer categoryId, Map<String, String> params);
     List<Course> getCoursesCreatedByUser(Integer userId, Map<String, String> params);
+    Course getCourseByIdWithPermissionCheck(int courseId, User user);
     
     // Update operation with validation
     Course updateCourse(Course course) throws IOException;
@@ -37,4 +39,5 @@ public interface CourseService {
     boolean isValidCourse(Course course);
     boolean isNameUnique(String name, Integer excludeId);
     boolean hasValidDates(Course course);
+
 }

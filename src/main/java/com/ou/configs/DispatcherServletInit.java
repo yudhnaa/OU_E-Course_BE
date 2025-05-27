@@ -13,7 +13,8 @@ public class DispatcherServletInit extends AbstractAnnotationConfigDispatcherSer
             HibernateConfigs.class,
             SpringSecurityConfigs.class,
             CloudinaryConfigs.class,
-            MessageSourceConfig.class
+            MessageSourceConfig.class,
+            GoogleDriveConfigs.class
         };
     }
 

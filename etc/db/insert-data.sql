@@ -1,8 +1,8 @@
 -- Sample data for user_role
 INSERT INTO user_role (name, description) VALUES
-    ('admin', 'Administrator'),
-    ('lecturer', 'Lecturer'),
-    ('student', 'Student');
+    ('ROLE_ADMIN', 'Administrator'),
+    ('ROLE_LECTURER', 'Lecturer'),
+    ('ROLE_STUDENT', 'Student');
 
 -- Sample data for user
 INSERT INTO user (last_name, first_name, birthday, username, password, avatar, email, user_role_id)
@@ -95,12 +95,16 @@ INSERT INTO course_student (progress, course_id, student_id) VALUES
     (0.25, 1, 3),
     (0.6, 1, 4),
     (0.8, 1, 5),
-    (0.4, 1, 6);
+    (0.4, 1, 6),
+    (1, 2, 6);
 
 
 -- Sample data for course_certificate
 INSERT INTO course_certificate (download_link, course_student_id) VALUES
-    ('/certs/john-java.pdf', 1);
+    ('https://example.com/certs/john-java.pdf', 1),
+    ('https://example.com/certs/jane-web.pdf', 7);
+
+
 
 -- Sample data for course_rate
 INSERT INTO course_rate (rate, comment, course_student_id)

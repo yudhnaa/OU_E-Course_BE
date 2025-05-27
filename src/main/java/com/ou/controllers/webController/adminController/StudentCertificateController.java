@@ -1,13 +1,21 @@
 package com.ou.controllers.webController.adminController;
 
 import com.ou.dto.CourseCertificateDto;
+import com.ou.exceptions.NotFoundException;
 import com.ou.helpers.PaginationHelper;
 import com.ou.mappers.CourseCertificateMapper;
 import com.ou.pojo.CourseCertificate;
+import com.ou.pojo.CustomUserDetails;
+import com.ou.pojo.Lecturer;
 import com.ou.services.CertificateService;
 import com.ou.services.CourseCertificateService;
+import com.ou.services.LecturerService;
+import com.ou.services.LocalizationService;
 import com.ou.utils.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,26 +39,31 @@ public class StudentCertificateController {
     private PaginationHelper paginationHelper;
     @Autowired
     private CertificateService certificateService;
-
-
-    public StudentCertificateController(CourseCertificateService courseCertificateService, CourseCertificateMapper courseCertificateMapper, PaginationHelper paginationHelper) {
-        this.courseCertificateService = courseCertificateService;
-        this.courseCertificateMapper = courseCertificateMapper;
-        this.paginationHelper = paginationHelper;
-    }
+    @Autowired
+    private LecturerService lecturerService;
+    @Autowired
+    private LocalizationService localizationService;
 
     @GetMapping("/student-certificates")
     public String studentCertificates(
             Model model,
             @RequestParam Map<String, String> params,
-            RedirectAttributes redirectAttributes
+            RedirectAttributes redirectAttributes,
+            @AuthenticationPrincipal CustomUserDetails principal
             ) {
+
+        if (principal.getUser().getUserRoleId().getName().contains("LECTURER")) {
+            Lecturer lecturer = lecturerService.getLecturerByUserId(principal.getUser().getId())
+                    .orElseThrow(() -> new NotFoundException(localizationService.getMessage("lecturer.notFound", LocaleContextHolder.getLocale())));
+
+            params.put("lecturerId", lecturer.getId().toString());
+        }
 
         // Pagination
         long totalItems = courseCertificateService.countSearchResults(params);
         Pagination pagination = paginationHelper.getPagination(params, totalItems);
 
-        List<CourseCertificateDto> courseCertificates = courseCertificateService.getCourseCertificates(params).stream()
+        List<CourseCertificateDto> courseCertificates = courseCertificateService.searchCourseCertificates(params,params).stream()
                 .map(courseCertificateMapper::toDto).toList();
 
         model.addAttribute("courseCertificates", courseCertificates);

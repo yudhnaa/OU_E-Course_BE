@@ -29,4 +29,7 @@ public interface CourseLecturerRepository {
     long countCourseLecturersByCourse(Integer courseId);
     long countCourseLecturersByLecturer(Integer lecturerId);
     long countSearchResults(Map<String, String> filters);
+
+    //validation methods
+    boolean existsByCourseIdAndLecturerId(int courseId, int lecturerId);
 }

@@ -1,5 +1,7 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
       layout:decorate="~{layout}">
 
 <th:block layout:fragment="pagetitle">
@@ -32,7 +34,7 @@
 
     <div class="mb-2 d-flex gap-2 justify-content-end align-items-center">
         <input class="form-control flex-grow-1" type="text" id="search-box" placeholder="Search...">
-        <a th:href="@{/admin/course/create}" class="btn btn-success waves-effect waves-light">
+        <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/course/create}" class="btn btn-success waves-effect waves-light">
             Create
         </a>
     </div>

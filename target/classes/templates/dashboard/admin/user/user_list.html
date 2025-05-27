@@ -104,9 +104,9 @@
                                 </th>
                                 <td class="id" th:text="${user.id}">#VLZ501</td>
                                 <td class="project_name">
-                                    <a th:if="${user.userRoleId.name == 'lecturer'}" th:href="@{/admin/lecturer/{lecturerId}(lecturerId=${user.id})}" class="fw-medium link-primary" th:text="${user.username}">Velzon - v1.0.0</a>
-                                    <a th:if="${user.userRoleId.name == 'student'}" th:href="@{/admin/student/{studentId}(studentId=${user.id})}" class="fw-medium link-primary" th:text="${user.username}">Velzon - v1.0.0</a>
-                                    <a th:if="${user.userRoleId.name == 'admin'}" class="fw-medium" th:text="${user.username}">Velzon - v1.0.0</a>
+                                    <a th:if="${user.userRoleId.name == 'ROLE_LECTURER'}" th:href="@{/admin/lecturer/{lecturerId}(lecturerId=${user.id})}" class="fw-medium link-primary" th:text="${user.username}">Velzon - v1.0.0</a>
+                                    <a th:if="${user.userRoleId.name == 'ROLE_STUDENT'}" th:href="@{/admin/student/{studentId}(studentId=${user.id})}" class="fw-medium link-primary" th:text="${user.username}">Velzon - v1.0.0</a>
+                                    <a th:if="${user.userRoleId.name == 'ROLE_ADMIN'}" class="fw-medium" th:text="${user.username}">Velzon - v1.0.0</a>
                                 </td>
                                 <td class="client_name" th:text="${user.userRoleId.name}">Robert McMahon</td>
                                 <td>

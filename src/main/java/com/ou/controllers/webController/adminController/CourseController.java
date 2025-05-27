@@ -11,6 +11,7 @@ import com.ou.utils.Pagination;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -55,14 +57,17 @@ public class CourseController{
     public String index(
             Model model,
             @RequestParam Map<String, String> params,
-            RedirectAttributes redirectAttributes
+            RedirectAttributes redirectAttributes,
+            @AuthenticationPrincipal CustomUserDetails principal
     ) {
+        if (principal.getUser().getUserRoleId().getName().contains("LECTURER")) {
+            Lecturer lecturer = lecturerService.getLecturerByUserId(principal.getUser().getId())
+                    .orElseThrow(() -> new NotFoundException(localizationService.getMessage("lecturer.notFound", LocaleContextHolder.getLocale())));
 
-        long totalItems;
-        if (params.get("name") != null) {
-            totalItems = courseService.countSearchResults(params);
-        } else
-            totalItems = courseService.countCourses();
+            params.put("lecturerId", lecturer.getId().toString());
+        }
+
+        long totalItems = courseService.countSearchResults(params);
 
         Pagination pagination = paginationHelper.getPagination(params, totalItems);
 
@@ -90,11 +95,11 @@ public class CourseController{
     @GetMapping("/course/{id}")
     public String courseDetail(Model model,
                                @PathVariable("id") int id,
-                               @RequestParam Map<String, String> params
+                               @RequestParam Map<String, String> params,
+                               @AuthenticationPrincipal CustomUserDetails principal
     ) throws Exception {
 
-        Course course = courseService.getCourseById(id)
-                .orElseThrow(() -> new NotFoundException(localizationService.getMessage("course.notFound", LocaleContextHolder.getLocale())));
+        Course course = courseService.getCourseByIdWithPermissionCheck(id, principal.getUser());
 
         List<Category> categories = categoryService.getCategories(params);
 

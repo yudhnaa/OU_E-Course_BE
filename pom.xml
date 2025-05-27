@@ -113,7 +113,15 @@
             <version>2.0.0</version>
         </dependency>
 
-<!--        Others -->
+        <!-- https://mvnrepository.com/artifact/com.google.apis/google-api-services-drive -->
+        <dependency>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-drive</artifactId>
+            <version>v3-rev197-1.25.0</version>
+        </dependency>
+
+
+        <!--        Others -->
         <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -121,6 +129,7 @@
             <version>2.19.0</version>
         </dependency>
 
+<!--        HTML TO XHTML TO PDF-->
         <!-- https://mvnrepository.com/artifact/org.xhtmlrenderer/flying-saucer-core -->
         <dependency>
             <groupId>org.xhtmlrenderer</groupId>
@@ -139,7 +148,6 @@
             <artifactId>jsoup</artifactId>
             <version>1.20.1</version>
         </dependency>
-
 
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-devtools -->
         <dependency>

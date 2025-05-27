@@ -1,13 +1,21 @@
 package com.ou.services.impl;
 
+import com.ou.exceptions.NotFoundException;
 import com.ou.helpers.CloudinaryHelper;
 import com.ou.pojo.Course;
+import com.ou.pojo.Lecturer;
+import com.ou.pojo.User;
+import com.ou.repositories.CourseLecturerRepository;
 import com.ou.repositories.CourseRepository;
+import com.ou.repositories.LecturerRepository;
+import com.ou.repositories.UserRepository;
+import com.ou.services.CourseLecturerService;
 import com.ou.services.CourseService;
 import com.ou.services.LocalizationService;
 import com.ou.utils.ValidateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +35,10 @@ public class CourseServiceImpl implements CourseService {
 
     @Autowired
     private CloudinaryHelper cloudinaryHelper;
+    @Autowired
+    LecturerRepository lecturerRepository;
+    @Autowired
+    private CourseLecturerRepository courseLecturerRepository;
 
 
     @Override
@@ -85,13 +97,13 @@ public class CourseServiceImpl implements CourseService {
 
         //Upload and delete image to Cloudinary if provided
         if (!course.getImageFile().isEmpty()){
-            Map<String, String> imageUrl = cloudinaryHelper.uploadMultipartFile(course.getImageFile());
-            course.setImage(imageUrl.get("url"));
-            course.setPublicId(imageUrl.get("publicId"));
-
             if (course.getPublicId() != null) {
                 cloudinaryHelper.deleteFile(course.getPublicId());
             }
+
+            Map<String, String> imageUrl = cloudinaryHelper.uploadMultipartFile(course.getImageFile());
+            course.setImage(imageUrl.get("url"));
+            course.setPublicId(imageUrl.get("publicId"));
         }
 
 
@@ -112,9 +124,6 @@ public class CourseServiceImpl implements CourseService {
         if (courseOpt.isEmpty()) {
             throw new IllegalArgumentException("Course not found");
         }
-        
-        // TODO: Add additional business logic validation if needed
-        // For example: check if there are active students enrolled before deletion
         
         return courseRepository.deleteCourse(id);
     }
@@ -205,6 +214,26 @@ public class CourseServiceImpl implements CourseService {
         ValidateUtils.validatePaginationParams(params);
         
         return courseRepository.getCoursesCreatedByUser(userId, params);
+    }
+
+    @Override
+    public Course getCourseByIdWithPermissionCheck(int courseId, User user) {
+        // get course by ID
+        Optional<Course> courseOpt = courseRepository.getCourseById(courseId);
+        if (courseOpt.isEmpty()) {
+            throw new NotFoundException(localizationService.getMessage("course.notFound", LocaleContextHolder.getLocale()));
+        }
+
+        if (user.getUserRoleId().getName().contains("LECTURER")){
+            Lecturer lecturer = lecturerRepository.getLecturerByUserId(user.getId()).orElseThrow(() ->
+                    new AccessDeniedException(localizationService.getMessage("lecturer.notFound", LocaleContextHolder.getLocale())));
+
+            boolean isLecturerOfCourse = courseLecturerRepository.existsByCourseIdAndLecturerId(courseId, lecturer.getId());
+            if (!isLecturerOfCourse) {
+                throw new AccessDeniedException(localizationService.getMessage("course.access.denied", LocaleContextHolder.getLocale()));
+            }
+        }
+        return courseOpt.get();
     }
 
     @Override
