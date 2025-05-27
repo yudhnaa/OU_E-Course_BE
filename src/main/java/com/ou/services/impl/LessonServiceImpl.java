@@ -1,11 +1,19 @@
 package com.ou.services.impl;
 
+import com.ou.helpers.CloudinaryHelper;
+import com.ou.pojo.Attachment;
 import com.ou.pojo.Lesson;
+import com.ou.pojo.LessonAttachment;
 import com.ou.repositories.LessonRepository;
+import com.ou.services.AttachmentService;
+import com.ou.services.LessonAttachmentService;
 import com.ou.services.LessonService;
+import com.ou.services.LocalizationService;
+import com.ou.utils.ValidateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -17,6 +25,18 @@ public class LessonServiceImpl implements LessonService {
 
     @Autowired
     private LessonRepository lessonRepository;
+
+    @Autowired
+    private CloudinaryHelper cloudinaryHelper;
+
+    @Autowired
+    private LocalizationService localizationService;
+
+    @Autowired
+    private LessonAttachmentService lessonAttachmentService;
+
+    @Autowired
+    private AttachmentService attachmentService;
 
     @Override
     public Lesson createLesson(Lesson lesson) throws Exception {
@@ -40,13 +60,39 @@ public class LessonServiceImpl implements LessonService {
         if (lesson.getUserUploadId() == null) {
             throw new Exception("User who uploads the lesson is required");
         }
-        
-        return lessonRepository.addLesson(lesson);
+
+        if (!lesson.getThumbnailImage().isEmpty()){
+            Map<String, String> imageUrl = cloudinaryHelper.uploadMultipartFile(lesson.getThumbnailImage());
+            lesson.setImage(imageUrl.get("url"));
+            lesson.setPublicId(imageUrl.get("publicId"));
+        }
+        Lesson newLesson = lessonRepository.addLesson(lesson);
+
+        if (lesson.getLessonAttachments() != null && newLesson != null) {
+            for (MultipartFile file : lesson.getLessonAttachments()) {
+                if (!file.isEmpty()) {
+                    Attachment attachment = new Attachment();
+                    attachment.setName(file.getOriginalFilename());
+                    attachment.setFile(file);
+                    Attachment savedAttachment = attachmentService.addAttachment(attachment);
+
+                    LessonAttachment lessonAttachment = new LessonAttachment();
+                    lessonAttachment.setLessonId(newLesson);
+                    lessonAttachment.setAttachmentId(savedAttachment);
+                    lessonAttachmentService.createLessonAttachment(lessonAttachment);
+                }
+            }
+        }
+
+        return newLesson;
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Lesson> getLessons(Map<String, String> params) {
+
+        ValidateUtils.validatePaginationParams(params);
+
         return lessonRepository.getLessons(params);
     }
 
@@ -96,13 +142,13 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public Lesson updateLesson(Lesson lesson) throws Exception {
+    public Lesson updateLesson(Lesson lesson, List<Long> notDeleteLessonAttachmentIds) throws Exception {
         // Validate lesson exists
         if (lesson.getId() == null) {
             throw new Exception("Cannot update lesson without ID");
         }
         
-        Optional<Lesson> existingLesson = lessonRepository.getLessonById(lesson.getId());
+        Optional<Lesson> existingLesson = this.getLessonById(lesson.getId());
         if (existingLesson.isEmpty()) {
             throw new Exception("Lesson with ID " + lesson.getId() + " not found");
         }
@@ -122,7 +168,53 @@ public class LessonServiceImpl implements LessonService {
         if (lesson.getUserUploadId() == null) {
             throw new Exception("User who uploads the lesson is required");
         }
-        
+
+        if (!lesson.getThumbnailImage().isEmpty()){
+            // Delete old image if it exists
+            if (lesson.getPublicId() != null) {
+                cloudinaryHelper.deleteFile(lesson.getPublicId());
+            }
+
+            Map<String, String> imageUrl = cloudinaryHelper.uploadMultipartFile(lesson.getThumbnailImage());
+            lesson.setImage(imageUrl.get("url"));
+            lesson.setPublicId(imageUrl.get("publicId"));
+        } else {
+            // If no new image is provided, keep the old one
+            Lesson existingLessonData = existingLesson.get();
+            lesson.setImage(existingLessonData.getImage());
+            lesson.setPublicId(existingLessonData.getPublicId());
+        }
+        Lesson newLesson = lessonRepository.updateLesson(lesson);
+
+//         Handle deletion of lesson attachments
+        List<LessonAttachment> currentLessonAttachments = lessonAttachmentService.getLessonAttachmentsByLesson(newLesson.getId());
+        if (currentLessonAttachments != null && !currentLessonAttachments.isEmpty()) {
+            for (LessonAttachment lessonAttachment : currentLessonAttachments) {
+                if (notDeleteLessonAttachmentIds == null ||
+                        !notDeleteLessonAttachmentIds.contains(lessonAttachment.getId().longValue())) {
+                    lessonAttachmentService.deleteLessonAttachment(lessonAttachment.getId());
+                }
+            }
+        }
+
+        if (lesson.getLessonAttachments() != null && newLesson != null) {
+            for (MultipartFile file : lesson.getLessonAttachments()) {
+                if (!file.isEmpty()) {
+                    Attachment attachment = new Attachment();
+                    attachment.setName(file.getOriginalFilename());
+                    attachment.setFile(file);
+                    Attachment savedAttachment = attachmentService.addAttachment(attachment);
+
+                    LessonAttachment lessonAttachment = new LessonAttachment();
+                    lessonAttachment.setLessonId(newLesson);
+                    lessonAttachment.setAttachmentId(savedAttachment);
+                    lessonAttachmentService.createLessonAttachment(lessonAttachment);
+                }
+            }
+        }
+
+
+
         return lessonRepository.updateLesson(lesson);
     }
 
@@ -171,11 +263,11 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     @Transactional(readOnly = true)
-    public long countLessonsByCourse(Integer courseId) {
+    public long countLessonsByCourse(Integer courseId, Map<String, String> params) {
         if (courseId == null || courseId <= 0) {
             throw new IllegalArgumentException("Invalid course ID");
         }
-        return lessonRepository.countLessonsByCourse(courseId);
+        return lessonRepository.countLessonsByCourse(courseId, params);
     }
 
     @Override
@@ -212,11 +304,11 @@ public class LessonServiceImpl implements LessonService {
         if (lesson.getName() == null || lesson.getName().trim().isEmpty()) {
             throw new Exception("Lesson name cannot be empty");
         }
-        
-        if (lesson.getName().length() > 50) {
-            throw new Exception("Lesson name cannot exceed 50 characters");
-        }
-        
+
+//        if (lesson.getName().length() > 50) {
+//            throw new Exception("Lesson name cannot exceed 50 characters");
+//        }
+//
         // Embed link validation
         if (lesson.getEmbedLink() == null || lesson.getEmbedLink().trim().isEmpty()) {
             throw new Exception("Embed link cannot be empty");

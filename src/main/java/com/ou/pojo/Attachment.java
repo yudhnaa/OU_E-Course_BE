@@ -4,34 +4,26 @@
  */
 package com.ou.pojo;
 
-import jakarta.persistence.Basic;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
-import jakarta.persistence.NamedQueries;
-import jakarta.persistence.NamedQuery;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.Serializable;
 import java.util.Set;
 
 /**
  *
- * @author ADMIN
+ * @author yudhna
  */
 @Entity
 @Table(name = "attachment")
 @NamedQueries({
-        @NamedQuery(name = "Attachment.findAll", query = "SELECT a FROM Attachment a"),
-        @NamedQuery(name = "Attachment.findById", query = "SELECT a FROM Attachment a WHERE a.id = :id"),
-        @NamedQuery(name = "Attachment.findByName", query = "SELECT a FROM Attachment a WHERE a.name = :name"),
-        @NamedQuery(name = "Attachment.findByLink", query = "SELECT a FROM Attachment a WHERE a.link = :link")})
+    @NamedQuery(name = "Attachment.findAll", query = "SELECT a FROM Attachment a"),
+    @NamedQuery(name = "Attachment.findById", query = "SELECT a FROM Attachment a WHERE a.id = :id"),
+    @NamedQuery(name = "Attachment.findByName", query = "SELECT a FROM Attachment a WHERE a.name = :name"),
+    @NamedQuery(name = "Attachment.findByLink", query = "SELECT a FROM Attachment a WHERE a.link = :link"),
+    @NamedQuery(name = "Attachment.findByPublicId", query = "SELECT a FROM Attachment a WHERE a.publicId = :publicId")})
 public class Attachment implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -50,6 +42,9 @@ public class Attachment implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "link")
     private String link;
+    @Size(max = 100)
+    @Column(name = "public_id")
+    private String publicId;
     @Lob
     @Size(max = 65535)
     @Column(name = "description")
@@ -58,6 +53,10 @@ public class Attachment implements Serializable {
     private Set<ExerciseAttachment> exerciseAttachmentSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "attachmentId")
     private Set<LessonAttachment> lessonAttachmentSet;
+
+    @Transient
+    private MultipartFile file;
+
 
     public Attachment() {
     }
@@ -74,6 +73,14 @@ public class Attachment implements Serializable {
 
     public Integer getId() {
         return id;
+    }
+
+    public MultipartFile getFile() {
+        return file;
+    }
+
+    public void setFile(MultipartFile file) {
+        this.file = file;
     }
 
     public void setId(Integer id) {
@@ -94,6 +101,14 @@ public class Attachment implements Serializable {
 
     public void setLink(String link) {
         this.link = link;
+    }
+
+    public String getPublicId() {
+        return publicId;
+    }
+
+    public void setPublicId(String publicId) {
+        this.publicId = publicId;
     }
 
     public String getDescription() {

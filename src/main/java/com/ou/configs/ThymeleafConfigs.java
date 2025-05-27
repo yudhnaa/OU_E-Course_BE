@@ -56,7 +56,7 @@ public class ThymeleafConfigs {
         templateResolver.setTemplateMode("HTML");
         templateResolver.setCharacterEncoding("UTF-8");
         templateResolver.setCacheable(false);
-        templateResolver.setCheckExistence(true); // để không lỗi nếu thiếu
+        templateResolver.setCheckExistence(true);
         return templateResolver;
     }
 
@@ -64,7 +64,7 @@ public class ThymeleafConfigs {
     public SpringTemplateEngine templateEngine() {
         SpringTemplateEngine templateEngine = new SpringTemplateEngine();
         templateEngine.setTemplateResolver(fileTemplateResolver());
-        templateEngine.addDialect(new LayoutDialect()); // nếu bạn đang dùng layout
+        templateEngine.addDialect(new LayoutDialect());
         return templateEngine;
     }
 

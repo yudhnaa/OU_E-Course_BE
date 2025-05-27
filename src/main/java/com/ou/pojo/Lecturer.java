@@ -23,7 +23,7 @@ import java.util.Set;
 
 /**
  *
- * @author yudhna
+ * @author ADMIN
  */
 @Entity
 @Table(name = "lecturer")
@@ -33,17 +33,16 @@ import java.util.Set;
     @NamedQuery(name = "Lecturer.findByIsActive", query = "SELECT l FROM Lecturer l WHERE l.isActive = :isActive")})
 public class Lecturer implements Serializable {
 
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "is_active")
-    private boolean isActive;
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "is_active")
+    private boolean isActive;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdByUserId")
     private Set<Exercise> exerciseSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "lecturerId")

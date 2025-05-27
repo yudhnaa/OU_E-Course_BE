@@ -33,7 +33,7 @@ import java.util.Set;
 
 /**
  *
- * @author yudhna
+ * @author ADMIN
  */
 @Entity
 @Table(name = "exercise_attempt")

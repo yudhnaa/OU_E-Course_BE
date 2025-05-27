@@ -20,12 +20,19 @@ import java.util.Set;
 @Entity
 @Table(name = "lesson")
 @NamedQueries({
-        @NamedQuery(name = "Lesson.findAll", query = "SELECT l FROM Lesson l"),
-        @NamedQuery(name = "Lesson.findById", query = "SELECT l FROM Lesson l WHERE l.id = :id"),
-        @NamedQuery(name = "Lesson.findByEmbedLink", query = "SELECT l FROM Lesson l WHERE l.embedLink = :embedLink"),
-        @NamedQuery(name = "Lesson.findByImage", query = "SELECT l FROM Lesson l WHERE l.image = :image")})
+    @NamedQuery(name = "Lesson.findAll", query = "SELECT l FROM Lesson l"),
+    @NamedQuery(name = "Lesson.findById", query = "SELECT l FROM Lesson l WHERE l.id = :id"),
+    @NamedQuery(name = "Lesson.findByEmbedLink", query = "SELECT l FROM Lesson l WHERE l.embedLink = :embedLink"),
+    @NamedQuery(name = "Lesson.findByImage", query = "SELECT l FROM Lesson l WHERE l.image = :image"),
+    @NamedQuery(name = "Lesson.findByPublicId", query = "SELECT l FROM Lesson l WHERE l.publicId = :publicId")})
 public class Lesson implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
+    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Lob
@@ -48,13 +55,9 @@ public class Lesson implements Serializable {
     @NotNull
     @Column(name = "order_index")
     private int orderIndex;
-
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id")
-    private Integer id;
+    @Size(max = 100)
+    @Column(name = "public_id")
+    private String publicId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "lessonId")
     private Set<Exercise> exerciseSet;
     @JoinColumn(name = "course_id", referencedColumnName = "id")
@@ -71,9 +74,9 @@ public class Lesson implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "lessonId")
     private Set<LessonStudent> lessonStudentSet;
 
-
     @Transient
     private MultipartFile thumbnailImage;
+
     @Transient
     private List<MultipartFile> lessonAttachments;
 
@@ -115,6 +118,13 @@ public class Lesson implements Serializable {
         this.id = id;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getEmbedLink() {
         return embedLink;
@@ -124,6 +134,29 @@ public class Lesson implements Serializable {
         this.embedLink = embedLink;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getPublicId() {
+        return publicId;
+    }
+
+    public void setPublicId(String publicId) {
+        this.publicId = publicId;
+    }
 
     public Set<Exercise> getExerciseSet() {
         return exerciseSet;
@@ -198,30 +231,6 @@ public class Lesson implements Serializable {
         return "com.ou.pojo.Lesson[ id=" + id + " ]";
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
     public int getOrderIndex() {
         return orderIndex;
     }
@@ -229,5 +238,5 @@ public class Lesson implements Serializable {
     public void setOrderIndex(int orderIndex) {
         this.orderIndex = orderIndex;
     }
-
+    
 }

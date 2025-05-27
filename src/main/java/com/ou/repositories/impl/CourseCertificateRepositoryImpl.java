@@ -28,7 +28,7 @@ public class CourseCertificateRepositoryImpl implements CourseCertificateReposit
     @Override
     public CourseCertificate addCourseCertificate(CourseCertificate certificate) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.save(certificate);
+        session.persist(certificate);
         session.flush(); // Ensure ID is generated and available
         return certificate;
     }
@@ -36,7 +36,7 @@ public class CourseCertificateRepositoryImpl implements CourseCertificateReposit
     @Override
     public CourseCertificate updateCourseCertificate(CourseCertificate certificate) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.update(certificate);
+        session.merge(certificate);
         return certificate;
     }
 

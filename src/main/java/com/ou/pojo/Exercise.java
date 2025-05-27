@@ -25,7 +25,7 @@ import java.util.Set;
 
 /**
  *
- * @author yudhna
+ * @author ADMIN
  */
 @Entity
 @Table(name = "exercise")
@@ -37,6 +37,12 @@ import java.util.Set;
     @NamedQuery(name = "Exercise.findByMaxScore", query = "SELECT e FROM Exercise e WHERE e.maxScore = :maxScore")})
 public class Exercise implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
+    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
@@ -51,13 +57,6 @@ public class Exercise implements Serializable {
     @NotNull
     @Column(name = "max_score")
     private BigDecimal maxScore;
-
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id")
-    private Integer id;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "exerciseId")
     private Set<ExerciseAttachment> exerciseAttachmentSet;
     @JoinColumn(name = "course_id", referencedColumnName = "id")
@@ -96,6 +95,13 @@ public class Exercise implements Serializable {
         this.id = id;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public int getDurationMinutes() {
         return durationMinutes;
@@ -185,13 +191,5 @@ public class Exercise implements Serializable {
     public String toString() {
         return "com.ou.pojo.Exercise[ id=" + id + " ]";
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
+    
 }

@@ -29,7 +29,7 @@ public class CourseRateRepositoryImpl implements CourseRateRepository {
     @Override
     public CourseRate addCourseRate(CourseRate courseRate) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.save(courseRate);
+        session.persist(courseRate);
         session.flush(); // Ensure ID is generated and available
         return courseRate;
     }
@@ -37,7 +37,7 @@ public class CourseRateRepositoryImpl implements CourseRateRepository {
     @Override
     public CourseRate updateCourseRate(CourseRate courseRate) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.update(courseRate);
+        session.merge(courseRate);
         return courseRate;
     }
 

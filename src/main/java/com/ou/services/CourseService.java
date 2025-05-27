@@ -1,6 +1,7 @@
 package com.ou.services;
 
 import com.ou.pojo.Course;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
@@ -13,6 +14,7 @@ public interface CourseService {
     
     // Read operations
     List<Course> getCourses(Map<String, String> params);
+
     List<Course> searchCourses(Map<String, String> filters, Map<String, String> params);
     Optional<Course> getCourseById(Integer id);
     Optional<Course> getCourseByName(String name);

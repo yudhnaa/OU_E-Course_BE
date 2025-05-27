@@ -1,76 +1,69 @@
 USE ecourse;
 
-CREATE TABLE `user_role`
-(
+CREATE TABLE `user_role`(
     -- admin, lecturer, user
-    id          INT AUTO_INCREMENT PRIMARY KEY,
-    name        NVARCHAR(50) NOT NULL,
-    description TEXT         NULL
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name NVARCHAR(50) NOT NULL,
+    description TEXT NULL
 );
 
 -- la student co the xoa
-CREATE TABLE `user`
-(
-    id           INT AUTO_INCREMENT PRIMARY KEY,
-    last_name    NVARCHAR(50) NOT NULL,
-    first_name   NVARCHAR(50) NOT NULL,
-    birthday     DATE         NOT NULL,
-    username     NVARCHAR(50) NOT NULL UNIQUE,
-    password     VARCHAR(255) NOT NULL,
-    avatar       VARCHAR(255) NULL,
-    email        VARCHAR(100) NOT NULL UNIQUE,
+CREATE TABLE `user` (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    last_name NVARCHAR(50) NOT NULL,
+    first_name NVARCHAR(50) NOT NULL,
+    birthday DATE NOT NULL,
+    username NVARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    avatar VARCHAR(255) NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
 
-    user_role_id INT          NOT NULL,
-    FOREIGN KEY (user_role_id) REFERENCES user_role (id) ON DELETE RESTRICT
+    user_role_id INT NOT NULL,
+    FOREIGN KEY (user_role_id) REFERENCES user_role(id) ON DELETE RESTRICT
 );
 
 
 -- la admin, khong the xoa
-CREATE TABLE `student`
-(
-    id      INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE `student`(
+    id INT AUTO_INCREMENT PRIMARY KEY,
 
     user_id INT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE RESTRICT
+    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE RESTRICT
 );
 
 
 -- la admin, khong the xoa
-CREATE TABLE `admin`
-(
-    id      INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE `admin`(
+    id INT AUTO_INCREMENT PRIMARY KEY,
 
     user_id INT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE RESTRICT
+    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE RESTRICT
 );
 
 -- la giang vien, khong the xoa chi co the khoa
-create table `lecturer`
-(
-    id        INT AUTO_INCREMENT PRIMARY KEY,
+create table `lecturer`(
+    id INT AUTO_INCREMENT PRIMARY KEY,
     is_active BOOL NOT NULL DEFAULT TRUE,
 
-    user_id   INT  NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE RESTRICT
+    user_id INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE RESTRICT
 );
 
-CREATE TABLE `category`
-(
-    id          INT AUTO_INCREMENT PRIMARY KEY,
-    name        NVARCHAR(50) NOT NULL,
-    description TEXT         NULL
+CREATE TABLE `category`(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name NVARCHAR(50) NOT NULL,
+    description TEXT NULL
 );
 
-CREATE TABLE `course`
-(
-    id                  INT AUTO_INCREMENT PRIMARY KEY,
-    name                NVARCHAR(50) NOT NULL,
-    description         TEXT         NULL,
-    image               VARCHAR(255) NULL,
-
-    date_added          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    date_start          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    date_end            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+CREATE TABLE `course`(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name NVARCHAR(50) NOT NULL,
+    description TEXT NULL,
+    image VARCHAR(255) NULL,
+    
+    date_added TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    date_start TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    date_end TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     created_by_admin_id INT,
     FOREIGN KEY (created_by_admin_id) REFERENCES admin (id) ON DELETE RESTRICT,
@@ -95,7 +88,6 @@ CREATE TABLE `course_lecturer`
 CREATE TABLE `course_student`
 (
     id         INT AUTO_INCREMENT PRIMARY KEY,
-    name       NVARCHAR(50) NOT NULL,
     progress   DOUBLE       NOT NULL DEFAULT 0,
 
     course_id  INT          NOT NULL,
@@ -113,7 +105,10 @@ CREATE TABLE course_certificate
     download_link     VARCHAR(255) NOT NULL,
 
     course_student_id INT          NOT NULL,
-    FOREIGN KEY (course_student_id) REFERENCES course_student (id) ON DELETE CASCADE
+    FOREIGN KEY (course_student_id) REFERENCES course_student (id) ON DELETE CASCADE,
+
+#     1 student chi co the co 1 certificate cho 1 course
+    UNIQUE KEY unique_certificate (course_student_id)
 );
 
 CREATE TABLE `course_rate`
@@ -150,6 +145,7 @@ CREATE TABLE `lesson`
     embed_link     VARCHAR(255) NOT NULL,
     description    TEXT         NULL,
     image          VARCHAR(255) NULL,
+    order_index INT NOT NULL DEFAULT 0,
 
     lesson_type_id INT          NOT NULL,
     FOREIGN KEY (lesson_type_id) REFERENCES lesson_type (id) ON DELETE RESTRICT,
@@ -261,9 +257,9 @@ CREATE TABLE writing_answer
 -- 1 exercise co nhieu status: Submitted, Pending, Graded
 CREATE TABLE exercise_score_status
 (
-    id          INT AUTO_INCREMENT PRIMARY KEY,
-    name        NVARCHAR(50) NOT NULL,
-    description TEXT         NULL
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name NVARCHAR(50) NOT NULL,
+    description TEXT NULL
 );
 
 CREATE TABLE exercise_attempt
@@ -272,7 +268,7 @@ CREATE TABLE exercise_attempt
     started_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     submitted_at     TIMESTAMP NULL,
     total_score      DECIMAL(5, 2),
-    response         TEXT      NOT NULL,
+    response         TEXT      NULL,
 
     status_id        INT       NOT NULL,
     FOREIGN KEY (status_id) REFERENCES exercise_score_status (id) ON DELETE RESTRICT,
@@ -326,14 +322,13 @@ CREATE TABLE test_attempt
     FOREIGN KEY (user_id) REFERENCES student (id) ON DELETE CASCADE
 );
 
-ALTER TABLE lesson
-    ADD COLUMN order_index INT NOT NULL DEFAULT 0;
-
 CREATE TABLE exercise_attempt_answer
 (
     id          INT AUTO_INCREMENT PRIMARY KEY,
+
     attempt_id  INT           NOT NULL,
     FOREIGN KEY (attempt_id) REFERENCES exercise_attempt (id) ON DELETE CASCADE,
+
     question_id INT           NOT NULL,
     FOREIGN KEY (question_id) REFERENCES question (id) ON DELETE CASCADE,
 
@@ -355,5 +350,24 @@ CREATE TABLE test_attempt_answer
     score       DECIMAL(5, 2) NULL
 );
 
-ALTER TABLE exercise_attempt
-MODIFY COLUMN response TEXT NULL;
+# Triger
+
+# chi co the tao certificate khi student da hoan thanh course: progress = 1
+DELIMITER //
+
+CREATE TRIGGER trg_before_insert_certificate
+    BEFORE INSERT ON course_certificate
+    FOR EACH ROW
+BEGIN
+    DECLARE p DOUBLE;
+
+    SELECT progress INTO p FROM course_student WHERE id = NEW.course_student_id;
+
+    IF p < 1 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Cannot issue certificate: Course progress is not complete';
+    END IF;
+END;
+//
+
+DELIMITER ;

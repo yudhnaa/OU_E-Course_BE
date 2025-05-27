@@ -2,6 +2,7 @@ package com.ou.repositories.impl;
 
 import com.ou.configs.WebApplicationSettings;
 import com.ou.pojo.CourseStudent;
+import com.ou.pojo.Student;
 import com.ou.pojo.User;
 import com.ou.repositories.CourseStudentRepository;
 import jakarta.persistence.NoResultException;
@@ -30,7 +31,7 @@ public class CourseStudentRepositoryImpl implements CourseStudentRepository {
     @Override
     public CourseStudent addCourseStudent(CourseStudent courseStudent) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.save(courseStudent);
+        session.persist(courseStudent);
         session.flush(); // Ensure ID is generated and available
         return courseStudent;
     }
@@ -38,7 +39,7 @@ public class CourseStudentRepositoryImpl implements CourseStudentRepository {
     @Override
     public CourseStudent updateCourseStudent(CourseStudent courseStudent) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.update(courseStudent);
+        session.merge(courseStudent);
         return courseStudent;
     }
 
@@ -147,12 +148,15 @@ public class CourseStudentRepositoryImpl implements CourseStudentRepository {
         
         if (filters != null) {
             if (filters.containsKey("name")) {
-                Join<CourseStudent, User> studentJoin = root.join("studentId");
+                Join<CourseStudent, Student> studentJoin = root.join("studentId", JoinType.LEFT);
+
+                Join<Student, User> userJoin =  studentJoin.join("userId", JoinType.LEFT);
+
                 String keyword = "%" + filters.get("name") + "%";
                 predicates.add(
                         builder.or(
-                                builder.like(studentJoin.get("firstName"), keyword),
-                                builder.like(studentJoin.get("lastName"), keyword)
+                                builder.like(userJoin.get("firstName"), keyword),
+                                builder.like(userJoin.get("lastName"), keyword)
                         )
                 );
             }

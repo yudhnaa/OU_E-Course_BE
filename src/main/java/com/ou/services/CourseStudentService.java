@@ -36,4 +36,5 @@ public interface CourseStudentService {
     // Business validation methods
     boolean isEnrollmentValid(Integer courseId, Integer studentId);
     boolean canUpdateProgress(CourseStudent courseStudent, double newProgress);
+    boolean isCourseCompleted(CourseStudent courseStudent);
 }

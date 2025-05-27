@@ -7,6 +7,8 @@ package com.ou.configs;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.ou.formatters.*;
+import com.ou.formatters.CourseFormatter;
+import com.ou.formatters.UserFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -37,29 +39,19 @@ import java.util.Locale;
 @EnableWebMvc
 @EnableTransactionManagement
 @ComponentScan(basePackages = {
-        "com.ou.controllers",
-        "com.ou.repositories",
-        "com.ou.services",
-        "com.ou.formatters",
-        "com.ou.helpers"
+    "com.ou.controllers",
+    "com.ou.repositories",
+    "com.ou.services",
+    "com.ou.formatters",
+    "com.ou.helpers",
+    "com.ou.mappers"
+
 })
 public class WebAppContextConfigs implements WebMvcConfigurer {
     @Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
 
         configurer.enable();
-    }
-
-    /*
-     * This method configures the message source for internationalization (i18n).
-     * It sets the base name for the message properties files and the default encoding.
-     */
-    @Bean
-    public MessageSource messageSource() {
-        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setBasenames("messages");
-        messageSource.setDefaultEncoding("UTF-8");
-        return messageSource;
     }
 
     /*
@@ -121,5 +113,6 @@ public class WebAppContextConfigs implements WebMvcConfigurer {
         registry.addFormatter(new StudentFormatter());
         registry.addFormatter(new TestAttemptFormatter());
         registry.addFormatter(new TestFormatter());
+        registry.addFormatter(new UserFormatter());
     }
 }

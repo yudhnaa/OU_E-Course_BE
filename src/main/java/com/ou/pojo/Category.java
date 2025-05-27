@@ -22,7 +22,7 @@ import java.util.Set;
 
 /**
  *
- * @author yudhna
+ * @author ADMIN
  */
 @Entity
 @Table(name = "category")
@@ -32,6 +32,12 @@ import java.util.Set;
     @NamedQuery(name = "Category.findByName", query = "SELECT c FROM Category c WHERE c.name = :name")})
 public class Category implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
+    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
@@ -41,13 +47,6 @@ public class Category implements Serializable {
     @Size(max = 65535)
     @Column(name = "description")
     private String description;
-
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id")
-    private Integer id;
     @OneToMany(mappedBy = "categoryId")
     private Set<Course> courseSet;
 
@@ -71,6 +70,21 @@ public class Category implements Serializable {
         this.id = id;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public Set<Course> getCourseSet() {
         return courseSet;
@@ -104,21 +118,5 @@ public class Category implements Serializable {
     public String toString() {
         return "com.ou.pojo.Category[ id=" + id + " ]";
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
+    
 }

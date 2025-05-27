@@ -28,7 +28,7 @@ public interface LessonRepository {
 
     // Count methods for pagination
     long countLessons(String locale);
-    long countLessonsByCourse(Integer courseId);
+    long countLessonsByCourse(Integer courseId, Map<String, String> params);
     long countLessonsByType(Integer typeId);
     long countLessonsByUploadUser(Integer userId);
     long countSearchResults(Map<String, String> filters);

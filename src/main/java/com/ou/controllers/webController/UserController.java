@@ -8,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Controller
@@ -30,9 +32,9 @@ public class UserController {
     }
 
     @PostMapping(value = "/register")
-    public String register(@ModelAttribute ("user") User user) {
+    public String register(@ModelAttribute ("user") User user) throws IOException {
 
-        User u = new User(1, "A", "B", new Date(), "A", "B", "A");
+        User u = new User(1, "A", "B",new Date(), "A", "B", "A");
         u.setUsername(user.getUsername());
         u.setPassword(user.getPassword());
         u.setUserRoleId(new UserRole(1, "admin"));
