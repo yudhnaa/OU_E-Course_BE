@@ -24,7 +24,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Set;
 
 /**
@@ -41,9 +40,6 @@ import java.util.Set;
     @NamedQuery(name = "TestAttempt.findByTotalScore", query = "SELECT t FROM TestAttempt t WHERE t.totalScore = :totalScore")})
 public class TestAttempt implements Serializable {
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "attemptId")
-    private Set<TestAttemptAnswer> testAttemptAnswerSet;
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,6 +55,8 @@ public class TestAttempt implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "total_score")
     private BigDecimal totalScore;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "attemptId")
+    private Set<TestAttemptAnswer> testAttemptAnswerSet;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Student userId;
@@ -105,6 +103,14 @@ public class TestAttempt implements Serializable {
         this.totalScore = totalScore;
     }
 
+    public Set<TestAttemptAnswer> getTestAttemptAnswerSet() {
+        return testAttemptAnswerSet;
+    }
+
+    public void setTestAttemptAnswerSet(Set<TestAttemptAnswer> testAttemptAnswerSet) {
+        this.testAttemptAnswerSet = testAttemptAnswerSet;
+    }
+
     public Student getUserId() {
         return userId;
     }
@@ -144,14 +150,6 @@ public class TestAttempt implements Serializable {
     @Override
     public String toString() {
         return "com.ou.pojo.TestAttempt[ id=" + id + " ]";
-    }
-
-    public Set<TestAttemptAnswer> getTestAttemptAnswerSet() {
-        return testAttemptAnswerSet;
-    }
-
-    public void setTestAttemptAnswerSet(Set<TestAttemptAnswer> testAttemptAnswerSet) {
-        this.testAttemptAnswerSet = testAttemptAnswerSet;
     }
 
 }

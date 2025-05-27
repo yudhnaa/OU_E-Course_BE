@@ -1,12 +1,13 @@
 package com.ou.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.ou.pojo.User;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -22,8 +23,8 @@ public class StudentDto implements Serializable {
     @NotNull
     @Size(min = 1, max = 50)
     private String userIdFirstName;
-    @NotNull
-    private Date userIdBirthday;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime userIdBirthday;
     @NotNull
     @Size(min = 1, max = 50)
     private String userIdUsername;
@@ -37,7 +38,7 @@ public class StudentDto implements Serializable {
     public StudentDto() {
     }
 
-    public StudentDto(Integer id, String userIdLastName, String userIdFirstName, Date userIdBirthday, String userIdUsername, String userIdEmail, Integer userRoleIdId, String userRoleIdName,
+    public StudentDto(Integer id, String userIdLastName, String userIdFirstName, LocalDateTime userIdBirthday, String userIdUsername, String userIdEmail, Integer userRoleIdId, String userRoleIdName,
                       String userIdAvatar,
                       Integer userIdId) {
         this.id = id;
@@ -69,7 +70,7 @@ public class StudentDto implements Serializable {
     }
 
 
-    public Date getUserIdBirthday() {
+    public LocalDateTime getUserIdBirthday() {
         return userIdBirthday;
     }
 
@@ -107,7 +108,7 @@ public class StudentDto implements Serializable {
     }
 
 
-    public void setUserIdBirthday(Date userIdBirthday) {
+    public void setUserIdBirthday(LocalDateTime userIdBirthday) {
         this.userIdBirthday = userIdBirthday;
     }
 

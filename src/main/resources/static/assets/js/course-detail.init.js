@@ -84,10 +84,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(data => {
                     const members = data.map(s => ({
                         id: s.id,
-                        username: s.username,
-                        firstName: s.firstName,
-                        lastName: s.lastName,
-                        avatar: s.avatar || '/assets/images/users/default-avatar.jpg'
+                        username: s.userIdUsername,
+                        firstName: s.userIdFirstName,
+                        lastName: s.userIdLastName,
+                        avatar: s.userIdAvatar || '/assets/images/users/default-avatar.jpg'
                     }));
                     renderMembers(members);
                 });

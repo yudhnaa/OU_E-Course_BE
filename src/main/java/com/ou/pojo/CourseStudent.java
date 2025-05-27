@@ -16,6 +16,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -45,8 +46,8 @@ public class CourseStudent implements Serializable {
     private double progress;
     @OneToMany(mappedBy = "courseStudentId")
     private Set<CourseRate> courseRateSet;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseStudentId")
-    private Set<CourseCertificate> courseCertificateSet;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "courseStudentId")
+    private CourseCertificate courseCertificate;
     @JoinColumn(name = "course_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Course courseId;
@@ -90,12 +91,12 @@ public class CourseStudent implements Serializable {
         this.courseRateSet = courseRateSet;
     }
 
-    public Set<CourseCertificate> getCourseCertificateSet() {
-        return courseCertificateSet;
+    public CourseCertificate getCourseCertificate() {
+        return courseCertificate;
     }
 
-    public void setCourseCertificateSet(Set<CourseCertificate> courseCertificateSet) {
-        this.courseCertificateSet = courseCertificateSet;
+    public void setCourseCertificate(CourseCertificate courseCertificate) {
+        this.courseCertificate = courseCertificate;
     }
 
     public Course getCourseId() {

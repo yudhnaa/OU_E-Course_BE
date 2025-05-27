@@ -17,8 +17,10 @@ import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -42,8 +44,8 @@ public class LessonStudent implements Serializable {
     @Column(name = "is_learn")
     private Boolean isLearn;
     @Column(name = "learned_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date learnedAt;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime learnedAt;
     @JoinColumn(name = "lesson_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Lesson lessonId;
@@ -74,11 +76,11 @@ public class LessonStudent implements Serializable {
         this.isLearn = isLearn;
     }
 
-    public Date getLearnedAt() {
+    public LocalDateTime getLearnedAt() {
         return learnedAt;
     }
 
-    public void setLearnedAt(Date learnedAt) {
+    public void setLearnedAt(LocalDateTime learnedAt) {
         this.learnedAt = learnedAt;
     }
 

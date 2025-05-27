@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -22,14 +22,14 @@ public class TestDto implements Serializable {
     @Size(max = 65535)
     private final String description;
     private final int durationMinutes;
-    private final Date createdAt;
+    private final LocalDateTime createdAt;
     @NotNull
     private final BigDecimal maxScore;
     private final Integer courseIdId;
     private final String courseIdName;
     private final String courseIdDescription;
 
-    public TestDto(Integer id, String name, String description, int durationMinutes, Date createdAt, BigDecimal maxScore, Integer courseIdId, String courseIdName, String courseIdDescription) {
+    public TestDto(Integer id, String name, String description, int durationMinutes, LocalDateTime createdAt, BigDecimal maxScore, Integer courseIdId, String courseIdName, String courseIdDescription) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -57,7 +57,7 @@ public class TestDto implements Serializable {
         return durationMinutes;
     }
 
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 

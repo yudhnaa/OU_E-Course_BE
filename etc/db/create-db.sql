@@ -275,9 +275,9 @@ CREATE TABLE exercise_score_status
 
 CREATE TABLE exercise_attempt
 (
-                                 id INT AUTO_INCREMENT PRIMARY KEY,
-                                 started_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                                 submitted_at DATETIME NULL,
+     id INT AUTO_INCREMENT PRIMARY KEY,
+     started_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+     submitted_at DATETIME NULL,
     total_score      DECIMAL(5, 2),
     response         TEXT      NULL,
 
@@ -288,7 +288,10 @@ CREATE TABLE exercise_attempt
     FOREIGN KEY (exercise_id) REFERENCES exercise (id) ON DELETE CASCADE,
 
     score_by_user_id INT       NOT NULL,
-    FOREIGN KEY (score_by_user_id) REFERENCES lecturer (id) ON DELETE RESTRICT
+    FOREIGN KEY (score_by_user_id) REFERENCES lecturer (id) ON DELETE RESTRICT,
+
+    student_id       INT       NOT NULL,
+    FOREIGN KEY (student_id) REFERENCES student (id) ON DELETE CASCADE
 );
 
 -- lecturer co the tao bai tap

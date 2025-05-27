@@ -57,7 +57,6 @@ public class Attachment implements Serializable {
     @Transient
     private MultipartFile file;
 
-
     public Attachment() {
     }
 
@@ -71,16 +70,16 @@ public class Attachment implements Serializable {
         this.link = link;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
     public MultipartFile getFile() {
         return file;
     }
 
     public void setFile(MultipartFile file) {
         this.file = file;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public void setId(Integer id) {

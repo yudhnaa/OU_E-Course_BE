@@ -15,7 +15,7 @@ import java.util.Set;
 
 /**
  *
- * @author ADMIN
+ * @author yudhna
  */
 @Entity
 @Table(name = "lesson")
@@ -24,7 +24,8 @@ import java.util.Set;
     @NamedQuery(name = "Lesson.findById", query = "SELECT l FROM Lesson l WHERE l.id = :id"),
     @NamedQuery(name = "Lesson.findByEmbedLink", query = "SELECT l FROM Lesson l WHERE l.embedLink = :embedLink"),
     @NamedQuery(name = "Lesson.findByImage", query = "SELECT l FROM Lesson l WHERE l.image = :image"),
-    @NamedQuery(name = "Lesson.findByPublicId", query = "SELECT l FROM Lesson l WHERE l.publicId = :publicId")})
+    @NamedQuery(name = "Lesson.findByPublicId", query = "SELECT l FROM Lesson l WHERE l.publicId = :publicId"),
+    @NamedQuery(name = "Lesson.findByOrderIndex", query = "SELECT l FROM Lesson l WHERE l.orderIndex = :orderIndex")})
 public class Lesson implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -51,13 +52,13 @@ public class Lesson implements Serializable {
     @Size(max = 255)
     @Column(name = "image")
     private String image;
+    @Size(max = 100)
+    @Column(name = "public_id")
+    private String publicId;
     @Basic(optional = false)
     @NotNull
     @Column(name = "order_index")
     private int orderIndex;
-    @Size(max = 100)
-    @Column(name = "public_id")
-    private String publicId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "lessonId")
     private Set<Exercise> exerciseSet;
     @JoinColumn(name = "course_id", referencedColumnName = "id")
@@ -80,7 +81,6 @@ public class Lesson implements Serializable {
     @Transient
     private List<MultipartFile> lessonAttachments;
 
-
     public Lesson() {
     }
 
@@ -88,10 +88,11 @@ public class Lesson implements Serializable {
         this.id = id;
     }
 
-    public Lesson(Integer id, String name, String embedLink) {
+    public Lesson(Integer id, String name, String embedLink, int orderIndex) {
         this.id = id;
         this.name = name;
         this.embedLink = embedLink;
+        this.orderIndex = orderIndex;
     }
 
     public MultipartFile getThumbnailImage() {
@@ -156,6 +157,14 @@ public class Lesson implements Serializable {
 
     public void setPublicId(String publicId) {
         this.publicId = publicId;
+    }
+
+    public int getOrderIndex() {
+        return orderIndex;
+    }
+
+    public void setOrderIndex(int orderIndex) {
+        this.orderIndex = orderIndex;
     }
 
     public Set<Exercise> getExerciseSet() {
@@ -231,12 +240,4 @@ public class Lesson implements Serializable {
         return "com.ou.pojo.Lesson[ id=" + id + " ]";
     }
 
-    public int getOrderIndex() {
-        return orderIndex;
-    }
-
-    public void setOrderIndex(int orderIndex) {
-        this.orderIndex = orderIndex;
-    }
-    
 }

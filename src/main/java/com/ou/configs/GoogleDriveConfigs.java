@@ -38,7 +38,7 @@ public class GoogleDriveConfigs {
 
     @Bean
     public GoogleCredential googleCredential() throws GeneralSecurityException, IOException {
-        Resource resource = resourceLoader.getResource("classpath:ecourseproject-b55a65685935.p12");
+        Resource resource = resourceLoader.getResource("classpath:ecourseproject.p12");
         File p12File = resource.getFile();  // lấy File từ Resource
 
         Collection<String> elenco = new ArrayList<String>();

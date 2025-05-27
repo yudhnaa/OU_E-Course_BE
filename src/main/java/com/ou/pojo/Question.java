@@ -25,7 +25,7 @@ import java.util.Set;
 
 /**
  *
- * @author ADMIN
+ * @author yudhna
  */
 @Entity
 @Table(name = "question")
@@ -34,6 +34,12 @@ import java.util.Set;
     @NamedQuery(name = "Question.findById", query = "SELECT q FROM Question q WHERE q.id = :id")})
 public class Question implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
+    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Lob
@@ -41,18 +47,9 @@ public class Question implements Serializable {
     @Column(name = "content")
     private String content;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "questionId")
-    private Set<TestAttemptAnswer> testAttemptAnswerSet;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "questionId")
-    private Set<ExerciseAttemptAnswer> exerciseAttemptAnswerSet;
-
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id")
-    private Integer id;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "questionId")
     private Set<WritingAnswer> writingAnswerSet;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "questionId")
+    private Set<TestAttemptAnswer> testAttemptAnswerSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "questionId")
     private Set<TestQuestion> testQuestionSet;
     @JoinColumn(name = "exercise_id", referencedColumnName = "id")
@@ -63,6 +60,8 @@ public class Question implements Serializable {
     private QuestionType questionTypeId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "questionId")
     private Set<MultipleChoiceAnswer> multipleChoiceAnswerSet;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "questionId")
+    private Set<ExerciseAttemptAnswer> exerciseAttemptAnswerSet;
 
     public Question() {
     }
@@ -84,6 +83,13 @@ public class Question implements Serializable {
         this.id = id;
     }
 
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
 
     public Set<WritingAnswer> getWritingAnswerSet() {
         return writingAnswerSet;
@@ -91,6 +97,14 @@ public class Question implements Serializable {
 
     public void setWritingAnswerSet(Set<WritingAnswer> writingAnswerSet) {
         this.writingAnswerSet = writingAnswerSet;
+    }
+
+    public Set<TestAttemptAnswer> getTestAttemptAnswerSet() {
+        return testAttemptAnswerSet;
+    }
+
+    public void setTestAttemptAnswerSet(Set<TestAttemptAnswer> testAttemptAnswerSet) {
+        this.testAttemptAnswerSet = testAttemptAnswerSet;
     }
 
     public Set<TestQuestion> getTestQuestionSet() {
@@ -125,6 +139,14 @@ public class Question implements Serializable {
         this.multipleChoiceAnswerSet = multipleChoiceAnswerSet;
     }
 
+    public Set<ExerciseAttemptAnswer> getExerciseAttemptAnswerSet() {
+        return exerciseAttemptAnswerSet;
+    }
+
+    public void setExerciseAttemptAnswerSet(Set<ExerciseAttemptAnswer> exerciseAttemptAnswerSet) {
+        this.exerciseAttemptAnswerSet = exerciseAttemptAnswerSet;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -148,30 +170,6 @@ public class Question implements Serializable {
     @Override
     public String toString() {
         return "com.ou.pojo.Question[ id=" + id + " ]";
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public Set<TestAttemptAnswer> getTestAttemptAnswerSet() {
-        return testAttemptAnswerSet;
-    }
-
-    public void setTestAttemptAnswerSet(Set<TestAttemptAnswer> testAttemptAnswerSet) {
-        this.testAttemptAnswerSet = testAttemptAnswerSet;
-    }
-
-    public Set<ExerciseAttemptAnswer> getExerciseAttemptAnswerSet() {
-        return exerciseAttemptAnswerSet;
-    }
-
-    public void setExerciseAttemptAnswerSet(Set<ExerciseAttemptAnswer> exerciseAttemptAnswerSet) {
-        this.exerciseAttemptAnswerSet = exerciseAttemptAnswerSet;
     }
 
 }

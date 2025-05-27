@@ -16,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.beans.PropertyEditorSupport;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -193,7 +194,7 @@ public class TestController {
         Test test = new Test();
         test.setCourseId(new Course(courseId));
         test.setCreatedByUserId(new Lecturer(lecturerId));
-        test.setCreatedAt(new Date()); // Set current date as creation date
+        test.setCreatedAt(LocalDateTime.now()); // Set current date as creation date
         test.setMaxScore(new BigDecimal(100)); // Default max score
         test.setDurationMinutes(60); // Default duration
 
@@ -216,7 +217,7 @@ public class TestController {
 
         try {
             if (test.getCreatedAt() == null) {
-                test.setCreatedAt(new Date());
+                test.setCreatedAt(LocalDateTime.now());
             }
             testService.addTest(test);
             redirectAttributes.addFlashAttribute("success", "Test added successfully!");
