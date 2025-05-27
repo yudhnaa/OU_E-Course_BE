@@ -52,7 +52,7 @@ public class TestController {
         long totalTests = testService.countTestsInCourse(courseId);
         if (totalTests == 0) {
             model.addAttribute("message", "No tests found for this course.");
-            return "dashboard/lecturer/test";
+            return "dashboard/lecturer/test/test";
         }
 
         Pagination pagination = paginationHelper.getPagination(params, totalTests);
@@ -61,7 +61,7 @@ public class TestController {
 
         if (tests.isEmpty()) {
             model.addAttribute("message", "No tests were found");
-            return "dashboard/lecturer/test";
+            return "dashboard/lecturer/test/test";
         }
 
         model.addAttribute("tests", tests);
@@ -71,7 +71,7 @@ public class TestController {
         model.addAttribute("totalPages", pagination.getTotalPages());
         model.addAttribute("startIndex", pagination.getStartIndex());
         model.addAttribute("endIndex", pagination.getEndIndex());
-        return "dashboard/lecturer/test";
+        return "dashboard/lecturer/test/test";
     }
 
     @GetMapping("/test/{id}")
@@ -97,7 +97,7 @@ public class TestController {
         model.addAttribute("allQuestionsInCourse", allQuestionsInCourse);
         model.addAttribute("existingQuestionIds", existingQuestionIds);
         model.addAttribute("exercises", exercises);
-        return "dashboard/lecturer/testDetail";
+        return "dashboard/lecturer/test/testDetail";
     }
 
     // Thêm endpoint để xử lý việc thêm multiple questions
@@ -162,7 +162,7 @@ public class TestController {
             test.setCourseId(new Course(courseId));
             model.addAttribute("error", "Form has errors.");
             model.addAttribute("test", test);
-            return "dashboard/lecturer/testDetail";
+            return "dashboard/lecturer/test/testDetail";
         }
 
         try {
@@ -199,7 +199,7 @@ public class TestController {
 
         model.addAttribute("test", test);
         model.addAttribute("courseId", courseId);
-        return "dashboard/lecturer/testAdd";
+        return "dashboard/lecturer/test/testAdd";
     }
 
     @PostMapping("/add")
@@ -211,7 +211,7 @@ public class TestController {
         if (result.hasErrors()) {
             model.addAttribute("error", "Form has errors.");
             model.addAttribute("test", test);
-            return "dashboard/lecturer/testAdd";
+            return "dashboard/lecturer/test/testAdd";
         }
 
         try {
@@ -222,7 +222,7 @@ public class TestController {
             redirectAttributes.addFlashAttribute("success", "Test added successfully!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error adding test: " + e.getMessage());
-            return "dashboard/lecturer/testAdd";
+            return "dashboard/lecturer/test/testAdd";
         }
 
         return "redirect:/course/" + courseId + "/tests";
