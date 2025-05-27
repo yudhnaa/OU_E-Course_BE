@@ -285,6 +285,19 @@ public class StudentRepositoryImpl implements StudentRepository {
                 predicates.add(builder.equal(userJoin.get("id"),
                         Integer.valueOf(filters.get("userId"))));
             }
+
+            if (filters.containsKey("notInCourse")) {
+                Integer courseId = Integer.valueOf(filters.get("notInCourse"));
+
+                // Create a subquery for students enrolled in the course
+                Subquery<Integer> subquery = builder.createQuery().subquery(Integer.class);
+                Root<CourseStudent> subRoot = subquery.from(CourseStudent.class);
+                subquery.select(subRoot.get("studentId").get("id"))
+                        .where(builder.equal(subRoot.get("courseId").get("id"), courseId));
+
+                // Add predicate to exclude students in the subquery results
+                predicates.add(builder.not(root.get("id").in(subquery)));
+            }
         }
 
         return predicates;

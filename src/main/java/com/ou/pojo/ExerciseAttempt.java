@@ -20,20 +20,17 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Locale;
 import java.util.Set;
 
 /**
  *
- * @author ADMIN
+ * @author yudhna
  */
 @Entity
 @Table(name = "exercise_attempt")
@@ -44,15 +41,6 @@ import java.util.Set;
     @NamedQuery(name = "ExerciseAttempt.findBySubmittedAt", query = "SELECT e FROM ExerciseAttempt e WHERE e.submittedAt = :submittedAt"),
     @NamedQuery(name = "ExerciseAttempt.findByTotalScore", query = "SELECT e FROM ExerciseAttempt e WHERE e.totalScore = :totalScore")})
 public class ExerciseAttempt implements Serializable {
-    @Lob
-    @Size(max = 65535)
-    @Column(name = "response")
-    private String response;
-    @JoinColumn(name = "student_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Student studentId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "attemptId")
-    private Set<ExerciseAttemptAnswer> exerciseAttemptAnswerSet;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -69,6 +57,10 @@ public class ExerciseAttempt implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "total_score")
     private BigDecimal totalScore;
+    @Lob
+    @Size(max = 65535)
+    @Column(name = "response")
+    private String response;
     @JoinColumn(name = "exercise_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Exercise exerciseId;
@@ -78,17 +70,17 @@ public class ExerciseAttempt implements Serializable {
     @JoinColumn(name = "score_by_user_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Lecturer scoreByUserId;
+    @JoinColumn(name = "student_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Student studentId;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "attemptId")
+    private Set<ExerciseAttemptAnswer> exerciseAttemptAnswerSet;
 
     public ExerciseAttempt() {
     }
 
     public ExerciseAttempt(Integer id) {
         this.id = id;
-    }
-
-    public ExerciseAttempt(Integer id, String response) {
-        this.id = id;
-        this.response = response;
     }
 
     public Integer getId() {
@@ -123,6 +115,13 @@ public class ExerciseAttempt implements Serializable {
         this.totalScore = totalScore;
     }
 
+    public String getResponse() {
+        return response;
+    }
+
+    public void setResponse(String response) {
+        this.response = response;
+    }
 
     public Exercise getExerciseId() {
         return exerciseId;
@@ -146,6 +145,22 @@ public class ExerciseAttempt implements Serializable {
 
     public void setScoreByUserId(Lecturer scoreByUserId) {
         this.scoreByUserId = scoreByUserId;
+    }
+
+    public Student getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(Student studentId) {
+        this.studentId = studentId;
+    }
+
+    public Set<ExerciseAttemptAnswer> getExerciseAttemptAnswerSet() {
+        return exerciseAttemptAnswerSet;
+    }
+
+    public void setExerciseAttemptAnswerSet(Set<ExerciseAttemptAnswer> exerciseAttemptAnswerSet) {
+        this.exerciseAttemptAnswerSet = exerciseAttemptAnswerSet;
     }
 
     @Override
@@ -173,27 +188,4 @@ public class ExerciseAttempt implements Serializable {
         return "com.ou.pojo.ExerciseAttempt[ id=" + id + " ]";
     }
 
-    public String getResponse() {
-        return response;
-    }
-
-    public void setResponse(String response) {
-        this.response = response;
-    }
-
-    public Student getStudentId() {
-        return studentId;
-    }
-
-    public void setStudentId(Student studentId) {
-        this.studentId = studentId;
-    }
-
-    public Set<ExerciseAttemptAnswer> getExerciseAttemptAnswerSet() {
-        return exerciseAttemptAnswerSet;
-    }
-
-    public void setExerciseAttemptAnswerSet(Set<ExerciseAttemptAnswer> exerciseAttemptAnswerSet) {
-        this.exerciseAttemptAnswerSet = exerciseAttemptAnswerSet;
-    }
 }

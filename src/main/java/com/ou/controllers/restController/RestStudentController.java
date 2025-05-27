@@ -47,6 +47,7 @@ public class RestStudentController {
             filters.put("notInCourse", params.get("courseId"));
             params.remove("courseId");
         }
+        filters.put("notInCourse", String.valueOf(courseId));
 
         List<Student> students = studentService.searchStudents(filters, null);
 

@@ -104,6 +104,12 @@ public class CourseServiceImpl implements CourseService {
             Map<String, String> imageUrl = cloudinaryHelper.uploadMultipartFile(course.getImageFile());
             course.setImage(imageUrl.get("url"));
             course.setPublicId(imageUrl.get("publicId"));
+        } else {
+            // If no new image is provided, keep the existing one
+            Course existingCourse = courseRepository.getCourseById(course.getId()).orElseThrow(() ->
+                    new IllegalArgumentException(localizationService.getMessage("course.notFound", LocaleContextHolder.getLocale())));
+            course.setImage(existingCourse.getImage());
+            course.setPublicId(existingCourse.getPublicId());
         }
 
 

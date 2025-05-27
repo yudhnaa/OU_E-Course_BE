@@ -12,12 +12,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Set;
 
 /**
  *
- * @author ADMIN
+ * @author yudhna
  */
 @Entity
 @Table(name = "user")
@@ -53,8 +52,8 @@ public class User implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "birthday")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date birthday;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime birthday;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
@@ -99,7 +98,7 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public User(Integer id, String lastName, String firstName, Date birthday, String username, String password, String email) {
+    public User(Integer id, String lastName, String firstName, LocalDateTime birthday, String username, String password, String email) {
         this.id = id;
         this.lastName = lastName;
         this.firstName = firstName;
@@ -141,11 +140,11 @@ public class User implements Serializable {
         this.firstName = firstName;
     }
 
-    public Date getBirthday() {
+    public LocalDateTime getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(LocalDateTime birthday) {
         this.birthday = birthday;
     }
 
@@ -253,5 +252,5 @@ public class User implements Serializable {
     public String toString() {
         return "com.ou.pojo.User[ id=" + id + " ]";
     }
-    
+
 }

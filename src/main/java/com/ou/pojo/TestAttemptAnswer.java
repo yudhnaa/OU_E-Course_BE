@@ -22,7 +22,7 @@ import java.math.BigDecimal;
 
 /**
  *
- * @author ADMIN
+ * @author yudhna
  */
 @Entity
 @Table(name = "test_attempt_answer")
@@ -134,5 +134,5 @@ public class TestAttemptAnswer implements Serializable {
     public String toString() {
         return "com.ou.pojo.TestAttemptAnswer[ id=" + id + " ]";
     }
-    
+
 }

@@ -25,7 +25,7 @@ public class CourseFormatter implements Formatter<Course> {
         return (course != null && course.getId() != null) ? String.valueOf(course.getId()) : "";
     }
 
-    Override
+    @Override
     public Course parse(String text, Locale locale) throws ParseException {
         try {
             Integer id = Integer.parseInt(text);

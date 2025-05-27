@@ -81,7 +81,6 @@ public class Course implements Serializable {
     @Transient
     private MultipartFile imageFile;
 
-
     public Course() {
     }
 

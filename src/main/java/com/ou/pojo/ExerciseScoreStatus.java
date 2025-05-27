@@ -33,6 +33,12 @@ import java.util.Set;
     @NamedQuery(name = "ExerciseScoreStatus.findByName", query = "SELECT e FROM ExerciseScoreStatus e WHERE e.name = :name")})
 public class ExerciseScoreStatus implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
+    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
@@ -42,13 +48,6 @@ public class ExerciseScoreStatus implements Serializable {
     @Size(max = 65535)
     @Column(name = "description")
     private String description;
-
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id")
-    private Integer id;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "statusId")
     private Set<ExerciseAttempt> exerciseAttemptSet;
 
@@ -72,6 +71,21 @@ public class ExerciseScoreStatus implements Serializable {
         this.id = id;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public Set<ExerciseAttempt> getExerciseAttemptSet() {
         return exerciseAttemptSet;
@@ -104,22 +118,6 @@ public class ExerciseScoreStatus implements Serializable {
     @Override
     public String toString() {
         return "com.ou.pojo.ExerciseScoreStatus[ id=" + id + " ]";
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
 }

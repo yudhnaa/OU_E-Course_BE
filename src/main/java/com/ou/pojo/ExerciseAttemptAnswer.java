@@ -22,7 +22,7 @@ import java.math.BigDecimal;
 
 /**
  *
- * @author ADMIN
+ * @author yudhna
  */
 @Entity
 @Table(name = "exercise_attempt_answer")
@@ -32,6 +32,7 @@ import java.math.BigDecimal;
     @NamedQuery(name = "ExerciseAttemptAnswer.findByIsCorrect", query = "SELECT e FROM ExerciseAttemptAnswer e WHERE e.isCorrect = :isCorrect"),
     @NamedQuery(name = "ExerciseAttemptAnswer.findByScore", query = "SELECT e FROM ExerciseAttemptAnswer e WHERE e.score = :score")})
 public class ExerciseAttemptAnswer implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -133,5 +134,5 @@ public class ExerciseAttemptAnswer implements Serializable {
     public String toString() {
         return "com.ou.pojo.ExerciseAttemptAnswer[ id=" + id + " ]";
     }
-    
+
 }

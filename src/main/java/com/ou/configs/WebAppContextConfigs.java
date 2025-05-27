@@ -6,6 +6,9 @@ package com.ou.configs;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.ou.formatters.*;
 import com.ou.formatters.CourseFormatter;
 import com.ou.formatters.UserFormatter;
@@ -48,6 +51,11 @@ import java.util.Locale;
 
 })
 public class WebAppContextConfigs implements WebMvcConfigurer {
+    @Autowired
+    private UserFormatter userFormatter;
+    @Autowired
+    private CourseFormatter courseFormatter;
+
     @Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
 
@@ -103,7 +111,6 @@ public class WebAppContextConfigs implements WebMvcConfigurer {
 
     @Override
     public void addFormatters(FormatterRegistry registry) {
-        registry.addFormatter(new CourseFormatter());
         registry.addFormatter(new ExerciseFormatter());
         registry.addFormatter(new QuestionTypeFormatter());
         registry.addFormatter(new LessonFormatter());
@@ -113,6 +120,15 @@ public class WebAppContextConfigs implements WebMvcConfigurer {
         registry.addFormatter(new StudentFormatter());
         registry.addFormatter(new TestAttemptFormatter());
         registry.addFormatter(new TestFormatter());
-        registry.addFormatter(new UserFormatter());
+        registry.addFormatter(userFormatter);
+        registry.addFormatter(courseFormatter);
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return mapper;
     }
 }
