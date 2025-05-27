@@ -9,7 +9,7 @@
 
 <head>
     <!-- Sweet Alert css-->
-<!--    <link th:href="@{/assets/libs/sweetalert2/sweetalert2.min.css}" rel="stylesheet" type="text/css"/>-->
+    <link th:href="@{/assets/libs/sweetalert2/sweetalert2.min.css}" rel="stylesheet" type="text/css"/>
 </head>
 
 <body>
@@ -127,7 +127,8 @@
                                 <div class="card-body">
                                     <form th:action="@{'/course/' + ${test.courseId.id} + '/tests/test/' + ${test.id}}"
                                           th:object="${test}" method="post">
-                                        <input type="hidden" th:name="courseId" th:value="${test.courseId.id}"/>
+                                        <input type="hidden" id = "courseId" th:name="courseId" th:value="${test.courseId.id}"/>
+                                        <input type="hidden" id="testId" th:value="${test.id}">
                                         <input type="hidden" th:field="*{id}"/>
 
                                         <div class="mb-3">
@@ -334,9 +335,6 @@
         let addQuestionModal = null;
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Get test and course IDs from Thymeleaf - FIXED THIS PART
-            const testId = /*==[[${test.id}]]*/ 1;
-            const courseId = /*[[${test.courseId.id}]]*/ 1;
 
             // Initialize modal - Wait for Bootstrap to load
             setTimeout(() => {
@@ -602,6 +600,9 @@
                         Swal.fire('Warning', 'Please select at least one question', 'warning');
                         return;
                     }
+
+                    const courseId = document.getElementById('courseId').value;
+                    const testId = document.getElementById('testId').value;
 
                     if (!testId || !courseId) {
                         Swal.fire('Error', 'Missing test or course information', 'error');

@@ -29,4 +29,5 @@ public interface ExerciseService {
     long countExercisesByLesson(Integer lessonId);
     long countExercisesByCreator(Integer userId);
     long countSearchResults(Map<String, String> filters);
+    boolean isValidExercise(Exercise exercise) throws Exception;
 }

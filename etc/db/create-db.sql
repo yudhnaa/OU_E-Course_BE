@@ -350,12 +350,10 @@ CREATE TABLE test_attempt_answer
     question_id INT           NOT NULL,
     FOREIGN KEY (question_id) REFERENCES question (id) ON DELETE CASCADE,
 
-    answer_text TEXT          NULL, -- câu trả lời của student
+    answer_text TEXT          NULL,
     is_correct  BOOL          NULL,
     score       DECIMAL(5, 2) NULL
 );
 
 ALTER TABLE exercise_attempt
-ADD COLUMN student_id INT NOT NULL,
-ADD CONSTRAINT fk_exercise_attempt_student
-FOREIGN KEY (student_id) REFERENCES student(id) ON DELETE CASCADE;
+MODIFY COLUMN response TEXT NULL;

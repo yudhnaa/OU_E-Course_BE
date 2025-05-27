@@ -1,9 +1,8 @@
-package com.ou.repositories.impl;
+package com.ou.repositories;
 
 import com.ou.configs.WebApplicationSettings;
 import com.ou.pojo.Test;
-import com.ou.repositories.QuestionRepository;
-import com.ou.repositories.TestRepository;
+import jakarta.persistence.criteria.Predicate;
 import org.hibernate.query.Query;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -13,10 +12,9 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.hibernate.Session;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+
+import java.math.BigDecimal;
+import java.util.*;
 
 @Repository
 @Transactional
@@ -89,7 +87,15 @@ public class TestRepositoryImpl implements TestRepository {
         CriteriaQuery<Test> query = builder.createQuery(Test.class);
         Root<Test> root = query.from(Test.class);
         query.select(root).where(builder.equal(root.get("courseId").get("id"), courseId));
+
+        // Apply filters if any
+        List<Predicate> predicates = buildSearchPredicates(builder,root, params);
+        if(!predicates.isEmpty()) {
+            query.where(builder.and(predicates.toArray(new Predicate[0])));
+        }
+
         Query<Test> q = session.createQuery(query);
+
 
         // Apply pagination
         if(params != null) {
@@ -132,6 +138,43 @@ public class TestRepositoryImpl implements TestRepository {
         query.select(builder.count(root))
                 .where(builder.equal(root.get("courseId").get("id"), courseId));
         return session.createQuery(query).getSingleResult();
+    }
+
+    private List<Predicate> buildSearchPredicates(CriteriaBuilder builder, Root<Test> root, Map<String, String> filters) {
+        List<Predicate> predicates = new ArrayList<>();
+
+        if (filters.containsKey("name")) {
+            predicates.add(builder.like(root.get("name"), String.format("%%%s%%", filters.get("name"))));
+        }
+
+        if (filters.containsKey("createdAt")) {
+            Date createdAt = new Date(Long.parseLong(filters.get("createdAt")));
+            predicates.add(builder.equal(root.get("createdAt"), createdAt));
+        }
+
+        if( filters.containsKey("durationMinutes")) {
+            predicates.add(builder.equal(root.get("durationMinutes"), Integer.valueOf(filters.get("durationMinutes"))));
+        }
+
+        if (filters.containsKey("maxScore")) {
+            BigDecimal maxScore = new BigDecimal(filters.get("maxScore"));
+            predicates.add(builder.equal(root.get("maxScore"), maxScore));
+        }
+
+        if (filters.containsKey("courseId")) {
+            predicates.add(builder.equal(root.get("courseId").get("id"), Integer.valueOf(filters.get("courseId"))));
+        }
+
+        if(filters.containsKey("createdByUserId")){
+            Integer createdByUserId = Integer.parseInt(filters.get("createdByUserId"));
+            predicates.add(builder.equal(root.get("createdByUserId").get("id"), createdByUserId));
+        }
+
+        if(filters.containsKey("description")){
+            predicates.add(builder.like(root.get("description"), String.format("%%%s%%", filters.get("description"))));
+        }
+
+        return predicates;
     }
 
 }

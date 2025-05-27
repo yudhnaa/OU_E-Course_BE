@@ -45,50 +45,10 @@ public class TestController {
     @Autowired
     private TestQuestionService testQuestionService;
 
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        // Register custom editor for Course objects
-        binder.registerCustomEditor(Course.class, new PropertyEditorSupport() {
-            @Override
-            public void setAsText(String text) {
-                if (text == null || text.isEmpty()) {
-                    setValue(null);
-                } else {
-                    Course course = courseService.getCourseById(Integer.parseInt(text))
-                            .orElseThrow(() -> new IllegalArgumentException("Invalid course ID: " + text));
-                    setValue(course);
-                }
-            }
-
-            @Override
-            public String getAsText() {
-                Course course = (Course) getValue();
-                return (course != null ? course.getId().toString() : "");
-            }
-        });
-
-        binder.registerCustomEditor(Lecturer.class, new PropertyEditorSupport() {
-            @Override
-            public void setAsText(String text) {
-                if (text == null || text.isEmpty()) {
-                    setValue(null);
-                } else {
-                    Lecturer lecturer = lecturerService.getLecturerById(Integer.parseInt(text))
-                            .orElseThrow(() -> new IllegalArgumentException("Invalid lecturer ID: " + text));
-                    setValue(lecturer);
-                }
-            }
-
-            @Override
-            public String getAsText() {
-                Lecturer lecturer = (Lecturer) getValue();
-                return (lecturer != null ? lecturer.getId().toString() : "");
-            }
-        });
-    }
 
     @GetMapping
-    public String getAllTestsByCourse(@PathVariable("courseId") Integer courseId, Model model,@RequestParam Map<String,String> params) {
+    public String getAllTestsByCourse(@PathVariable("courseId") Integer courseId, Model model,
+                                      @RequestParam Map<String,String> params) {
         long totalTests = testService.countTestsInCourse(courseId);
         if (totalTests == 0) {
             model.addAttribute("message", "No tests found for this course.");
@@ -98,6 +58,12 @@ public class TestController {
         Pagination pagination = paginationHelper.getPagination(params, totalTests);
 
         List<Test> tests = testService.getTestsByCourse(courseId, params);
+
+        if (tests.isEmpty()) {
+            model.addAttribute("message", "No tests were found");
+            return "dashboard/lecturer/test";
+        }
+
         model.addAttribute("tests", tests);
         model.addAttribute("courseId", courseId);
         model.addAttribute("currentPage", pagination.getCurrentPage());

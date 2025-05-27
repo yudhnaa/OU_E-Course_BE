@@ -185,7 +185,7 @@ public class ExerciseController {
         }
         try {
             exercise.setLessonId(lesson.get());
-            // Giả sử bạn có một đối tượng Lecturer với ID 1, thay thế bằng logic lấy ID người dùng thực tế
+            // Giả sử có một đối tượng Lecturer với ID 1, thay thế bằng logic lấy ID người dùng thực tế
             exercise.setCreatedByUserId(new Lecturer(1));
             exerciseService.createExercise(exercise);
             redirectAttributes.addFlashAttribute("msg_success", "Exercise created successfully!");

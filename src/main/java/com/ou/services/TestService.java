@@ -18,4 +18,5 @@ public interface TestService {
     List<Test> searchTestsByName(String name);
     List<Test> getTestsByCreatedDateRange(Date startDate, Date endDate);
     long countTestsInCourse(Integer courseId);
+    boolean isValidTest(Test test);
 }

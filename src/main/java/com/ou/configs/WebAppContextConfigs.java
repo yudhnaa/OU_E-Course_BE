@@ -6,10 +6,7 @@ package com.ou.configs;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import com.ou.formatters.CourseFormatter;
-import com.ou.formatters.ExerciseFormatter;
-import com.ou.formatters.LessonFormatter;
-import com.ou.formatters.QuestionTypeFormatter;
+import com.ou.formatters.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -118,5 +115,11 @@ public class WebAppContextConfigs implements WebMvcConfigurer {
         registry.addFormatter(new ExerciseFormatter());
         registry.addFormatter(new QuestionTypeFormatter());
         registry.addFormatter(new LessonFormatter());
+        registry.addFormatter(new ExerciseScoreStatusFormatter());
+        registry.addFormatter(new ExerciseAttemptFormatter());
+        registry.addFormatter(new LecturerFormatter());
+        registry.addFormatter(new StudentFormatter());
+        registry.addFormatter(new TestAttemptFormatter());
+        registry.addFormatter(new TestFormatter());
     }
 }

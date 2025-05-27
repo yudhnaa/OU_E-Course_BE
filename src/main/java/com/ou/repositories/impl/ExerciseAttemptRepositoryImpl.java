@@ -33,14 +33,14 @@ public class ExerciseAttemptRepositoryImpl implements ExerciseAttemptRepository 
     public ExerciseAttempt addExerciseAttempt(ExerciseAttempt exerciseAttempt) {
         Session session = sessionFactory.getObject().getCurrentSession();
         session.save(exerciseAttempt);
-        session.flush(); // Ensure ID is generated and available
+        session.flush();
         return exerciseAttempt;
     }
 
     @Override
     public ExerciseAttempt updateExerciseAttempt(ExerciseAttempt exerciseAttempt) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.update(exerciseAttempt);
+        session.merge(exerciseAttempt);
         return exerciseAttempt;
     }
 
@@ -170,14 +170,6 @@ public class ExerciseAttemptRepositoryImpl implements ExerciseAttemptRepository 
             
             if (filters.containsKey("startDateTo")) {
                 predicates.add(builder.lessThanOrEqualTo(root.get("startedAt"), filters.get("startDateTo")));
-            }
-            
-            if (filters.containsKey("submittedDateFrom")) {
-                predicates.add(builder.greaterThanOrEqualTo(root.get("submittedAt"), filters.get("submittedDateFrom")));
-            }
-            
-            if (filters.containsKey("submittedDateTo")) {
-                predicates.add(builder.lessThanOrEqualTo(root.get("submittedAt"), filters.get("submittedDateTo")));
             }
         }
         

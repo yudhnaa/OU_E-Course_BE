@@ -32,5 +32,6 @@
     <class>com.ou.pojo.Course</class>
     <class>com.ou.pojo.ExerciseAttemptAnswer</class>
     <class>com.ou.pojo.TestAttemptAnswer</class>
+    <class>com.ou.repositories.TestAttemptAnswer</class>
   </persistence-unit>
 </persistence>

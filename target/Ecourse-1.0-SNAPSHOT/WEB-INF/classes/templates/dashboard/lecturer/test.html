@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<th:block layout:fragment="pagetitle" >
+    <div th:replace="partials/title-meta :: title-meta('Test')"></div>
+</th:block>
 <head>
-    <th:block layout:fragment="pagetitle" >
-        <div th:replace="partials/title-meta :: title-meta('Test')"></div>
-    </th:block>
+
 </head>
 <body>
     <div layout:fragment="content">
@@ -22,11 +23,16 @@
         </div>
 
 
-        <div class="d-flex justify-content-end mb-3" >
-            <a th:href="@{'/course/' + ${courseId} + '/tests/add'}"
-               class="btn btn-primary btn-animation waves-effect waves-light ms-2" data-text="Add Test">
-                <span>Add Test</span>
-            </a>
+        <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
+            <div class="flex-grow-1 me-3 pe-3"> <!-- Thêm pe-3 cho padding right -->
+                <input class="form-control" type="text" id="search-box" placeholder="Search...">
+            </div>
+            <div>
+                <a th:href="@{'/course/' + ${courseId} + '/tests/add'}"
+                   class="btn btn-primary btn-animation waves-effect waves-light" data-text="Add Test">
+                    <span>Add Test</span>
+                </a>
+            </div>
         </div>
 
         <div class="row">
@@ -43,6 +49,12 @@
                         <a th:href="@{'/course/' + ${test.courseId.id} + '/tests/test/' + ${test.id}}"
                            class="btn btn-primary btn-animation waves-effect waves-light" data-text="Detail">
                             <span>Detail</span>
+                        </a>
+
+                        <a th:href="@{'/course/' + ${test.courseId.id} + '/tests/test/' + ${test.id} + '/submissions'}"
+                           class="btn btn-secondary btn-label waves-effect right waves-light">
+                                <span>All Submissions</span>
+                                <i class="fa-solid fa-file-lines label-icon align-middle fs-16 ms-2"></i>
                         </a>
                     </div>
                 </div>
@@ -72,7 +84,31 @@
                 </li>
             </ul>
         </div>
-
     </div>
+
+    <th:block layout:fragment="pagejs">
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                let debounceTimeout;
+                const searchBox = document.getElementById("search-box");
+
+                searchBox.addEventListener("input", (event) => {
+                    clearTimeout(debounceTimeout);
+                    debounceTimeout = setTimeout(() => {
+                        const query = event.target.value.toLowerCase();
+                        const url = new URL(window.location.href);
+
+                        if(query){
+                            url.searchParams.set("name", query);
+                        } else {
+                            url.searchParams.delete("name");
+                        }
+                        window.location.href = url.toString();
+                    },1000);
+                });
+            })
+        </script>
+    </th:block>
+
 </body>
 </html>
