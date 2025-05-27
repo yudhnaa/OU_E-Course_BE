@@ -15,7 +15,7 @@ import java.util.Set;
 
 /**
  *
- * @author yudhna
+ * @author ADMIN
  */
 @Entity
 @Table(name = "lesson")
@@ -51,6 +51,10 @@ public class Lesson implements Serializable {
     @Size(max = 255)
     @Column(name = "image")
     private String image;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "order_index")
+    private int orderIndex;
     @Size(max = 100)
     @Column(name = "public_id")
     private String publicId;
@@ -90,20 +94,20 @@ public class Lesson implements Serializable {
         this.embedLink = embedLink;
     }
 
-    public List<MultipartFile> getLessonAttachments() {
-        return lessonAttachments;
-    }
-
-    public void setLessonAttachments(List<MultipartFile> lessonAttachments) {
-        this.lessonAttachments = lessonAttachments;
-    }
-
     public MultipartFile getThumbnailImage() {
         return thumbnailImage;
     }
 
     public void setThumbnailImage(MultipartFile thumbnailImage) {
         this.thumbnailImage = thumbnailImage;
+    }
+
+    public List<MultipartFile> getLessonAttachments() {
+        return lessonAttachments;
+    }
+
+    public void setLessonAttachments(List<MultipartFile> lessonAttachments) {
+        this.lessonAttachments = lessonAttachments;
     }
 
     public Integer getId() {
@@ -227,4 +231,12 @@ public class Lesson implements Serializable {
         return "com.ou.pojo.Lesson[ id=" + id + " ]";
     }
 
+    public int getOrderIndex() {
+        return orderIndex;
+    }
+
+    public void setOrderIndex(int orderIndex) {
+        this.orderIndex = orderIndex;
+    }
+    
 }

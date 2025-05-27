@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<th:block layout:fragment="pagetitle">
+  <!--page title-->
+  <div th:replace="~{partials/title-meta :: title-meta('Submissions')}"></div>
+</th:block>
+<head>
+</head>
+<body>
+<div layout:fragment="content">
+  <div th:replace="~{partials/page-title :: page-title('Submission','Test')}"></div>
+
+  <!-- Danger Alert -->
+  <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${msg_error}">
+    <b th:text="${msg_error}">Dismissible danger Alert </b>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+
+  <!-- Success Alert -->
+  <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${msg_success}">
+    <b th:text="${msg_success}"></b>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+
+  <!-- Submission Header -->
+  <div class="card mb-4 shadow">
+    <div class="card-body p-4">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <h1 class="card-title mb-0">
+            <i class="fas fa-clipboard-check me-3"></i>
+            Submission Detail
+          </h1>
+          <p class="card-text mb-0 mt-2 opacity-75">
+            View student submissions and evaluations
+          </p>
+        </div>
+        <div class="col-md-4 text-end">
+          <div class="fw-bold">
+            <span th:text="${testAttempt.totalScore}">0</span>
+            <small class="fs-3">/100</small>
+          </div>
+          <small class="text-white-50">Total Score</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submission Information -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-light">
+      <h2 class="card-title mb-0">
+        <i class="fas fa-info-circle me-2 text-primary"></i>
+        Submission Information
+      </h2>
+    </div>
+    <div class="card-body p-4">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="d-flex align-items-center p-3 bg-light rounded">
+            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 60px; height: 60px;">
+              <i class="fas fa-user fs-4"></i>
+            </div>
+            <div>
+              <h6 class="mb-1 text-muted small">STUDENT</h6>
+              <p class="mb-0 fw-bold fs-5" th:text="${testAttempt.userId.userId.username}">Student Name</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="d-flex align-items-center p-3 bg-success bg-opacity-10 rounded">
+            <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 60px; height: 60px;">
+              <i class="fas fa-trophy fs-4"></i>
+            </div>
+            <div>
+              <h6 class="mb-1 text-muted small">TOTAL SCORE</h6>
+              <p class="mb-0 fw-bold fs-4 text-success" th:text="${testAttempt.totalScore}">85</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="d-flex align-items-center p-3 bg-warning bg-opacity-10 rounded">
+            <div class="bg-warning text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 60px; height: 60px;">
+              <i class="fas fa-clock fs-4"></i>
+            </div>
+            <div>
+              <h6 class="mb-1 text-muted small">SUBMITTED AT</h6>
+              <p class="mb-0 fw-bold" th:text="${@dateTimeFormatter.format(testAttempt.submittedAt, 'dd-MM-yyyy HH:mm')}">20-11-2024 14:30</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Questions and Answers Section -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-dark text-white">
+      <h2 class="card-title mb-0">
+        <i class="fas fa-question-circle me-2"></i>
+        Question and Answer Details
+      </h2>
+    </div>
+    <div class="card-body p-0">
+      <div th:each="entry, iterStat : ${questionDetails}" class="border-bottom">
+        <div th:with="question=${entry.key}, details=${entry.value}" class="p-4">
+
+          <!-- Question Header -->
+          <div class="d-flex align-items-start mb-4 position-relative">
+            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3 fw-bold" style="width: 40px; height: 40px; min-width: 40px;">
+              <span th:text="${iterStat.count}">1</span>
+            </div>
+            <div class="flex-grow-1">
+              <h4 class="mb-2 fw-bold" th:text="${question.content}">Question content here</h4>
+            </div>
+
+            <div class="ms-3">
+                            <span th:if="${details['questionType'] == 'multiple choice'}"
+                                  class="badge bg-danger fs-6 px-3 py-2">
+                                <i class="fas fa-list-ul me-1"></i>Multiple Choice
+                            </span>
+
+              <span th:if="${details['questionType'] == 'writing'}"
+                    class="badge bg-success fs-6 px-3 py-2">
+                                <i class="fas fa-pen me-1"></i>Writing
+                            </span>
+            </div>
+          </div>
+
+          <!-- Student Answer -->
+          <div class="mb-4">
+            <div class="bg-warning bg-opacity-10 border-start border-warning border-4 p-3 rounded">
+              <h6 class="mb-3 text-warning fw-bold">
+                <i class="fas fa-user-edit me-2"></i>
+                Student's Answer
+              </h6>
+              <div class="bg-white p-3 rounded border">
+                <p class="mb-0" th:text="${details['studentAnswer']} ?: 'No answer provided'">Student answer here</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Multiple Choice Answers -->
+          <div th:if="${details['questionType'] == 'multiple choice'}" class="mb-4">
+            <div class="bg-info bg-opacity-10 border-start border-info border-4 p-3 rounded">
+              <h6 class="mb-3 text-info fw-bold">
+                <i class="fas fa-check-circle me-2"></i>
+                Answer Options
+              </h6>
+              <div class="row g-2">
+                <div th:each="mcAnswer, mcStat : ${details.multipleChoiceAnswers}" class="col-12">
+                  <div th:class="${mcAnswer.isCorrect} ? 'bg-success bg-opacity-10 border border-success' : 'bg-danger bg-opacity-10 border border-danger'"
+                       class="p-3 rounded">
+                    <div class="d-flex align-items-center gap-2">
+                                            <span th:class="${mcAnswer.isCorrect} ? 'bg-success' : 'bg-danger'"
+                                                  class="badge text-white me-3 fs-6"
+                                                  th:text="${'ABCD'.substring(mcStat.index, mcStat.index + 1)}">A</span>
+                      <span th:text="${mcAnswer.content}" class="flex-grow-1">Answer content</span>
+                      <i th:if="${mcAnswer.isCorrect}" class="fas fa-check text-success ms-2 fs-5"></i>
+                      <i th:unless="${mcAnswer.isCorrect}" class="fas fa-times text-danger ms-2 fs-5"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Writing Model Answer -->
+          <div th:if="${details['questionType'] == 'writing'}">
+            <div class="bg-success bg-opacity-10 border-start border-success border-4 p-3 rounded">
+              <h6 class="mb-3 text-success fw-bold">
+                <i class="fas fa-lightbulb me-2"></i>
+                Sample Answer
+              </h6>
+              <div class="bg-white p-3 rounded border">
+                <p class="mb-0" th:if="${details['writingAnswer'] != null}" th:text="${details['writingAnswer'].content}">Model answer</p>
+                <p class="mb-0 text-muted fst-italic" th:unless="${details['writingAnswer'] != null}">No sample answer provided.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lecturer Comment Section -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-secondary text-white">
+      <h2 class="card-title text-white mb-0">
+        <i class="fas fa-comment-dots me-2"></i>
+        Lecturer's Comment
+      </h2>
+    </div>
+    <div class="card-body p-4">
+      <form th:object="${testAttempt}" th:action="@{/course/{courseId}/tests/test/{testId}/submissions/{submissionId}/update(courseId=${courseId}, testId=${testId}, submissionId=${testAttempt.id})}" method="post">
+        <input type="hidden" th:value="*{id}" name="id" />
+        <input type="hidden" name="userId" th:value="${testAttempt.userId.id}" />
+        <input type="hidden" name="submittedAt" th:value="${testAttempt.submittedAt}" />
+        <input type="hidden" name="startedAt" th:value="${testAttempt.startedAt}" />
+        <div class="mb-4">
+          <label for="totalScore" class="form-label fw-bold">Total Score</label>
+          <input type="number" name="totalScore" id="totalScore" class="form-control form-control-lg"
+                 min="0" max="100" step="1"
+                 th:field="*{totalScore}" required />
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg px-4">
+          <i class="fas fa-save me-2"></i>
+          Save Comment
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <a th:href="@{/course/{courseId}/tests/test/{testId}/submissions(courseId=${courseId}, testId=${testId})}" class="btn btn-secondary mt-3">Back to Submission List</a>
+
+</div>
+</body>
+</html>

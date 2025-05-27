@@ -3,11 +3,14 @@ package com.ou.services.impl;
 import com.ou.pojo.ExerciseAttempt;
 import com.ou.repositories.ExerciseAttemptRepository;
 import com.ou.services.ExerciseAttemptService;
+import com.ou.services.LocalizationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +23,9 @@ public class ExerciseAttemptServiceImpl implements ExerciseAttemptService {
     @Autowired
     private ExerciseAttemptRepository exerciseAttemptRepository;
 
+    @Autowired
+    private LocalizationService localizationService;
+
     @Override
     public ExerciseAttempt addExerciseAttempt(ExerciseAttempt exerciseAttempt) {
         // Business logic validation
@@ -27,7 +33,7 @@ public class ExerciseAttemptServiceImpl implements ExerciseAttemptService {
         
         // Set started time if not provided
         if (exerciseAttempt.getStartedAt() == null) {
-            exerciseAttempt.setStartedAt(new Date());
+            exerciseAttempt.setStartedAt(LocalDateTime.now());
         }
         
         return exerciseAttemptRepository.addExerciseAttempt(exerciseAttempt);
@@ -155,19 +161,20 @@ public class ExerciseAttemptServiceImpl implements ExerciseAttemptService {
     public long countSearchResults(Map<String, String> filters) {
         return exerciseAttemptRepository.countSearchResults(filters);
     }
-    
+
+
     // Private validation methods
     private void validateExerciseAttempt(ExerciseAttempt exerciseAttempt) {
         if (exerciseAttempt == null) {
-            throw new IllegalArgumentException("Exercise attempt cannot be null");
+            throw new IllegalArgumentException(localizationService.getMessage("exerciseAttempt.invalid", LocaleContextHolder.getLocale()));
         }
         
         if (exerciseAttempt.getResponse() == null || exerciseAttempt.getResponse().trim().isEmpty()) {
-            throw new IllegalArgumentException("Exercise attempt response cannot be empty");
+            throw new IllegalArgumentException(localizationService.getMessage("exerciseAttempt.response.notNull", LocaleContextHolder.getLocale()));
         }
         
         if (exerciseAttempt.getExerciseId() == null) {
-            throw new IllegalArgumentException("Exercise ID cannot be null");
+            throw new IllegalArgumentException(localizationService.getMessage("exerciseAttempt.exercise.invalid",LocaleContextHolder.getLocale()));
         }
         
         if (exerciseAttempt.getStatusId() == null) {
@@ -175,12 +182,12 @@ public class ExerciseAttemptServiceImpl implements ExerciseAttemptService {
         }
         
         if (exerciseAttempt.getScoreByUserId() == null) {
-            throw new IllegalArgumentException("Scorer user ID cannot be null");
+            throw new IllegalArgumentException(localizationService.getMessage("exerciseAttempt.user.notNull",LocaleContextHolder.getLocale()));
         }
         
         // Validation for date consistency
         if (exerciseAttempt.getStartedAt() != null && exerciseAttempt.getSubmittedAt() != null) {
-            if (exerciseAttempt.getSubmittedAt().before(exerciseAttempt.getStartedAt())) {
+            if (exerciseAttempt.getSubmittedAt().isBefore(exerciseAttempt.getStartedAt())) {
                 throw new IllegalArgumentException("Submission date cannot be before start date");
             }
         }
@@ -188,7 +195,7 @@ public class ExerciseAttemptServiceImpl implements ExerciseAttemptService {
         // Score validation if present
         if (exerciseAttempt.getTotalScore() != null) {
             if (exerciseAttempt.getTotalScore().compareTo(BigDecimal.ZERO) < 0) {
-                throw new IllegalArgumentException("Total score cannot be negative");
+                throw new IllegalArgumentException(localizationService.getMessage("exerciseAttempt.totalScore.invalid",LocaleContextHolder.getLocale()));
             }
         }
     }
@@ -201,7 +208,7 @@ public class ExerciseAttemptServiceImpl implements ExerciseAttemptService {
         
         // Set submission time if not provided
         if (exerciseAttempt.getSubmittedAt() == null) {
-            exerciseAttempt.setSubmittedAt(new Date());
+            exerciseAttempt.setSubmittedAt(LocalDateTime.now());
         }
     }
 }

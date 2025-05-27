@@ -11,5 +11,5 @@ public interface MultipleChoiceAnswerRepository{
     MultipleChoiceAnswer updateMultipleChoiceAnswer(MultipleChoiceAnswer answer);
     boolean deleteMultipleChoiceAnswer(Integer id);
     List<MultipleChoiceAnswer> getAnswersByQuestionId(Integer questionId);
-    List<MultipleChoiceAnswer> getCorrectAnswers(Integer questionId);
+    MultipleChoiceAnswer getCorrectAnswer(Integer questionId);
 }

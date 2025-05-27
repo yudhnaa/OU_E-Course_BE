@@ -14,7 +14,9 @@ public interface TestService {
     Test addTest(Test test);
     Test updateTest(Test test);
     boolean deleteTest(Integer id);
-    List<Test> getTestsByCourse(Integer courseId);
+    List<Test> getTestsByCourse(Integer courseId,Map<String, String> params);
     List<Test> searchTestsByName(String name);
     List<Test> getTestsByCreatedDateRange(Date startDate, Date endDate);
+    long countTestsInCourse(Integer courseId);
+    boolean isValidTest(Test test);
 }
