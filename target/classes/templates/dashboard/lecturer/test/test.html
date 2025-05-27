@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<th:block layout:fragment="pagetitle" >
+    <div th:replace="partials/title-meta :: title-meta('Test')"></div>
+</th:block>
+<head>
+
+</head>
+<body>
+    <div layout:fragment="content">
+        <div th:replace="~{partials/page-title :: page-title('Test','Admin')}"></div>
+
+        <!-- Danger Alert -->
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${msg_error}">
+            <b th:text="${msg_error}"></b>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Success Alert -->
+        <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${msg_success}">
+            <b th:text="${msg_success}"></b>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+
+        <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
+            <div class="flex-grow-1 me-3 pe-3"> <!-- Thêm pe-3 cho padding right -->
+                <input class="form-control" type="text" id="search-box" placeholder="Search...">
+            </div>
+            <div>
+                <a th:href="@{'/course/' + ${courseId} + '/tests/add'}"
+                   class="btn btn-primary btn-animation waves-effect waves-light" data-text="Add Test">
+                    <span>Add Test</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-4" th:each="test : ${tests}">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h2 class="card-title" th:text="${test.name}">Card title</h2>
+                        <p class="card-text" th:text="${test.description}">Some example text</p>
+                        <p class="card-text">
+                            Duration minutes: <span th:text="${test.durationMinutes}"></span> minutes<br>
+                            Max score: <span th:text="${test.maxScore}"></span>
+                        </p>
+
+                        <a th:href="@{'/course/' + ${test.courseId.id} + '/tests/test/' + ${test.id}}"
+                           class="btn btn-primary btn-animation waves-effect waves-light" data-text="Detail">
+                            <span>Detail</span>
+                        </a>
+
+                        <a th:href="@{'/course/' + ${test.courseId.id} + '/tests/test/' + ${test.id} + '/submissions'}"
+                           class="btn btn-secondary btn-label waves-effect right waves-light">
+                                <span>All Submissions</span>
+                                <i class="fa-solid fa-file-lines label-icon align-middle fs-16 ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="col-sm-6">
+            <ul class="pagination pagination-separated justify-content-center justify-content-sm-end mb-sm-0">
+                <!-- Nút Previous -->
+                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                    <a th:href="@{/course/{courseId}/tests(courseId=${courseId}, page=${currentPage - 1})}" class="page-link">
+                        <i class="mdi mdi-chevron-left"></i>
+                    </a>
+                </li>
+
+                <!-- Các số trang -->
+                <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}" th:classappend="${page == currentPage} ? 'active'">
+                    <a th:href="@{/course/{courseId}/tests(courseId=${courseId}, page=${page})}" class="page-link" th:text="${page}"></a>
+                </li>
+
+                <!-- Nút Next -->
+                <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                    <a th:href="@{/course/{courseId}/tests(courseId=${courseId}, page=${currentPage + 1})}" class="page-link">
+                        <i class="mdi mdi-chevron-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <th:block layout:fragment="pagejs">
+        <script th:src="@{/assets/js/test-list.init.js}"></script>
+    </th:block>
+
+</body>
+</html>

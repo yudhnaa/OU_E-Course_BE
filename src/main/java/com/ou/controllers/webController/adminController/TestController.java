@@ -1,13 +1,9 @@
 package com.ou.controllers.webController.adminController;
 import com.ou.dto.TestDto;
-import com.ou.pojo.Course;
-import com.ou.pojo.Lecturer;
-import com.ou.pojo.Question;
-import com.ou.pojo.Test;
-import com.ou.services.CourseService;
-import com.ou.services.LecturerService;
-import com.ou.services.QuestionService;
-import com.ou.services.TestService;
+import com.ou.helpers.PaginationHelper;
+import com.ou.pojo.*;
+import com.ou.services.*;
+import com.ou.utils.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +17,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.beans.PropertyEditorSupport;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.ou.configs.WebApplicationSettings.PAGE_SIZE;
 
 @RequestMapping("/course/{courseId}/tests")
 @Controller
@@ -34,56 +33,45 @@ public class TestController {
     @Autowired
     private LecturerService lecturerService;
 
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        // Register custom editor for Course objects
-        binder.registerCustomEditor(Course.class, new PropertyEditorSupport() {
-            @Override
-            public void setAsText(String text) {
-                if (text == null || text.isEmpty()) {
-                    setValue(null);
-                } else {
-                    Course course = courseService.getCourseById(Integer.parseInt(text))
-                            .orElseThrow(() -> new IllegalArgumentException("Invalid course ID: " + text));
-                    setValue(course);
-                }
+    @Autowired
+    private PaginationHelper paginationHelper;
 
+    @Autowired
+    private QuestionService questionService;
 
-            }
+    @Autowired
+    private ExerciseService exerciseService;
 
-            @Override
-            public String getAsText() {
-                Course course = (Course) getValue();
-                return (course != null ? course.getId().toString() : "");
-            }
-        });
+    @Autowired
+    private TestQuestionService testQuestionService;
 
-        binder.registerCustomEditor(Lecturer.class, new PropertyEditorSupport() {
-            @Override
-            public void setAsText(String text) {
-                if (text == null || text.isEmpty()) {
-                    setValue(null);
-                } else {
-                    Lecturer lecturer = lecturerService.getLecturerById(Integer.parseInt(text))
-                            .orElseThrow(() -> new IllegalArgumentException("Invalid lecturer ID: " + text));
-                    setValue(lecturer);
-                }
-            }
-
-            @Override
-            public String getAsText() {
-                Lecturer lecturer = (Lecturer) getValue();
-                return (lecturer != null ? lecturer.getId().toString() : "");
-            }
-        });
-    }
 
     @GetMapping
-    public String getAllTests(@PathVariable("courseId") Integer courseId, Model model) {
-        List<Test> tests = testService.getTestsByCourse(courseId);
+    public String getAllTestsByCourse(@PathVariable("courseId") Integer courseId, Model model,
+                                      @RequestParam Map<String,String> params) {
+        long totalTests = testService.countTestsInCourse(courseId);
+        if (totalTests == 0) {
+            model.addAttribute("message", "No tests found for this course.");
+            return "dashboard/lecturer/test/test";
+        }
+
+        Pagination pagination = paginationHelper.getPagination(params, totalTests);
+
+        List<Test> tests = testService.getTestsByCourse(courseId, params);
+
+        if (tests.isEmpty()) {
+            model.addAttribute("message", "No tests were found");
+            return "dashboard/lecturer/test/test";
+        }
+
         model.addAttribute("tests", tests);
         model.addAttribute("courseId", courseId);
-        return "dashboard/admin/test";
+        model.addAttribute("currentPage", pagination.getCurrentPage());
+//        model.addAttribute("totalTests", totalTests);
+        model.addAttribute("totalPages", pagination.getTotalPages());
+        model.addAttribute("startIndex", pagination.getStartIndex());
+        model.addAttribute("endIndex", pagination.getEndIndex());
+        return "dashboard/lecturer/test/test";
     }
 
     @GetMapping("/test/{id}")
@@ -92,10 +80,74 @@ public class TestController {
                               @PathVariable("id") Integer id) {
         Test test = testService.getTestById(id)
                 .orElseThrow(() -> new RuntimeException("Test not found with id " + id));
+        List<Question> questions = questionService.getQuestionsByTest(id);
+        List<Question> allQuestionsInCourse = questionService.getQuestionsByCourse(courseId);
+
+        // Tạo Set để kiểm tra câu hỏi đã tồn tại
+        Set<Integer> existingQuestionIds = questions.stream()
+                .map(Question::getId)
+                .collect(Collectors.toSet());
+
+        List<Exercise> exercises = exerciseService.getExercisesByCourse(courseId,null);
 
         test.setCourseId(new Course(courseId));
         model.addAttribute("test", test);
-        return "dashboard/admin/testDetail";
+        model.addAttribute("courseId", courseId);
+        model.addAttribute("questions", questions);
+        model.addAttribute("allQuestionsInCourse", allQuestionsInCourse);
+        model.addAttribute("existingQuestionIds", existingQuestionIds);
+        model.addAttribute("exercises", exercises);
+        return "dashboard/lecturer/test/testDetail";
+    }
+
+    // Thêm endpoint để xử lý việc thêm multiple questions
+    @PostMapping("/test/{testId}/questions/add-multiple")
+    @ResponseBody
+    public ResponseEntity<?> addMultipleQuestions(
+            @PathVariable("courseId") Integer courseId,
+            @PathVariable("testId") Integer testId,
+            @RequestBody Map<String, List<Integer>> requestBody) {
+
+        try {
+            List<Integer> questionIds = requestBody.get("questionIds");
+
+            if (questionIds == null || questionIds.isEmpty()) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("success", false, "message", "No question IDs provided"));
+            }
+
+            for (Integer questionId : questionIds) {
+                testQuestionService.addQuestionToTest(testId, questionId);
+            }
+
+            return ResponseEntity.ok(Map.of("success", true, "message", "Questions added successfully!"));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("success", false, "message", "Error adding questions: " + e.getMessage()));
+        }
+    }
+
+    // Thêm endpoint để xóa câu hỏi khỏi test
+    @PostMapping("/test/{testId}/question/{questionId}/delete")
+    @ResponseBody
+    public ResponseEntity<?> deleteQuestionFromTest(
+            @PathVariable("courseId") Integer courseId,
+            @PathVariable("testId") Integer testId,
+            @PathVariable("questionId") Integer questionId) {
+
+        try {
+            boolean removed = testQuestionService.removeQuestionFromTest(testId, questionId);
+            if (removed) {
+                return ResponseEntity.ok(Map.of("success", true, "message", "Question removed successfully"));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("success", false, "message", "Question not found in this test"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("success", false, "message", "Error removing question: " + e.getMessage()));
+        }
     }
 
 
@@ -105,23 +157,21 @@ public class TestController {
                              @ModelAttribute("test") Test test,
                              BindingResult result,
                              RedirectAttributes redirectAttributes,
-                             Model model) {
+                             Model model){
         if (result.hasErrors()) {
-            test.setCourseId(new Course(courseId)); // 👈 Thêm dòng này để tránh lỗi bind khi trả về view
+            test.setCourseId(new Course(courseId));
             model.addAttribute("error", "Form has errors.");
             model.addAttribute("test", test);
-            return "dashboard/admin/testDetail";
+            return "dashboard/lecturer/test/testDetail";
         }
 
         try {
             Test existingTest = testService.getTestById(id)
                     .orElseThrow(() -> new RuntimeException("Test not found with id " + id));
-            // Update information
             existingTest.setName(test.getName());
             existingTest.setDescription(test.getDescription());
             existingTest.setDurationMinutes(test.getDurationMinutes());
             existingTest.setMaxScore(test.getMaxScore());
-            // The courseId should now be properly bound thanks to our custom editor
             if (test.getCourseId() != null) {
                 existingTest.setCourseId(test.getCourseId());
             }
@@ -131,7 +181,7 @@ public class TestController {
             redirectAttributes.addFlashAttribute("error", "Error updating test: " + e.getMessage());
         }
 
-        return "redirect:/admin/course/" + courseId + "/tests/test/" + id;
+        return "redirect:/course/" + courseId + "/tests/test/" + id;
     }
 
 
@@ -149,7 +199,7 @@ public class TestController {
 
         model.addAttribute("test", test);
         model.addAttribute("courseId", courseId);
-        return "dashboard/admin/testAdd";
+        return "dashboard/lecturer/test/testAdd";
     }
 
     @PostMapping("/add")
@@ -161,7 +211,7 @@ public class TestController {
         if (result.hasErrors()) {
             model.addAttribute("error", "Form has errors.");
             model.addAttribute("test", test);
-            return "dashboard/admin/testAdd";
+            return "dashboard/lecturer/test/testAdd";
         }
 
         try {
@@ -172,10 +222,10 @@ public class TestController {
             redirectAttributes.addFlashAttribute("success", "Test added successfully!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error adding test: " + e.getMessage());
-            return "dashboard/admin/testAdd";
+            return "dashboard/lecturer/test/testAdd";
         }
 
-        return "redirect:/admin/course/" + courseId + "/tests";
+        return "redirect:/course/" + courseId + "/tests";
     }
 
     @PostMapping("/test/{id}/delete")
@@ -190,9 +240,6 @@ public class TestController {
         } else {
             redirectAttributes.addFlashAttribute("error", "Test not found!");
         }
-        return "redirect:/admin/course/" + courseId + "/tests";
+        return "redirect:/course/" + courseId + "/tests";
     }
-
-
-
 }

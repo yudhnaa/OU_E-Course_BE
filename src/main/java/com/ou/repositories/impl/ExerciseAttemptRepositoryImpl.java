@@ -171,14 +171,6 @@ public class ExerciseAttemptRepositoryImpl implements ExerciseAttemptRepository 
             if (filters.containsKey("startDateTo")) {
                 predicates.add(builder.lessThanOrEqualTo(root.get("startedAt"), filters.get("startDateTo")));
             }
-            
-            if (filters.containsKey("submittedDateFrom")) {
-                predicates.add(builder.greaterThanOrEqualTo(root.get("submittedAt"), filters.get("submittedDateFrom")));
-            }
-            
-            if (filters.containsKey("submittedDateTo")) {
-                predicates.add(builder.lessThanOrEqualTo(root.get("submittedAt"), filters.get("submittedDateTo")));
-            }
         }
         
         return predicates;

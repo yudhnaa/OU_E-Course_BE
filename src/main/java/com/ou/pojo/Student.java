@@ -31,6 +31,9 @@ import java.util.Set;
     @NamedQuery(name = "Student.findById", query = "SELECT s FROM Student s WHERE s.id = :id")})
 public class Student implements Serializable {
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "studentId")
+    private Set<ExerciseAttempt> exerciseAttemptSet;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -117,6 +120,14 @@ public class Student implements Serializable {
     @Override
     public String toString() {
         return "com.ou.pojo.Student[ id=" + id + " ]";
+    }
+
+    public Set<ExerciseAttempt> getExerciseAttemptSet() {
+        return exerciseAttemptSet;
+    }
+
+    public void setExerciseAttemptSet(Set<ExerciseAttempt> exerciseAttemptSet) {
+        this.exerciseAttemptSet = exerciseAttemptSet;
     }
 
 }

@@ -142,7 +142,15 @@ INSERT INTO lesson_student (is_learn, learned_at, lesson_id, student_id) VALUES
 
 -- Sample data for exercise
 INSERT INTO exercise (name, duration_minutes, max_score, created_by_user_id, course_id, lesson_id) VALUES
-    ('Quiz 1', 30, 100.00, 1, 1, 1);
+    ('Quiz 2', 30, 100.00, 1, 1, 1),
+    ('Quiz 3', 30, 100.00, 1, 1, 1),
+    ('Quiz 4', 30, 100.00, 1, 1, 1),
+    ('Quiz 5', 30, 100.00, 1, 1, 1),
+    ('Quiz 6', 30, 100.00, 1, 1, 1),
+    ('Quiz 7', 30, 100.00, 1, 1, 1),
+    ('Quiz 8', 30, 100.00, 1, 1, 1),
+    ('Quiz 9', 30, 100.00, 1, 1, 1),
+    ('Quiz 10', 30, 100.00, 1, 1, 1);
 
 -- Sample data for exercise_attachment
 INSERT INTO exercise_attachment (exercise_id, attachment_id) VALUES
@@ -196,3 +204,118 @@ INSERT INTO test_question (test_id, question_id) VALUES
 INSERT INTO test_attempt (started_at, submitted_at, total_score, test_id, user_id) VALUES
     (NOW(), NOW(), 90.00, 1, 3);
 
+-- Dữ liệu giả cho exercise_attempt_answer
+
+-- Câu trả lời cho bài tập 1 (Quiz 2) - Câu hỏi trắc nghiệm
+INSERT INTO exercise_attempt_answer (attempt_id, question_id, answer_text, is_correct, score) VALUES
+    (1, 1, 'A programming language', 1, 100.00);
+
+-- Thêm các câu trả lời khác cho các bài tập khác
+INSERT INTO exercise_attempt_answer (attempt_id, question_id, answer_text, is_correct, score) VALUES
+                                                                                                  (1, 1, 'A fruit', 0, 0.00),
+                                                                                                  (1, 1, 'A programming language', 1, 100.00),
+                                                                                                  (1, 1, 'A programming language', 1, 100.00),
+                                                                                                  (1, 1, 'A fruit', 0, 0.00);
+
+-- Thêm câu hỏi tự luận mới và câu trả lời
+-- Thêm câu hỏi tự luận vào bảng question
+INSERT INTO question (content, exercise_id, question_type_id) VALUES
+    ('Explain the main features of Java', 1, 2);
+
+-- Thêm câu trả lời mẫu cho câu hỏi tự luận
+INSERT INTO writing_answer (content, question_id) VALUES
+    ('Java is an object-oriented, platform-independent, secure programming language with automatic memory management.', 2);
+
+-- Thêm câu trả lời của sinh viên cho câu hỏi tự luận
+INSERT INTO exercise_attempt_answer (attempt_id, question_id, answer_text, is_correct, score) VALUES
+                                                                                                  (1, 2, 'Java is object-oriented and has automatic memory management called garbage collection.', NULL, 80.00),
+                                                                                                  (1, 2, 'Java features include platform independence through JVM and strong security features.', NULL, 90.00),
+                                                                                                  (1, 2, 'Java is fast and easy to learn.', NULL, 60.00);
+
+-- Thêm nhiều câu hỏi trắc nghiệm khác
+INSERT INTO question (content, exercise_id, question_type_id) VALUES
+                                                                  ('What is JVM?', 1, 1),
+                                                                  ('Which of these is not a Java keyword?', 1, 1),
+                                                                  ('What is the default value of int in Java?', 1, 1);
+
+-- Thêm lựa chọn cho các câu hỏi trắc nghiệm mới
+INSERT INTO multiple_choice_answer (content, is_correct, question_id) VALUES
+                                                                          ('Java Virtual Machine', 1, 3),
+                                                                          ('Java Visual Machine', 0, 3),
+                                                                          ('Java Verified Machine', 0, 3),
+                                                                          ('Java Variable Machine', 0, 3),
+
+                                                                          ('class', 0, 4),
+                                                                          ('interface', 0, 4),
+                                                                          ('extends', 0, 4),
+                                                                          ('string', 1, 4), -- 'string' không phải là keyword, String mới là class
+
+                                                                          ('0', 1, 5),
+                                                                          ('1', 0, 5),
+                                                                          ('null', 0, 5),
+                                                                          ('-1', 0, 5);
+
+-- Thêm câu trả lời của sinh viên cho các câu hỏi mới
+INSERT INTO exercise_attempt_answer (attempt_id, question_id, answer_text, is_correct, score) VALUES
+                                                                                                  (1, 3, 'Java Virtual Machine', 1, 100.00),
+                                                                                                  (1, 3, 'Java Visual Machine', 0, 0.00),
+                                                                                                  (1, 3, 'Java Virtual Machine', 1, 100.00),
+                                                                                                  (1, 3, 'Java Variable Machine', 0, 0.00),
+
+                                                                                                  (1, 4, 'string', 1, 100.00),
+                                                                                                  (1, 4, 'interface', 0, 0.00),
+                                                                                                  (1, 4, 'extends', 0, 0.00),
+                                                                                                  (1, 4, 'string', 1, 100.00),
+
+                                                                                                  (1, 5, '0', 1, 100.00),
+                                                                                                  (1, 5, '1', 0, 0.00),
+                                                                                                  (1, 5, 'null', 0, 0.00),
+                                                                                                  (1, 5, '0', 1, 100.00);
+
+-- Thêm các lần thi thử cho test 1 (Final Test)
+-- Sửa lại các lệnh INSERT vào test_attempt
+INSERT INTO test_attempt (started_at, submitted_at, total_score, test_id, user_id) VALUES
+                                                                                       ('2023-10-01 09:00:00', '2023-10-01 09:50:00', 85.00, 1, 1), -- student_id 1 (user_id 6)
+                                                                                       ('2023-10-02 14:00:00', '2023-10-02 14:55:00', 92.00, 1, 2),  -- student_id 2 (user_id 7)
+                                                                                       ('2023-10-03 10:30:00', '2023-10-03 11:25:00', 78.00, 1, 3),  -- student_id 3 (user_id 8)
+                                                                                       ('2023-10-04 13:15:00', '2023-10-04 14:10:00', 95.00, 1, 4),  -- student_id 4 (user_id 9)
+                                                                                       ('2023-10-05 15:45:00', '2023-10-05 16:40:00', 88.00, 1, 5);  -- student_id 5 (user_id 10)
+
+-- Câu trả lời cho lần thi thử 1 (user_id 6)
+INSERT INTO test_attempt_answer (attempt_id, question_id, answer_text, is_correct, score) VALUES
+                                                                                              (7, 1, 'A programming language', 1, 100.00), -- Câu hỏi trắc nghiệm
+                                                                                              (7, 2, 'Java is object-oriented, has automatic memory management and runs on JVM', NULL, 90.00); -- Câu hỏi tự luận
+
+-- Câu trả lời cho lần thi thử 2 (user_id 7)
+INSERT INTO test_attempt_answer (attempt_id, question_id, answer_text, is_correct, score) VALUES
+                                                                                              (8, 1, 'A fruit', 0, 0.00),
+                                                                                              (8, 2, 'Java is a popular programming language', NULL, 80.00),
+                                                                                              (8, 3, 'Java Virtual Machine', 1, 100.00),
+                                                                                              (8, 4, 'string', 1, 100.00),
+                                                                                              (8, 5, '0', 1, 100.00);
+
+-- Câu trả lời cho lần thi thử 3 (user_id 8)
+INSERT INTO test_attempt_answer (attempt_id, question_id, answer_text, is_correct, score) VALUES
+                                                                                              (9, 1, 'A programming language', 1, 100.00),
+                                                                                              (9, 2, 'Java is fast and secure', NULL, 70.00),
+                                                                                              (9, 3, 'Java Visual Machine', 0, 0.00),
+                                                                                              (9, 4, 'extends', 0, 0.00),
+                                                                                              (9, 5, 'null', 0, 0.00);
+
+-- Câu trả lời cho lần thi thử 4 (user_id 9)
+INSERT INTO test_attempt_answer (attempt_id, question_id, answer_text, is_correct, score) VALUES
+                                                                                              (10, 1, 'A programming language', 1, 100.00),
+                                                                                              (10, 2, 'Java features include platform independence, object-oriented programming, and strong memory management', NULL, 95.00),
+                                                                                              (10, 3, 'Java Virtual Machine', 1, 100.00),
+                                                                                              (10, 4, 'string', 1, 100.00),
+                                                                                              (10, 5, '0', 1, 100.00);
+
+-- Câu trả lời cho lần thi thử 5 (user_id 10)
+INSERT INTO test_attempt_answer (attempt_id, question_id, answer_text, is_correct, score) VALUES
+                                                                                              (11, 1, 'A programming language', 1, 100.00),
+                                                                                              (11, 2, 'Java is used for web and mobile applications', NULL, 75.00),
+                                                                                              (11, 3, 'Java Virtual Machine', 1, 100.00),
+                                                                                              (11, 4, 'interface', 0, 0.00),
+                                                                                              (11, 5, '1', 0, 0.00);
+
+SELECT id, user_id, test_id FROM test_attempt;

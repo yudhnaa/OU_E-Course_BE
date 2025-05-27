@@ -6,6 +6,7 @@ package com.ou.configs;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.ou.formatters.*;
 import com.ou.formatters.CourseFormatter;
 import com.ou.formatters.UserFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,25 +44,15 @@ import java.util.Locale;
     "com.ou.services",
     "com.ou.formatters",
     "com.ou.helpers",
-    "com.ou.mappers",
+    "com.ou.mappers"
 
 })
 public class WebAppContextConfigs implements WebMvcConfigurer {
-
-    @Autowired
-    private CourseFormatter courseFormatter;
-
-    @Autowired
-    private UserFormatter userFormatter;
-
-
     @Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
 
         configurer.enable();
     }
-
-
 
     /*
      * This method configures the LocaleResolver for handling locale changes.
@@ -112,7 +103,16 @@ public class WebAppContextConfigs implements WebMvcConfigurer {
 
     @Override
     public void addFormatters(FormatterRegistry registry) {
-        registry.addFormatter(userFormatter);
-        registry.addFormatter(courseFormatter);
+        registry.addFormatter(new CourseFormatter());
+        registry.addFormatter(new ExerciseFormatter());
+        registry.addFormatter(new QuestionTypeFormatter());
+        registry.addFormatter(new LessonFormatter());
+        registry.addFormatter(new ExerciseScoreStatusFormatter());
+        registry.addFormatter(new ExerciseAttemptFormatter());
+        registry.addFormatter(new LecturerFormatter());
+        registry.addFormatter(new StudentFormatter());
+        registry.addFormatter(new TestAttemptFormatter());
+        registry.addFormatter(new TestFormatter());
+        registry.addFormatter(new UserFormatter());
     }
 }

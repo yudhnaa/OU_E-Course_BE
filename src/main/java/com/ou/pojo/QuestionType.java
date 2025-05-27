@@ -33,12 +33,6 @@ import java.util.Set;
     @NamedQuery(name = "QuestionType.findByName", query = "SELECT q FROM QuestionType q WHERE q.name = :name")})
 public class QuestionType implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id")
-    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
@@ -48,6 +42,13 @@ public class QuestionType implements Serializable {
     @Size(max = 65535)
     @Column(name = "description")
     private String description;
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
+    private Integer id;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "questionTypeId")
     private Set<Question> questionSet;
 
@@ -71,21 +72,6 @@ public class QuestionType implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     public Set<Question> getQuestionSet() {
         return questionSet;
@@ -118,6 +104,22 @@ public class QuestionType implements Serializable {
     @Override
     public String toString() {
         return "com.ou.pojo.QuestionType[ id=" + id + " ]";
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
 }

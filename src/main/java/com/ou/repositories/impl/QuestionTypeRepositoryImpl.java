@@ -1,7 +1,10 @@
 package com.ou.repositories.impl;
 
 
+import com.ou.pojo.QuestionType;
 import com.ou.repositories.QuestionTypeRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
@@ -17,22 +20,28 @@ public class QuestionTypeRepositoryImpl implements QuestionTypeRepository {
     private LocalSessionFactoryBean factory;
 
     @Override
-    public List<QuestionTypeRepository> getAllQuestionTypes() {
-        return List.of();
+    public List<QuestionType> getAllQuestionTypes() {
+        Session session = factory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        var criteriaQuery = builder.createQuery(QuestionType.class);
+        var root = criteriaQuery.from(QuestionType.class);
+        criteriaQuery.select(root);
+        return session.createQuery(criteriaQuery).getResultList();
     }
 
     @Override
-    public List<QuestionTypeRepository> getQuestionTypeById(Integer id) {
-        return List.of();
+    public QuestionType getQuestionTypeById(Integer id) {
+        Session session = factory.getObject().getCurrentSession();
+        return session.get(QuestionType.class, id);
     }
 
     @Override
-    public QuestionTypeRepository createQuestionType(String name, String description) {
+    public QuestionType createQuestionType(String name, String description) {
         return null;
     }
 
     @Override
-    public QuestionTypeRepository updateQuestionType(Integer id, String name, String description) {
+    public QuestionType updateQuestionType(Integer id, String name, String description) {
         return null;
     }
 

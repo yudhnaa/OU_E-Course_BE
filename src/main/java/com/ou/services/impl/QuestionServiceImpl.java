@@ -21,12 +21,18 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public Question getQuestionById(Integer id) {
-        return null;
+        return questionRepository.getQuestionById(id);
     }
 
     @Override
     public Question addQuestion(Question question) {
-        return null;
+        if (question == null)
+            return null;
+        questionRepository.addQuestion(question);
+        if (question.getId() == null) {
+            return null;
+        }
+        return question;
     }
 
     @Override
@@ -36,12 +42,12 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public boolean deleteQuestion(Integer id) {
-        return false;
+        return questionRepository.deleteQuestion(id);
     }
 
     @Override
     public List<Question> getQuestionsByExercise(Integer exerciseId) {
-        return List.of();
+        return questionRepository.getQuestionsByExercise(exerciseId);
     }
 
     @Override
@@ -52,6 +58,11 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public List<Question> getQuestionsByTest(Integer testId) {
         return questionRepository.getQuestionsByTest(testId);
+    }
+
+    @Override
+    public List<Question> getQuestionsByCourse(Integer courseId) {
+        return questionRepository.getQuestionsByCourse(courseId);
     }
 
 }

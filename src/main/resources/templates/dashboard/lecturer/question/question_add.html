@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<th:block layout:fragment="pagetitle">
+    <div th:replace="~{partials/title-meta :: title-meta('Add Question')}"></div>
+</th:block>
+<head>
+    <link th:href="@{/assets/libs/sweetalert2/sweetalert2.min.css}" rel="stylesheet"/>
+</head>
+<body>
+<div layout:fragment="content">
+    <div th:replace="~{partials/page-title :: page-title('Add Question','Lecturer')}"></div>
+
+    <!-- Danger Alert -->
+    <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${msg_error}">
+        <b th:text="${msg_error}"></b>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Success Alert -->
+    <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${msg_success}">
+        <b th:text="${msg_success}"></b>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div class="container">
+        <form th:action="@{'/course/' + ${courseId} + '/lessons/' + ${lessonId} + '/exercises/exercise/' + ${exerciseId} + '/question/add'}"
+              th:object="${question}"
+              method="post">
+
+            <div class="mb-3">
+                <label class="form-label">Question Content</label>
+                <textarea class="form-control" th:field="*{content}" rows="4" required></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Question Type</label>
+                <select class="form-select" id="questionTypeSelect" name="questionTypeId" required>
+                    <option value="" disabled selected>Select Question Type</option>
+                    <option th:each="type : ${questionTypes}" th:value="${type.id}"
+                            th:text="${type.name}"></option>
+                </select>
+            </div>
+
+            <!-- Multiple Choice Questions -->
+            <div id="multipleChoiceSection" style="display:none;">
+                <div id="answers-container"></div>
+                <button type="button" class="btn btn-success btn-sm mt-2" onclick="addAnswer()">Add Option</button>
+            </div>
+
+            <!-- Writing Question -->
+            <div id="writingSection" style="display:none;" class="mb-3">
+                <label class="form-label">Sample Answer</label>
+                <textarea class="form-control" name="sampleAnswer" rows="3"></textarea>
+            </div>
+
+            <div class="text-end">
+                <button type="submit" class="btn btn-primary">Create Question</button>
+                <a th:href="@{'/course/' + ${courseId} + '/lessons/' + ${lessonId} + '/exercises/exercise/' + ${exerciseId}}" class="btn btn-secondary">Back</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<th:block layout:fragment="pagejs">
+    <script th:src="@{/assets/js/question-add.init.js}"></script>
+</th:block>
+</body>
+</html>

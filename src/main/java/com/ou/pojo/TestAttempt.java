@@ -5,6 +5,7 @@
 package com.ou.pojo;
 
 import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,12 +15,17 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Set;
 
 /**
  *
@@ -35,6 +41,9 @@ import java.util.Date;
     @NamedQuery(name = "TestAttempt.findByTotalScore", query = "SELECT t FROM TestAttempt t WHERE t.totalScore = :totalScore")})
 public class TestAttempt implements Serializable {
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "attemptId")
+    private Set<TestAttemptAnswer> testAttemptAnswerSet;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,11 +51,11 @@ public class TestAttempt implements Serializable {
     @Column(name = "id")
     private Integer id;
     @Column(name = "started_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date startedAt;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime startedAt;
     @Column(name = "submitted_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date submittedAt;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime submittedAt;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "total_score")
     private BigDecimal totalScore;
@@ -72,19 +81,19 @@ public class TestAttempt implements Serializable {
         this.id = id;
     }
 
-    public Date getStartedAt() {
+    public LocalDateTime getStartedAt() {
         return startedAt;
     }
 
-    public void setStartedAt(Date startedAt) {
+    public void setStartedAt(LocalDateTime startedAt) {
         this.startedAt = startedAt;
     }
 
-    public Date getSubmittedAt() {
+    public LocalDateTime getSubmittedAt() {
         return submittedAt;
     }
 
-    public void setSubmittedAt(Date submittedAt) {
+    public void setSubmittedAt(LocalDateTime submittedAt) {
         this.submittedAt = submittedAt;
     }
 
@@ -135,6 +144,14 @@ public class TestAttempt implements Serializable {
     @Override
     public String toString() {
         return "com.ou.pojo.TestAttempt[ id=" + id + " ]";
+    }
+
+    public Set<TestAttemptAnswer> getTestAttemptAnswerSet() {
+        return testAttemptAnswerSet;
+    }
+
+    public void setTestAttemptAnswerSet(Set<TestAttemptAnswer> testAttemptAnswerSet) {
+        this.testAttemptAnswerSet = testAttemptAnswerSet;
     }
 
 }

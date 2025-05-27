@@ -8,6 +8,8 @@ public interface WritingAnswerRepository {
     List<WritingAnswer> getAllWritingAnswers();
     WritingAnswer getWritingAnswerById(Integer id);
     WritingAnswer addWritingAnswer(WritingAnswer answer);
-    WritingAnswer updateWritingAnswer(WritingAnswer answer);
+    boolean updateWritingAnswer(WritingAnswer answer);
     boolean deleteWritingAnswer(Integer id);
+    WritingAnswer getWritingAnswerByQuestionId(Integer questionId);
+
 }

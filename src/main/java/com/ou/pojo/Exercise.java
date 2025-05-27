@@ -25,7 +25,7 @@ import java.util.Set;
 
 /**
  *
- * @author yudhna
+ * @author ADMIN
  */
 @Entity
 @Table(name = "exercise")
@@ -191,5 +191,5 @@ public class Exercise implements Serializable {
     public String toString() {
         return "com.ou.pojo.Exercise[ id=" + id + " ]";
     }
-
+    
 }
