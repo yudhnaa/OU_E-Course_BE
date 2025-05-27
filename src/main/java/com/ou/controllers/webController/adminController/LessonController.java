@@ -9,6 +9,7 @@ import com.ou.services.*;
 import com.ou.utils.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -51,35 +52,36 @@ public class LessonController {
             Model model,
             @PathVariable("courseId") Integer courseId,
             @RequestParam Map<String, String> params,
-            RedirectAttributes redirectAttributes
+            RedirectAttributes redirectAttributes,
+            @AuthenticationPrincipal CustomUserDetails principal
     ) {
 
         // Get the course by ID
-        Optional<Course> course = courseService.getCourseById(courseId);
-        if (course.isEmpty()) {
+        Course course = courseService.getCourseByIdWithPermissionCheck(courseId, principal.getUser());
+        if (course == null) {
             // If the course is not found, redirect to the course list with an error message
             redirectAttributes.addFlashAttribute("msg_error", localizationService.getMessage("course.notFound", LocaleContextHolder.getLocale()));
             return "redirect:/admin/courses";
         }
 
         // pagination
-       long total = lessonService.countLessonsByCourse(course.get().getId(), params);
+       long total = lessonService.countLessonsByCourse(course.getId(), params);
 
         Pagination pagination = paginationHelper.getPagination(params, total);
         params.put("page", String.valueOf(pagination.getCurrentPage()));
 
         // Get the lessons for the course
-        List<Lesson> lessons = lessonService.getLessonsByCourse(course.get().getId(), params);
-        if (lessons.isEmpty()) {
-            // If no lessons are found, redirect to the course list with an error message
-            redirectAttributes.addFlashAttribute("msg_error", localizationService.getMessage("lesson.notFound", LocaleContextHolder.getLocale()));
-            return "redirect:/admin/course/"+ courseId +"/lessons";
-        }
+        List<Lesson> lessons = lessonService.getLessonsByCourse(course.getId(), params);
+//        if (lessons.isEmpty()) {
+//            // If no lessons are found, redirect to the course list with an error message
+//            redirectAttributes.addFlashAttribute("msg_error", localizationService.getMessage("lesson.notFound", LocaleContextHolder.getLocale()));
+//            return "redirect:/admin/course/"+ courseId +"/lessons";
+//        }
         List<LessonDto> lessonDtos = lessons.stream().map(l -> lessonMapper.toDto(l)).collect(Collectors.toList());
 
         // Add the lessons and course to the model
         model.addAttribute("lessons", lessonDtos);
-        model.addAttribute("course", course.get());
+        model.addAttribute("course", course);
 
         model.addAttribute("currentPage", pagination.getCurrentPage());
         model.addAttribute("totalPages", pagination.getTotalPages() > 0 ? pagination.getTotalPages() : 1 );

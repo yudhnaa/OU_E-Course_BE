@@ -1,5 +1,6 @@
 package com.ou.services.impl;
 
+import com.ou.pojo.CustomUserDetails;
 import com.ou.pojo.User;
 import com.ou.repositories.UserRepository;
 import com.ou.services.LocalizationService;
@@ -33,25 +34,17 @@ public class UserDetailServiceImpl implements UserDetailService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
         // Fetch user from the database
         User user = userRepo.getUserByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(
                         localizationService.getMessage("user.notFound", LocaleContextHolder.getLocale())));
 
-        // Map roles to GrantedAuthority
-        Set<GrantedAuthority> authorities = new HashSet<>();
-        authorities.add(new SimpleGrantedAuthority(user.getUserRoleId().getName()));
+        //use CustomUserDetails. Do this in CustomUserDetails.java
+//        // Map roles to GrantedAuthority
+//        Set<GrantedAuthority> authorities = new HashSet<>();
+//        authorities.add(new SimpleGrantedAuthority(user.getUserRoleId().getName()));
 
         // Return UserDetails object
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
-//                user.getIsActive(),
-//                true, // accountNonExpired
-//                true, // credentialsNonExpired
-//                true, // accountNonLocked
-                authorities
-        );
+        return new CustomUserDetails(user);
     }
 }

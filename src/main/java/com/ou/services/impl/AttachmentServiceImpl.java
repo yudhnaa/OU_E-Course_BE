@@ -2,6 +2,7 @@ package com.ou.services.impl;
 
 import com.ou.exceptions.NotFoundException;
 import com.ou.helpers.CloudinaryHelper;
+import com.ou.helpers.GoogleDriveHelper;
 import com.ou.pojo.Attachment;
 import com.ou.repositories.AttachmentRepository;
 import com.ou.services.AttachmentService;
@@ -27,8 +28,11 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Autowired
     private CloudinaryHelper cloudinaryHelper;
+    @Autowired
+    private GoogleDriveHelper googleDriveHelper;
+
     @Override
-    public Attachment addAttachment(Attachment attachment) throws IOException {
+    public Attachment addAttachment(Attachment attachment) throws Exception {
         // Validate attachment input
         if (attachment == null) {
             throw new IllegalArgumentException(localizationService.getMessage("attachment.null", LocaleContextHolder.getLocale()));
@@ -39,7 +43,8 @@ public class AttachmentServiceImpl implements AttachmentService {
 
         // Upload file to Cloudinary if provided
         if (attachment.getFile() != null && !attachment.getFile().isEmpty()) {
-            Map<String, String> imageUrl = cloudinaryHelper.uploadMultipartFile(attachment.getFile());
+//            Map<String, String> imageUrl = cloudinaryHelper.uploadMultipartFile(attachment.getFile());
+            Map<String, String> imageUrl = googleDriveHelper.uploadFile(attachment.getFile());
             attachment.setLink(imageUrl.get("url"));
             attachment.setPublicId(imageUrl.get("publicId"));
         } else if (attachment.getLink() == null || attachment.getLink().trim().isEmpty()) {
@@ -149,7 +154,8 @@ public class AttachmentServiceImpl implements AttachmentService {
         // Check if attachment exists before attempting to delete
         Attachment cur = getAttachmentById(id);
 
-        cloudinaryHelper.deleteFile(cur.getPublicId());
+        googleDriveHelper.deleteFile(cur.getPublicId());
+//        cloudinaryHelper.deleteFile(cur.getPublicId());
         
         return attachmentRepository.deleteAttachment(id);
     }

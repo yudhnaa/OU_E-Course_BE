@@ -2,6 +2,8 @@ package com.ou.repositories.impl;
 
 import com.ou.configs.WebApplicationSettings;
 import com.ou.pojo.Course;
+import com.ou.pojo.CourseLecturer;
+import com.ou.pojo.Lecturer;
 import com.ou.repositories.CourseRepository;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.criteria.*;
@@ -69,8 +71,8 @@ public class CourseRepositoryImpl implements CourseRepository {
         Root<Course> root = query.from(Course.class);
         query.select(root);
 
-
         List<Predicate> predicates =  buildSearchPredicates(builder, root, params);
+
         // Apply predicates if any
         if (!predicates.isEmpty()) {
             query.where(builder.and(predicates.toArray(new Predicate[0])));
@@ -176,6 +178,11 @@ public class CourseRepositoryImpl implements CourseRepository {
 
             if (filters.containsKey("dateEnd")) {
                 predicates.add(builder.lessThanOrEqualTo(root.get("dateEnd"), filters.get("dateEnd")));
+            }
+
+            if (filters.containsKey("lecturerId")) {
+                Join<Course, CourseLecturer> courseCourseLecturerJoin = root.join("courseLecturerSet", JoinType.INNER);
+                predicates.add(builder.equal(courseCourseLecturerJoin.get("lecturerId").get("id"), Integer.valueOf(filters.get("lecturerId"))));
             }
         }
 

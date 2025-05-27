@@ -31,7 +31,7 @@ public class UserRepositoryImpl implements UserRepository {
     public User addUser(User user) {
         Session session = sessionFactory.getObject().getCurrentSession();
         session.persist(user);
-        session.flush(); // Ensure ID is generated and available
+        session.flush();
         return user;
     }
 
@@ -157,20 +157,16 @@ public class UserRepositoryImpl implements UserRepository {
         List<Predicate> predicates = new ArrayList<>();
 
         if (filters != null) {
-            if (filters.containsKey("username")) {
-                predicates.add(builder.like(root.get("username"), String.format("%%%s%%", filters.get("username"))));
+            if (filters.containsKey("name")) {
+                String keyword = "%" + filters.get("name").replace("_", "\\_").replace("%", "\\%") + "%";
+                Predicate usernameLike = builder.like(root.get("username"), keyword, '\\');
+                Predicate firstNameLike = builder.like(root.get("firstName"), keyword, '\\');
+                Predicate lastNameLike = builder.like(root.get("lastName"), keyword, '\\');
+                predicates.add(builder.or(firstNameLike, lastNameLike, usernameLike));
             }
 
             if (filters.containsKey("email")) {
                 predicates.add(builder.like(root.get("email"), String.format("%%%s%%", filters.get("email"))));
-            }
-
-            if (filters.containsKey("firstName")) {
-                predicates.add(builder.like(root.get("firstName"), String.format("%%%s%%", filters.get("firstName"))));
-            }
-
-            if (filters.containsKey("lastName")) {
-                predicates.add(builder.like(root.get("lastName"), String.format("%%%s%%", filters.get("lastName"))));
             }
 
             if (filters.containsKey("isActive")) {
@@ -178,7 +174,9 @@ public class UserRepositoryImpl implements UserRepository {
             }
 
             if (filters.containsKey("role")) {
-                predicates.add(builder.equal(root.get("userRoleId").get("name"), filters.get("role")));
+                if (!filters.get("role").equals("all")) {
+                    predicates.add(builder.equal(root.get("userRoleId").get("name"), filters.get("role")));
+                }
             }
         }
 

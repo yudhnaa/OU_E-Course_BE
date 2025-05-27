@@ -1,69 +1,78 @@
 USE ecourse;
 
-CREATE TABLE `user_role`(
+CREATE TABLE `user_role`
+(
     -- admin, lecturer, user
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name NVARCHAR(50) NOT NULL,
-    description TEXT NULL
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    name        NVARCHAR(50) NOT NULL,
+    description TEXT         NULL
 );
 
 -- la student co the xoa
-CREATE TABLE `user` (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    last_name NVARCHAR(50) NOT NULL,
-    first_name NVARCHAR(50) NOT NULL,
-    birthday DATE NOT NULL,
-    username NVARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    avatar VARCHAR(255) NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
+CREATE TABLE `user`
+(
+    id           INT AUTO_INCREMENT PRIMARY KEY,
+    last_name    NVARCHAR(50) NOT NULL,
+    first_name   NVARCHAR(50) NOT NULL,
+    birthday     DATE         NOT NULL,
+    username     NVARCHAR(50) NOT NULL UNIQUE,
+    password     VARCHAR(255) NOT NULL,
+    avatar       VARCHAR(255) NULL,
+                        public_id varchar(100) null,
+    email        VARCHAR(100) NOT NULL UNIQUE,
 
-    user_role_id INT NOT NULL,
-    FOREIGN KEY (user_role_id) REFERENCES user_role(id) ON DELETE RESTRICT
+    user_role_id INT          NOT NULL,
+    FOREIGN KEY (user_role_id) REFERENCES user_role (id) ON DELETE RESTRICT
 );
 
 
 -- la admin, khong the xoa
-CREATE TABLE `student`(
-    id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE `student`
+(
+    id      INT AUTO_INCREMENT PRIMARY KEY,
 
     user_id INT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE RESTRICT
+    FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE RESTRICT
 );
 
 
 -- la admin, khong the xoa
-CREATE TABLE `admin`(
-    id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE `admin`
+(
+    id      INT AUTO_INCREMENT PRIMARY KEY,
 
     user_id INT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE RESTRICT
+    FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE RESTRICT
 );
 
 -- la giang vien, khong the xoa chi co the khoa
-create table `lecturer`(
-    id INT AUTO_INCREMENT PRIMARY KEY,
+create table `lecturer`
+(
+    id        INT AUTO_INCREMENT PRIMARY KEY,
     is_active BOOL NOT NULL DEFAULT TRUE,
 
-    user_id INT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE RESTRICT
+    user_id   INT  NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE RESTRICT
 );
 
-CREATE TABLE `category`(
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name NVARCHAR(50) NOT NULL,
-    description TEXT NULL
+CREATE TABLE `category`
+(
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    name        NVARCHAR(50) NOT NULL,
+    description TEXT         NULL
 );
 
-CREATE TABLE `course`(
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name NVARCHAR(50) NOT NULL,
-    description TEXT NULL,
-    image VARCHAR(255) NULL,
-    
-    date_added TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    date_start TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    date_end TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+CREATE TABLE `course`
+(
+    id                  INT AUTO_INCREMENT PRIMARY KEY,
+    name                NVARCHAR(50) NOT NULL,
+    description         TEXT         NULL,
+    image               VARCHAR(255) NULL,
+                         public_id varchar(100) null,
+
+                         date_added DATETIME DEFAULT CURRENT_TIMESTAMP,
+                         date_start DATETIME DEFAULT CURRENT_TIMESTAMP,
+                         date_end DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     created_by_admin_id INT,
     FOREIGN KEY (created_by_admin_id) REFERENCES admin (id) ON DELETE RESTRICT,
@@ -126,6 +135,7 @@ CREATE TABLE attachment
     id          INT AUTO_INCREMENT PRIMARY KEY,
     name        NVARCHAR(50) NOT NULL,
     link        VARCHAR(255) NOT NULL,
+                           public_id varchar(100) null,
     description TEXT         NULL
 );
 
@@ -145,6 +155,7 @@ CREATE TABLE `lesson`
     embed_link     VARCHAR(255) NOT NULL,
     description    TEXT         NULL,
     image          VARCHAR(255) NULL,
+                         public_id varchar(100) null,
     order_index INT NOT NULL DEFAULT 0,
 
     lesson_type_id INT          NOT NULL,
@@ -174,7 +185,7 @@ CREATE TABLE `lesson_student`
 (
     id         INT AUTO_INCREMENT PRIMARY KEY,
     is_learn   BOOL DEFAULT FALSE,
-    learned_at TIMESTAMP NULL,
+                                 learned_at DATETIME NULL,
 
     lesson_id  INT       NOT NULL,
     FOREIGN KEY (lesson_id) REFERENCES lesson (id) ON DELETE CASCADE,
@@ -257,16 +268,16 @@ CREATE TABLE writing_answer
 -- 1 exercise co nhieu status: Submitted, Pending, Graded
 CREATE TABLE exercise_score_status
 (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name NVARCHAR(50) NOT NULL,
-    description TEXT NULL
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    name        NVARCHAR(50) NOT NULL,
+    description TEXT         NULL
 );
 
 CREATE TABLE exercise_attempt
 (
-    id               INT AUTO_INCREMENT PRIMARY KEY,
-    started_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    submitted_at     TIMESTAMP NULL,
+                                 id INT AUTO_INCREMENT PRIMARY KEY,
+                                 started_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                                 submitted_at DATETIME NULL,
     total_score      DECIMAL(5, 2),
     response         TEXT      NULL,
 
@@ -287,7 +298,7 @@ CREATE TABLE test
     name               NVARCHAR(100) NOT NULL,
     description        TEXT,
     duration_minutes   INT           NOT NULL,
-    created_at         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     max_score          DECIMAL(5, 2) NOT NULL,
 
     created_by_user_id INT           NOT NULL,
@@ -310,9 +321,9 @@ CREATE TABLE test_question
 
 CREATE TABLE test_attempt
 (
-    id           INT AUTO_INCREMENT PRIMARY KEY,
-    started_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    submitted_at TIMESTAMP NULL,
+                              id INT AUTO_INCREMENT PRIMARY KEY,
+                              started_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                              submitted_at DATETIME NULL,
     total_score  DECIMAL(5, 2),
 
     test_id      INT       NOT NULL,

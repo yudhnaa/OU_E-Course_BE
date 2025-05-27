@@ -30,4 +30,6 @@ public interface CourseRepository {
     long countCoursesByCategory(Integer categoryId);
     long countCoursesCreatedByUser(Integer userId);
     long countSearchResults(Map<String, String> filters);
+
+
 }

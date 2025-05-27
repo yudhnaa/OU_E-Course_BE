@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public interface AttachmentService {
     // Create operations
-    Attachment addAttachment(Attachment attachment) throws IOException;
+    Attachment addAttachment(Attachment attachment) throws Exception;
     
     // Read operations with pagination
     List<Attachment> getAttachments(Map<String, String> params);

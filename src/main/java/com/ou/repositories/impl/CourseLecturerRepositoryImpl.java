@@ -139,7 +139,24 @@ public class CourseLecturerRepositoryImpl implements CourseLecturerRepository {
         query.select(builder.count(root));
         return session.createQuery(query).getSingleResult();
     }
-    
+
+    @Override
+    public boolean existsByCourseIdAndLecturerId(int courseId, int lecturerId) {
+        Session session = sessionFactory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<CourseLecturer> query = builder.createQuery(CourseLecturer.class);
+        Root<CourseLecturer> root = query.from(CourseLecturer.class);
+
+        query.where(
+            builder.equal(root.get("courseId").get("id"), courseId),
+            builder.equal(root.get("lecturerId").get("id"), lecturerId)
+        );
+
+        List<CourseLecturer> results = session.createQuery(query).getResultList();
+
+        return !results.isEmpty();
+    }
+
     private List<Predicate> buildSearchPredicates(CriteriaBuilder builder, Root<CourseLecturer> root, Map<String, String> filters) {
         List<Predicate> predicates = new ArrayList<>();
         

@@ -28,17 +28,17 @@ public class IndexController {
 
     @GetMapping("/")
     public String index() {
-        return "dashboard/index";
-    }
-
-    @RequestMapping("/user/{userId}")
-    public String userDetail(Model model, @PathVariable("userId") int userId) throws Exception {
-        String helloWorld;
-
-        helloWorld = userService.getUserById(userId).getFirstName() + " " + userService.getUserById(userId).getLastName();
-
-        model.addAttribute("helloWorld", helloWorld);
         return "index";
     }
+
+//    @RequestMapping("/user/{userId}")
+//    public String userDetail(Model model, @PathVariable("userId") int userId) throws Exception {
+//        String helloWorld;
+//
+//        helloWorld = userService.getUserById(userId).getFirstName() + " " + userService.getUserById(userId).getLastName();
+//
+//        model.addAttribute("helloWorld", helloWorld);
+//        return "index";
+//    }
 
 }

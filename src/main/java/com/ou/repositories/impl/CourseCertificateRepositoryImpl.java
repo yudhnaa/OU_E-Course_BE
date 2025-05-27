@@ -1,7 +1,7 @@
 package com.ou.repositories.impl;
 
 import com.ou.configs.WebApplicationSettings;
-import com.ou.pojo.CourseCertificate;
+import com.ou.pojo.*;
 import com.ou.repositories.CourseCertificateRepository;
 import jakarta.persistence.criteria.*;
 import org.hibernate.Session;
@@ -90,7 +90,7 @@ public class CourseCertificateRepositoryImpl implements CourseCertificateReposit
         CriteriaQuery<CourseCertificate> query = builder.createQuery(CourseCertificate.class);
         Root<CourseCertificate> root = query.from(CourseCertificate.class);
         
-        List<Predicate> predicates = buildSearchPredicates(builder, root, filters);
+        List<Predicate> predicates = buildSearchPredicates(builder, root, filters, query);
         
         // Apply predicates if any
         if (!predicates.isEmpty()) {
@@ -166,7 +166,7 @@ public class CourseCertificateRepositoryImpl implements CourseCertificateReposit
         CriteriaQuery<Long> query = builder.createQuery(Long.class);
         Root<CourseCertificate> root = query.from(CourseCertificate.class);
         
-        List<Predicate> predicates = buildSearchPredicates(builder, root, filters);
+        List<Predicate> predicates = buildSearchPredicates(builder, root, filters, query);
         
         if (!predicates.isEmpty()) {
             query.where(builder.and(predicates.toArray(new Predicate[0])));
@@ -175,20 +175,45 @@ public class CourseCertificateRepositoryImpl implements CourseCertificateReposit
         query.select(builder.count(root));
         return session.createQuery(query).getSingleResult();
     }
-    
-    private List<Predicate> buildSearchPredicates(CriteriaBuilder builder, Root<CourseCertificate> root, Map<String, String> filters) {
+
+    private List<Predicate> buildSearchPredicates(CriteriaBuilder builder, Root<CourseCertificate> root,
+                                                  Map<String, String> filters, CriteriaQuery<?> query) {
         List<Predicate> predicates = new ArrayList<>();
-        
+
         if (filters != null) {
             if (filters.containsKey("downloadLink")) {
-                predicates.add(builder.like(root.get("downloadLink"), String.format("%%%s%%", filters.get("downloadLink"))));
+                predicates.add(builder.like(
+                        root.get("downloadLink"),
+                        "%" + filters.get("downloadLink") + "%"
+                ));
             }
-            
+
             if (filters.containsKey("courseStudentId")) {
-                predicates.add(builder.equal(root.get("courseStudentId").get("id"), Integer.valueOf(filters.get("courseStudentId"))));
+                predicates.add(builder.equal(
+                        root.get("courseStudentId").get("id"),
+                        Integer.valueOf(filters.get("courseStudentId"))
+                ));
+            }
+
+            if (filters.containsKey("lecturerId")) {
+                Integer lecturerId = Integer.valueOf(filters.get("lecturerId"));
+
+                // Subquery: tìm các CourseStudent ID có Lecturer tương ứng
+                Subquery<Integer> subquery = query.subquery(Integer.class);
+                Root<CourseStudent> csRoot = subquery.from(CourseStudent.class);
+                Join<CourseStudent, Course> courseJoin = csRoot.join("courseId");
+                Join<Course, CourseLecturer> clJoin = courseJoin.join("courseLecturerSet");
+                subquery.select(csRoot.get("id")).where(
+                        builder.equal(clJoin.get("lecturerId").get("id"), lecturerId)
+                );
+
+                // Predicate chính: chỉ lấy các CourseCertificate có CourseStudent nằm trong subquery
+                predicates.add(root.get("courseStudentId").get("id").in(subquery));
             }
         }
-        
+
         return predicates;
     }
+
+
 }

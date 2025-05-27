@@ -41,18 +41,41 @@ public class SpringSecurityConfigs {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(c -> c.disable());
-//                .authorizeHttpRequests(requests -> requests
-//                        .requestMatchers("/", "/home").permitAll()
-//                        .requestMatchers("/assets/**").permitAll()
-////                        .requestMatchers("/user/**").permitAll()
-//                )
-//                .formLogin(form
-//                        -> form.loginPage("/login")
-//                        .loginProcessingUrl("/login")
-//                        .defaultSuccessUrl("/")
-//                        .failureUrl("/login").permitAll())
-//                .logout(logout -> logout.logoutSuccessUrl("/login").permitAll());
+        http.csrf(c -> c.disable())
+                .authorizeHttpRequests(requests -> requests
+                                .requestMatchers("/assets/**").permitAll()
+                                .requestMatchers("/register").permitAll()
+
+                                .requestMatchers(
+                                        "/admin/users/**",
+                                        "/admin/user/**",
+                                        "/admin/lecturers",
+                                        "/admin/lecturer",
+                                        "/admin/students",
+                                        "/admin/student",
+                                        "/admin/course/create"
+                                ).hasRole("ADMIN")
+
+                                .requestMatchers(
+                                        "/admin/courses/**",
+                                        "/admin/course/**",
+                                        "/admin/student-certificates",
+                                        "/profile"
+                                ).hasAnyRole("ADMIN", "LECTURER")
+
+                                .requestMatchers("/access-denied").permitAll()
+
+                                .anyRequest().hasAnyRole("LECTURER", "ADMIN")
+                )
+                .formLogin(form
+                        -> form.loginPage("/login")
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/")
+                        .failureUrl("/login").permitAll())
+                .logout(logout -> logout.logoutSuccessUrl("/login").permitAll())
+                .exceptionHandling(exception -> exception
+                        .accessDeniedPage("/access-denied")
+                );
 
         return http.build();
     }

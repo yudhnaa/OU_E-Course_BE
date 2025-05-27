@@ -116,7 +116,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean deleteUser(int id) {
-        return false;
+        Optional<User> userOpt = userRepo.getUserById(id);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            // Delete avatar from Cloudinary if it exists
+            if (user.getPublicId() != null && !user.getPublicId().isEmpty()) {
+                try {
+                    cloudinaryHelper.deleteFile(user.getPublicId());
+                } catch (IOException e) {
+                    LOGGER.log(Level.SEVERE, "Error deleting avatar for user ID: " + id, e);
+                }
+            }
+            return userRepo.deleteUser(id);
+        } else {
+            throw new NotFoundException(localizationService.getMessage("user.notFound", LocaleContextHolder.getLocale()));
+        }
     }
 
     @Override
@@ -132,7 +146,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> getUserByUsername(String username) {
-        return Optional.empty();
+        return userRepo.getUserByUsername(username);
     }
 
     @Override

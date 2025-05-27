@@ -1,23 +1,24 @@
 -- Sample data for user_role
 INSERT INTO user_role (name, description) VALUES
-    ('admin', 'Administrator'),
-    ('lecturer', 'Lecturer'),
-    ('user', 'Student');
+    ('ROLE_ADMIN', 'Administrator'),
+    ('ROLE_LECTURER', 'Lecturer'),
+    ('ROLE_STUDENT', 'Student');
 
 -- Sample data for user
 INSERT INTO user (last_name, first_name, birthday, username, password, avatar, email, user_role_id)
 VALUES
-    ('Smith', 'John', '1990-01-01', 'admin', 'hashedpassword1', NULL, 'john.smith@example.com', 1),
-    ('Duong Huu', 'Thanh', '1993-11-11', 'thanhduong', 'hashedpassword11', 'https://yt3.googleusercontent.com/ytc/AIdro_kMHMMUSXvOBzfi9e6ks4pbI6I7I8yMuqFOUoAuwXpIzUE', 'thanh.dh@ou.edu.vn', 2),
-    ('Doe', 'Jane', '1992-02-02', 'janedoe', 'hashedpassword2', NULL, 'jane.doe@example.com', 2),
-    ('Brown', 'Charlie', '1995-03-03', 'charlieb', 'hashedpassword3', NULL, 'charlie.brown@example.com', 2),
-    ('Johnson', 'Emily', '1998-04-04', 'emilyj', 'hashedpassword4', NULL, 'daddasd.@dadad.com', 2),
-    ('Williams', 'Michael', '1996-05-05', 'michaelw', 'hashedpassword5', NULL, 'dasd@dasd.com', 3),
-    ('Jones', 'Sarah', '1994-06-06', 'sarahj', 'hashedpassword6', NULL, 'dasdasddasd@dasd.com', 3),
-    ('Garcia', 'David', '1991-07-07', 'davidg', 'hashedpassword7', NULL, 'erty@dsd.com', 3),
-    ('Martinez', 'Sophia', '1993-08-08', 'sophiam', 'hashedpassword8', NULL, 'dfgh@dfgh.com', 3),
-    ('Hernandez', 'James', '1990-09-09', 'jamesh', 'hashedpassword9', NULL, 'dfghytr@das.com', 3),
-    ('Lopez', 'Olivia', '1992-10-10', 'olivial', 'hashedpassword10', NULL, 'dfghgfd@dfghgf.com', 3);
+#     pass: 123
+    ('Smith', 'John', '1990-01-01', 'admin', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', NULL, 'john.smith@example.com', 1),
+    ('Duong Huu', 'Thanh', '1993-11-11', 'thanhduong', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', 'https://yt3.googleusercontent.com/ytc/AIdro_kMHMMUSXvOBzfi9e6ks4pbI6I7I8yMuqFOUoAuwXpIzUE', 'thanh.dh@ou.edu.vn', 2),
+    ('Doe', 'Jane', '1992-02-02', 'janedoe', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', NULL, 'jane.doe@example.com', 2),
+    ('Brown', 'Charlie', '1995-03-03', 'charlieb', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', NULL, 'charlie.brown@example.com', 2),
+    ('Johnson', 'Emily', '1998-04-04', 'emilyj', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', NULL, 'daddasd.@dadad.com', 2),
+    ('Williams', 'Michael', '1996-05-05', 'michaelw', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', NULL, 'dasd@dasd.com', 3),
+    ('Jones', 'Sarah', '1994-06-06', 'sarahj', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', NULL, 'dasdasddasd@dasd.com', 3),
+    ('Garcia', 'David', '1991-07-07', 'davidg', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', NULL, 'erty@dsd.com', 3),
+    ('Martinez', 'Sophia', '1993-08-08', 'sophiam', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', NULL, 'dfgh@dfgh.com', 3),
+    ('Hernandez', 'James', '1990-09-09', 'jamesh', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', NULL, 'dfghytr@das.com', 3),
+    ('Lopez', 'Olivia', '1992-10-10', 'olivial', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', NULL, 'dfghgfd@dfghgf.com', 3);
 
 -- Sample data for student
 INSERT INTO student (user_id)
@@ -94,12 +95,16 @@ INSERT INTO course_student (progress, course_id, student_id) VALUES
     (0.25, 1, 3),
     (0.6, 1, 4),
     (0.8, 1, 5),
-    (0.4, 1, 6);
+    (0.4, 1, 6),
+    (1, 2, 6);
 
 
 -- Sample data for course_certificate
 INSERT INTO course_certificate (download_link, course_student_id) VALUES
-    ('/certs/john-java.pdf', 1);
+    ('https://example.com/certs/john-java.pdf', 1),
+    ('https://example.com/certs/jane-web.pdf', 7);
+
+
 
 -- Sample data for course_rate
 INSERT INTO course_rate (rate, comment, course_student_id)
