@@ -96,8 +96,8 @@ INSERT INTO course_student (progress, course_id, student_id) VALUES
 
 -- Sample data for course_certificate
 INSERT INTO course_certificate (download_link, course_student_id) VALUES
-    ('https://example.com/certs/john-java.pdf', 1),
-    ('https://example.com/certs/jane-web.pdf', 7);
+    ('https://drive.google.com/file/d/1Q2zOARXiZrEpNu_aMngCdb3qGszNV2nJ/view?usp=drivesdk', 1),
+    ('https://drive.google.com/file/d/1Q2zOARXiZrEpNu_aMngCdb3qGszNV2nJ/view?usp=drivesdk', 7);
 
 -- Sample data for course_rate
 INSERT INTO course_rate (rate, comment, course_student_id)

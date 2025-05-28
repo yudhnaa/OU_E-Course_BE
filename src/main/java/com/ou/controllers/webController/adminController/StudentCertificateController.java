@@ -5,12 +5,10 @@ import com.ou.exceptions.NotFoundException;
 import com.ou.helpers.PaginationHelper;
 import com.ou.mappers.CourseCertificateMapper;
 import com.ou.pojo.CourseCertificate;
+import com.ou.pojo.CourseStudent;
 import com.ou.pojo.CustomUserDetails;
 import com.ou.pojo.Lecturer;
-import com.ou.services.CertificateService;
-import com.ou.services.CourseCertificateService;
-import com.ou.services.LecturerService;
-import com.ou.services.LocalizationService;
+import com.ou.services.*;
 import com.ou.utils.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -23,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -43,6 +42,8 @@ public class StudentCertificateController {
     private LecturerService lecturerService;
     @Autowired
     private LocalizationService localizationService;
+    @Autowired
+    private CourseStudentService courseStudentService;
 
     @GetMapping("/student-certificates")
     public String studentCertificates(
@@ -85,8 +86,19 @@ public class StudentCertificateController {
     ) {
         try {
             Optional<CourseCertificate> courseCertificate = courseCertificateService.getCourseCertificateById(1);
-            certificateService.generatePdf(courseCertificate.get());
-            redirectAttributes.addFlashAttribute("successMessage", "Certificate generated successfully.");
+            File generatedFile = certificateService.generatePdf(courseCertificate.get());
+
+            int courseStudentId = 3; // This should be dynamically set based on the course student ID you want to generate the certificate for
+            CourseStudent courseStudent = courseStudentService.getCourseStudentById(courseStudentId).orElseThrow(() -> new NotFoundException(localizationService.getMessage("courseStudent.notFound", LocaleContextHolder.getLocale())));
+            courseStudent.setProgress(1);
+            courseStudentService.updateCourseStudent(courseStudent);
+
+            CourseCertificate certificate = new CourseCertificate();
+            certificate.setCourseStudentId(courseStudent);
+
+            CourseCertificate createdCert = courseCertificateService.createCourseCertificate(certificate, generatedFile);
+
+            redirectAttributes.addFlashAttribute("successMessage", "Certificate generated successfully." + createdCert.getDownloadLink());
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Failed to generate certificate: " + e.getMessage());
         }

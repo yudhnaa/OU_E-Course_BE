@@ -40,9 +40,9 @@
         <div class="card-body border border-dashed border-end-0 border-start-0">
           <div class="mb-2 d-flex gap-2 justify-content-end align-items-center">
             <input class="form-control" type="text" id="search-box" placeholder="Search..." style="min-width: 0; flex: 1 1 auto;">
-            <a th:href="@{/admin/course/create}" class="btn btn-success waves-effect waves-light text-nowrap">
-              Search
-            </a>
+<!--            <a th:href="@{/admin/course/create}" class="btn btn-success waves-effect waves-light text-nowrap">-->
+<!--              Search-->
+<!--            </a>-->
           </div>
         </div>
         <!--end card-body-->
@@ -140,7 +140,7 @@
         <!-- Previous -->
         <li class="page-item" th:classappend="${currentPage <= 1} ? 'disabled'">
           <a class="page-link"
-             th:href="@{'/admin/courses?page=' + (${currentPage - 1}) + '&name=' + ${filterName}}"
+             th:href="@{'/admin/student-certificates?page=' + (${currentPage - 1}) + '&name=' + ${filterName}}"
              th:ariaDisabled="${currentPage <= 1}" tabindex="-1">
             <i class="mdi mdi-chevron-left"></i>
           </a>
@@ -151,14 +151,14 @@
             th:each="page : ${#numbers.sequence(1, totalPages)}"
             th:classappend="${page == currentPage} ? 'active'">
           <a class="page-link"
-             th:href="@{'/admin/courses?page=' + ${page} + '&name=' + ${filterName}}"
+             th:href="@{'/admin/student-certificates?page=' + ${page} + '&name=' + ${filterName}}"
              th:text="${page}">1</a>
         </li>
 
         <!-- Next -->
         <li class="page-item" th:classappend="${currentPage >= totalPages} ? 'disabled'">
           <a class="page-link"
-             th:href="@{'/admin/courses?page=' + (${currentPage + 1}) + '&name=' + ${filterName}}"
+             th:href="@{'/admin/student-certificates?page=' + (${currentPage + 1}) + '&name=' + ${filterName}}"
              th:ariaDisabled="${currentPage >= totalPages}" tabindex="-1">
             <i class="mdi mdi-chevron-right"></i>
           </a>

@@ -1,13 +1,15 @@
 package com.ou.services;
 
 import com.ou.pojo.CourseCertificate;
+
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 public interface CourseCertificateService {
     // Create operations
-    CourseCertificate createCourseCertificate(CourseCertificate certificate) throws Exception;
+    CourseCertificate createCourseCertificate(CourseCertificate certificate, File certificateFile) throws Exception;
     
     // Read operations
     List<CourseCertificate> getCourseCertificates(Map<String, String> params);
@@ -16,7 +18,7 @@ public interface CourseCertificateService {
     List<CourseCertificate> getCertificatesByCourseStudentId(Integer courseStudentId, Map<String, String> params);
     
     // Update operations
-    CourseCertificate updateCourseCertificate(CourseCertificate certificate) throws Exception;
+//    CourseCertificate updateCourseCertificate(CourseCertificate certificate) throws Exception;
     
     // Delete operations
     boolean deleteCourseCertificate(Integer id) throws Exception;
