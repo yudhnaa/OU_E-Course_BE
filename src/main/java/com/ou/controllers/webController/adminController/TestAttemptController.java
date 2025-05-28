@@ -5,6 +5,7 @@ import com.ou.pojo.*;
 import com.ou.services.*;
 import com.ou.utils.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/course/{courseId}/tests/test/{testId}/submissions")
+@RequestMapping("/admin/courses/{courseId}/tests/test/{testId}/submissions")
 public class TestAttemptController {
 
     @Autowired
@@ -38,11 +39,21 @@ public class TestAttemptController {
     @Autowired
     private WritingAnswerService writingAnswerService;
 
+    @Autowired
+    private TestService testService;
+
     @GetMapping
     public String getTestSubmissions(Model model,
                                      @PathVariable(value = "courseId") Integer courseId,
                                      @PathVariable(value = "testId") Integer testId,
-                                     @RequestParam Map<String, String> params) {
+                                     @RequestParam Map<String, String> params,
+                                     @AuthenticationPrincipal CustomUserDetails principal) {
+        // Check if the user has permission to view test submissions
+        Test test = testService.getTestByIdWithPermissionsCheck(testId, principal.getUser());
+        if (test == null) {
+            model.addAttribute("msg_error", "Test not found or you do not have permission to view it.");
+            return "dashboard/lecturer/submission/test_submission_list"; // Redirect to an error page or list
+        }
         List<TestAttempt> testAttempts = testAttemptService.getAllTestAttemptsByTestId(testId, params);
         if (testAttempts.isEmpty()) {
             model.addAttribute("msg_error", "No submissions found for this test.");
@@ -75,7 +86,14 @@ public class TestAttemptController {
     public String getTestAttemptDetails(Model model,
                                         @PathVariable(value = "courseId") Integer courseId,
                                         @PathVariable(value = "testId") Integer testId,
-                                        @PathVariable(value = "submissionId") Integer submissionId) {
+                                        @PathVariable(value = "submissionId") Integer submissionId,
+                                        @AuthenticationPrincipal CustomUserDetails principal) {
+        // Check if the user has permission to view test attempt details
+        Test test = testService.getTestByIdWithPermissionsCheck(testId, principal.getUser());
+        if (test == null) {
+            model.addAttribute("msg_error", "Test not found or you do not have permission to view it.");
+            return "dashboard/lecturer/submission/test_submission_list"; // Redirect to an error page or list
+        }
         Optional<TestAttempt> optionalTestAttempt = testAttemptService.getTestAttemptById(submissionId);
         if (optionalTestAttempt.isEmpty()) {
             model.addAttribute("msg_error", "Test attempt not found.");
@@ -132,6 +150,6 @@ public class TestAttemptController {
         }
 
 
-        return "redirect:/course/" + courseId + "/tests/test/" + testId + "/submissions/" + updatedTestAttempt.getId();
+        return "redirect:/admin/courses/" + courseId + "/tests/test/" + testId + "/submissions/" + updatedTestAttempt.getId();
     }
 }

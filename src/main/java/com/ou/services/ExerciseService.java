@@ -1,6 +1,8 @@
 package com.ou.services;
 
 import com.ou.pojo.Exercise;
+import com.ou.pojo.User;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -13,6 +15,7 @@ public interface ExerciseService {
     List<Exercise> getExercises(Map<String, String> params);
     List<Exercise> searchExercises(Map<String, String> filters, Map<String, String> params);
     Optional<Exercise> getExerciseById(Integer id) throws Exception;
+    Exercise getExerciseByIdWithPermissionsCheck(Integer exerciseId, User user);
     List<Exercise> getExercisesByCourse(Integer courseId, Map<String, String> params);
     List<Exercise> getExercisesByLesson(Integer lessonId, Map<String, String> params);
     List<Exercise> getExercisesByCreator(Integer userId, Map<String, String> params);

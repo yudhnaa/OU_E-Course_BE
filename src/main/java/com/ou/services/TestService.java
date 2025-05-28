@@ -2,6 +2,7 @@ package com.ou.services;
 
 import com.ou.dto.TestDto;
 import com.ou.pojo.Test;
+import com.ou.pojo.User;
 
 import java.util.Date;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Optional;
 public interface TestService {
     List<Test> getAllTests(Map<String, String> params);
     Optional<Test> getTestById(Integer id);
+    Test getTestByIdWithPermissionsCheck(Integer testId, User user);
     Test addTest(Test test);
     Test updateTest(Test test);
     boolean deleteTest(Integer id);
@@ -19,4 +21,5 @@ public interface TestService {
     List<Test> getTestsByCreatedDateRange(Date startDate, Date endDate);
     long countTestsInCourse(Integer courseId);
     boolean isValidTest(Test test);
+    long countSearchResults(Map<String, String> filters);
 }

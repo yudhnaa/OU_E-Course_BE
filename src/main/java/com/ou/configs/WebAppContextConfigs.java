@@ -55,6 +55,8 @@ public class WebAppContextConfigs implements WebMvcConfigurer {
     private UserFormatter userFormatter;
     @Autowired
     private CourseFormatter courseFormatter;
+    @Autowired
+    private LessonFormatter lessonFormatter;
 
     @Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
@@ -113,7 +115,6 @@ public class WebAppContextConfigs implements WebMvcConfigurer {
     public void addFormatters(FormatterRegistry registry) {
         registry.addFormatter(new ExerciseFormatter());
         registry.addFormatter(new QuestionTypeFormatter());
-        registry.addFormatter(new LessonFormatter());
         registry.addFormatter(new ExerciseScoreStatusFormatter());
         registry.addFormatter(new ExerciseAttemptFormatter());
         registry.addFormatter(new LecturerFormatter());
@@ -122,6 +123,7 @@ public class WebAppContextConfigs implements WebMvcConfigurer {
         registry.addFormatter(new TestFormatter());
         registry.addFormatter(userFormatter);
         registry.addFormatter(courseFormatter);
+        registry.addFormatter(lessonFormatter);
     }
 
     @Bean

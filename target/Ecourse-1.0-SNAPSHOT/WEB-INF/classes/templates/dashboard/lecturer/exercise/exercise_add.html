@@ -79,7 +79,7 @@
                         <div class="col-xl-9 col-lg-8">
                             <div class="card">
                                 <div class="card-body">
-                                    <form th:action="@{'/course/' + ${courseId} + '/lessons/' + ${lessonId} + '/exercises/exercise' + '/add'}"
+                                    <form th:action="@{'/admin/courses/' + ${courseId} + '/lessons/' + ${lessonId} + '/exercises/exercise' + '/add'}"
                                           th:object="${exercise}" method="post">
                                         <input type="hidden" th:value="*{id}" name="id"/>
                                         <div class="mb-3">
@@ -120,7 +120,7 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="text-start mt-3">
-                                        <a th:href="@{'/course/' + ${courseId} + '/lessons/' + ${lessonId} + '/exercises/exercise/' + ${exercise.id} + '/question/add'}"
+                                        <a th:href="@{'/admin/courses/' + ${courseId} + '/lessons/' + ${lessonId} + '/exercises/exercise/' + ${exercise.id} + '/question/add'}"
                                            class="btn btn-primary">
                                             <i class="ri-add-line align-bottom me-1"></i> Add Question
                                         </a>
@@ -162,7 +162,7 @@
                                                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                                             <li>
                                                                 <a class="dropdown-item"
-                                                                   th:href="@{'/course/' + ${courseId} + '/lessons/' + ${lessonId} + '/exercises/exercise/' + ${exercise.id} + '/question/' + ${question.id}}">
+                                                                   th:href="@{'/admin/courses/' + ${courseId} + '/lessons/' + ${lessonId} + '/exercises/exercise/' + ${exercise.id} + '/question/' + ${question.id}}">
                                                                     Edit exercise
                                                                 </a>
                                                             </li>

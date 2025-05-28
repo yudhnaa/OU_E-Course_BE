@@ -46,7 +46,7 @@
                 <i class="fa-solid fa-check"></i>
                 <span th:text="'Score: ' + ${testAttempt.totalScore}">Score: 85</span>
             </p>
-            <a th:href="@{/course/{courseId}/tests/test/{testId}/submissions/{submissionId}(courseId=${courseId}, testId=${testId}, submissionId=${testAttempt.id})}"
+            <a th:href="@{/admin/courses/{courseId}/tests/test/{testId}/submissions/{submissionId}(courseId=${courseId}, testId=${testId}, submissionId=${testAttempt.id})}"
                class="btn btn-primary">View Submission</a>
         </div>
     </div>
@@ -56,19 +56,19 @@
         <ul class="pagination pagination-separated justify-content-center justify-content-sm-end mb-sm-0">
             <!-- Nút Previous -->
             <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                <a th:href="@{/course/{courseId}/tests(courseId=${courseId}, page=${currentPage - 1})}" class="page-link">
+                <a th:href="@{/admin/courses/{courseId}/tests(courseId=${courseId}, page=${currentPage - 1})}" class="page-link">
                     <i class="mdi mdi-chevron-left"></i>
                 </a>
             </li>
 
             <!-- Các số trang -->
             <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}" th:classappend="${page == currentPage} ? 'active'">
-                <a th:href="@{/course/{courseId}/tests(courseId=${courseId}, page=${page})}" class="page-link" th:text="${page}"></a>
+                <a th:href="@{/admin/courses/{courseId}/tests/test/{testId}/submissions(courseId=${courseId}, testId=${testId} page=${page})}" class="page-link" th:text="${page}"></a>
             </li>
 
             <!-- Nút Next -->
             <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                <a th:href="@{/course/{courseId}/tests(courseId=${courseId}, page=${currentPage + 1})}" class="page-link">
+                <a th:href="@{/admin/courses/{courseId}/tests/test/{testId}/submissions(courseId=${courseId}, testId=${testId},page=${currentPage + 1})}" class="page-link">
                     <i class="mdi mdi-chevron-right"></i>
                 </a>
             </li>

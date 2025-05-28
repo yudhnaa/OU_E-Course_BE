@@ -1,12 +1,15 @@
 package com.ou.controllers.webController.adminController;
 import com.ou.dto.TestDto;
+import com.ou.exceptions.NotFoundException;
 import com.ou.helpers.PaginationHelper;
 import com.ou.pojo.*;
 import com.ou.services.*;
 import com.ou.utils.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,7 +25,7 @@ import java.util.stream.Collectors;
 
 import static com.ou.configs.WebApplicationSettings.PAGE_SIZE;
 
-@RequestMapping("/course/{courseId}/tests")
+@RequestMapping("/admin/courses/{courseId}/tests")
 @Controller
 public class TestController {
     @Autowired
@@ -46,11 +49,25 @@ public class TestController {
     @Autowired
     private TestQuestionService testQuestionService;
 
+    @Autowired
+    private LocalizationService localizationService;
+
 
     @GetMapping
-    public String getAllTestsByCourse(@PathVariable("courseId") Integer courseId, Model model,
-                                      @RequestParam Map<String,String> params) {
-        long totalTests = testService.countTestsInCourse(courseId);
+    public String getAllTestsByCourse(@PathVariable("courseId") Integer courseId,
+                                      Model model,
+                                      @RequestParam Map<String,String> params,
+                                      @AuthenticationPrincipal CustomUserDetails principal) {
+        Course course = courseService.getCourseByIdWithPermissionCheck(courseId, principal.getUser());
+        params.put("courseId", String.valueOf(courseId));
+
+        if(principal.getUser().getUserRoleId().getName().contains("LECTURER")) {
+            Lecturer lecturer = lecturerService.getLecturerByUserId(principal.getUser().getId())
+                    .orElseThrow(() -> new NotFoundException(localizationService.getMessage("lecturer.notFound", LocaleContextHolder.getLocale())));
+            params.put("createdByUserId", String.valueOf(lecturer.getId()));
+        }
+
+        long totalTests = testService.countSearchResults(params);
         if (totalTests == 0) {
             model.addAttribute("message", "No tests found for this course.");
             return "dashboard/lecturer/test/test";
@@ -58,7 +75,7 @@ public class TestController {
 
         Pagination pagination = paginationHelper.getPagination(params, totalTests);
 
-        List<Test> tests = testService.getTestsByCourse(courseId, params);
+        List<Test> tests = testService.getAllTests(params);
 
         if (tests.isEmpty()) {
             model.addAttribute("message", "No tests were found");
@@ -78,9 +95,9 @@ public class TestController {
     @GetMapping("/test/{id}")
     public String getTestById(Model model,
                               @PathVariable("courseId") Integer courseId,
-                              @PathVariable("id") Integer id) {
-        Test test = testService.getTestById(id)
-                .orElseThrow(() -> new RuntimeException("Test not found with id " + id));
+                              @PathVariable("id") Integer id,
+                              @AuthenticationPrincipal CustomUserDetails principal) {
+        Test test = testService.getTestByIdWithPermissionsCheck(id, principal.getUser());
         List<Question> questions = questionService.getQuestionsByTest(id);
         List<Question> allQuestionsInCourse = questionService.getQuestionsByCourse(courseId);
 
@@ -88,7 +105,6 @@ public class TestController {
         Set<Integer> existingQuestionIds = questions.stream()
                 .map(Question::getId)
                 .collect(Collectors.toSet());
-
         List<Exercise> exercises = exerciseService.getExercisesByCourse(courseId,null);
 
         test.setCourseId(new Course(courseId));
@@ -182,7 +198,7 @@ public class TestController {
             redirectAttributes.addFlashAttribute("error", "Error updating test: " + e.getMessage());
         }
 
-        return "redirect:/course/" + courseId + "/tests/test/" + id;
+        return "redirect:/admin/courses/" + courseId + "/tests/test/" + id;
     }
 
 
@@ -226,7 +242,7 @@ public class TestController {
             return "dashboard/lecturer/test/testAdd";
         }
 
-        return "redirect:/course/" + courseId + "/tests";
+        return "redirect:/admin/courses/" + courseId + "/tests";
     }
 
     @PostMapping("/test/{id}/delete")
@@ -241,6 +257,6 @@ public class TestController {
         } else {
             redirectAttributes.addFlashAttribute("error", "Test not found!");
         }
-        return "redirect:/course/" + courseId + "/tests";
+        return "redirect:/admin/courses/" + courseId + "/tests";
     }
 }

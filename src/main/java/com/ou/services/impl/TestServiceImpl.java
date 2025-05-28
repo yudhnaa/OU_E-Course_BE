@@ -1,11 +1,15 @@
 package com.ou.services.impl;
 
+import com.ou.pojo.Lecturer;
 import com.ou.pojo.Test;
+import com.ou.pojo.User;
+import com.ou.repositories.LecturerRepository;
 import com.ou.repositories.TestRepository;
 import com.ou.services.LocalizationService;
 import com.ou.services.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -22,6 +26,9 @@ public class TestServiceImpl implements TestService {
     @Autowired
     private LocalizationService localizationService;
 
+    @Autowired
+    private LecturerRepository lecturerRepository;
+
     @Override
     public List<Test> getAllTests(Map<String, String> params) {
         return testRepositoryImpl.getAllTests(params);
@@ -30,6 +37,25 @@ public class TestServiceImpl implements TestService {
     @Override
     public Optional<Test> getTestById(Integer id) {
         return testRepositoryImpl.getTestById(id);
+    }
+
+    @Override
+    public Test getTestByIdWithPermissionsCheck(Integer testId, User user) {
+        // get test by ID
+        Optional<Test> optionalTest = testRepositoryImpl.getTestById(testId);
+        if (optionalTest.isEmpty()) {
+            throw new IllegalArgumentException(localizationService.getMessage("test.notfound", LocaleContextHolder.getLocale()));
+        }
+        if(user.getUserRoleId().getName().contains("LECTURER")){
+            Lecturer lecturer = lecturerRepository.getLecturerByUserId(user.getId()).orElseThrow(() ->
+                    new AccessDeniedException(localizationService.getMessage("lecturer.notFound", LocaleContextHolder.getLocale())));
+
+            boolean isLecturerOfTest = testRepositoryImpl.isLecturerOfTest(lecturer.getId(), testId);
+            if (!isLecturerOfTest) {
+                throw new AccessDeniedException(localizationService.getMessage("test.access.denied", LocaleContextHolder.getLocale()));
+            }
+        }
+        return optionalTest.get();
     }
 
     @Override
@@ -106,5 +132,10 @@ public class TestServiceImpl implements TestService {
         }
 
         return true;
+    }
+
+    @Override
+    public long countSearchResults(Map<String, String> filters) {
+        return testRepositoryImpl.countSearchResults(filters);
     }
 }

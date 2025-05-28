@@ -207,7 +207,7 @@
             </h2>
         </div>
         <div class="card-body p-4">
-            <form th:object="${exerciseAttempt}" th:action="@{/course/{courseId}/lessons/{lessonId}/exercises/exercise/{exerciseId}/submissions/{submissionId}/update(courseId=${courseId}, lessonId=${lessonId}, exerciseId=${exerciseId}, submissionId=${exerciseAttempt.id})}" method="post">
+            <form th:object="${exerciseAttempt}" th:action="@{/admin/courses/{courseId}/lessons/{lessonId}/exercises/exercise/{exerciseId}/submissions/{submissionId}/update(courseId=${courseId}, lessonId=${lessonId}, exerciseId=${exerciseId}, submissionId=${exerciseAttempt.id})}" method="post">
                 <input type="hidden" th:value="*{id}" name="id" />
                 <input type="hidden" name="statusId" th:value="${exerciseAttempt.statusId.id}" />
                 <input type="hidden" name="scoreByUserId" th:value="${exerciseAttempt.scoreByUserId.id}" />
@@ -234,7 +234,7 @@
         </div>
     </div>
 
-    <a th:href="@{/course/{courseId}/lessons/{lessonId}/exercises/exercise/{exerciseId}/submissions(courseId=${courseId}, lessonId=${lessonId}, exerciseId=${exerciseId})}" class="btn btn-secondary mt-3">Back to Submission List</a>
+    <a th:href="@{/admin/courses/{courseId}/lessons/{lessonId}/exercises/exercise/{exerciseId}/submissions(courseId=${courseId}, lessonId=${lessonId}, exerciseId=${exerciseId})}" class="btn btn-secondary mt-3">Back to Submission List</a>
 </div>
 </body>
 </html>

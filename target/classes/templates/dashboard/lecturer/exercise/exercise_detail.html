@@ -129,7 +129,7 @@
                         <div class="col-xl-9 col-lg-8">
                             <div class="card">
                                 <div class="card-body">
-                                    <form th:action="@{'/course/' + ${courseId} + '/lessons/' + ${lessonId} + '/exercises/exercise/' + ${exercise.id} + '/update'}"
+                                    <form th:action="@{'/admin/courses/' + ${courseId} + '/lessons/' + ${lessonId} + '/exercises/exercise/' + ${exercise.id} + '/update'}"
                                           th:object="${exercise}" method="post">
                                         <input type="hidden" th:value="*{id}" name="id"/>
                                         <div class="mb-3">
@@ -153,7 +153,7 @@
                                         <div class="text-end">
                                             <button type="submit" class="btn btn-primary">Save Changes</button>
                                             <button type="button" class="btn btn-danger" id="delete-exercise-btn"
-                                                    th:data-url="@{'/course/' + ${courseId} + '/lessons/' + ${lessonId} + '/exercises/exercise/' + ${exercise.id} + '/delete'}">
+                                                    th:data-url="@{'/admin/courses/' + ${courseId} + '/lessons/' + ${lessonId} + '/exercises/exercise/' + ${exercise.id} + '/delete'}">
                                                 Delete exercise
                                             </button>
                                         </div>
@@ -174,7 +174,7 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="text-start mt-3">
-                                        <a th:href="@{'/course/' + ${courseId} + '/lessons/' + ${lessonId} + '/exercises/exercise/' + ${exercise.id} + '/question/add'}"
+                                        <a th:href="@{'/admin/courses/' + ${courseId} + '/lessons/' + ${lessonId} + '/exercises/exercise/' + ${exercise.id} + '/question/add'}"
                                            class="btn btn-primary">
                                             <i class="ri-add-line align-bottom me-1"></i> Add Question
                                         </a>
@@ -216,14 +216,14 @@
                                                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                                             <li>
                                                                 <a class="dropdown-item"
-                                                                   th:href="@{'/course/' + ${courseId} + '/lessons/' + ${lessonId} + '/exercises/exercise/' + ${exercise.id} + '/question/' + ${question.id}}">
+                                                                   th:href="@{'/admin/courses/' + ${courseId} + '/lessons/' + ${lessonId} + '/exercises/exercise/' + ${exercise.id} + '/question/' + ${question.id}}">
                                                                     Edit exercise
                                                                 </a>
                                                             </li>
                                                             <li>
                                                                 <a class="dropdown-item text-danger delete-question"
                                                                    th:data-id="${question.id}"
-                                                                   th:data-url="@{'/course/' + ${courseId} + '/lessons/' + ${lessonId} + '/exercises/exercise/' + ${exercise.id} + '/question/' + ${question.id} + '/delete'}">
+                                                                   th:data-url="@{'/admin/courses/' + ${courseId} + '/lessons/' + ${lessonId} + '/exercises/exercise/' + ${exercise.id} + '/question/' + ${question.id} + '/delete'}">
                                                                     Delete
                                                                 </a>
                                                             </li>

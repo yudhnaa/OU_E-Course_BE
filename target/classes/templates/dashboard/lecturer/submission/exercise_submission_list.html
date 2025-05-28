@@ -48,7 +48,7 @@
                 <i class="fa-solid fa-check"></i>
                 <span th:text="'Score: ' + ${exerciseAttempt.totalScore}">Score: 85</span>
             </p>
-            <a th:href="@{/course/{courseId}/lessons/{lessonId}/exercises/exercise/{exerciseId}/submissions/{submissionId}(courseId=${courseId}, lessonId=${lessonId}, exerciseId=${exerciseId}, submissionId=${exerciseAttempt.id})}"
+            <a th:href="@{/admin/courses/{courseId}/lessons/{lessonId}/exercises/exercise/{exerciseId}/submissions/{submissionId}(courseId=${courseId}, lessonId=${lessonId}, exerciseId=${exerciseId}, submissionId=${exerciseAttempt.id})}"
                class="btn btn-primary">View Submission</a>
         </div>
     </div>
@@ -58,19 +58,19 @@
         <ul class="pagination pagination-separated justify-content-center justify-content-sm-end mb-sm-0">
             <!-- Nút Previous -->
             <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                <a th:href="@{/course/{courseId}/tests(courseId=${courseId}, page=${currentPage - 1})}" class="page-link">
+                <a th:href="@{/admin/courses/{courseId}/tests(courseId=${courseId}, page=${currentPage - 1})}" class="page-link">
                     <i class="mdi mdi-chevron-left"></i>
                 </a>
             </li>
 
             <!-- Các số trang -->
             <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}" th:classappend="${page == currentPage} ? 'active'">
-                <a th:href="@{/course/{courseId}/lessons/{lessonId}/exercises/exercise/{exerciseId}/submissions(courseId=${courseId}, exerciseId=${exerciseId}, lessonId=${lessonId}, page=${page})}" class="page-link" th:text="${page}"></a>
+                <a th:href="@{/admin/courses/{courseId}/lessons/{lessonId}/exercises/exercise/{exerciseId}/submissions(courseId=${courseId}, exerciseId=${exerciseId}, lessonId=${lessonId}, page=${page})}" class="page-link" th:text="${page}"></a>
             </li>
 
             <!-- Nút Next -->
             <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                <a th:href="@{/course/{courseId}/lessons/{lessonId}/exercises/exercise/{exerciseId}/submissions(courseId=${courseId}, exerciseId=${exerciseId}, lessonId=${lessonId}, page=${currentPage + 1})}" class="page-link">
+                <a th:href="@{/admin/courses/{courseId}/lessons/{lessonId}/exercises/exercise/{exerciseId}/submissions(courseId=${courseId}, exerciseId=${exerciseId}, lessonId=${lessonId}, page=${currentPage + 1})}" class="page-link">
                     <i class="mdi mdi-chevron-right"></i>
                 </a>
             </li>

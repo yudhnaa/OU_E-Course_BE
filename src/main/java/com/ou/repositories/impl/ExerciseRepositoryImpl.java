@@ -139,7 +139,25 @@ public class ExerciseRepositoryImpl implements ExerciseRepository {
         query.select(builder.count(root));
         return session.createQuery(query).getSingleResult();
     }
-    
+
+    @Override
+    public boolean isCreatorOfExercise(Integer lecturerId, Integer exerciseId) {
+        Session session = sessionFactory.getObject().getCurrentSession();
+        try {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Exercise> query = builder.createQuery(Exercise.class);
+            Root<Exercise> root = query.from(Exercise.class);
+            query.where(builder.and(
+                builder.equal(root.get("id"), exerciseId),
+                builder.equal(root.get("createdByUserId").get("id"), lecturerId)
+            ));
+            Exercise exercise = session.createQuery(query).getSingleResult();
+            return exercise != null;
+        } catch (NoResultException e) {
+            return false;
+        }
+    }
+
     private List<Predicate> buildSearchPredicates(CriteriaBuilder builder, Root<Exercise> root, Map<String, String> filters) {
         List<Predicate> predicates = new ArrayList<>();
         
@@ -154,10 +172,6 @@ public class ExerciseRepositoryImpl implements ExerciseRepository {
             
             if (filters.containsKey("courseId")) {
                 predicates.add(builder.equal(root.get("courseId").get("id"), Integer.valueOf(filters.get("courseId"))));
-            }
-            
-            if (filters.containsKey("lessonId")) {
-                predicates.add(builder.equal(root.get("lessonId").get("id"), Integer.valueOf(filters.get("lessonId"))));
             }
             
             if (filters.containsKey("createdByUserId")) {
@@ -211,13 +225,16 @@ public class ExerciseRepositoryImpl implements ExerciseRepository {
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Exercise> query = builder.createQuery(Exercise.class);
         Root<Exercise> root = query.from(Exercise.class);
-        
-        query.where(builder.equal(root.get("lessonId").get("id"), lessonId));
 
-        List<Predicate> predicates = buildSearchPredicates(builder, root, params);
-        if(!predicates.isEmpty()) {
-            query.where(builder.and(predicates.toArray(new Predicate[0])));
-        }
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(builder.equal(root.get("lessonId").get("id"), lessonId));
+
+        // Thêm các điều kiện tìm kiếm khác
+        predicates.addAll(buildSearchPredicates(builder, root, params));
+
+        // Gộp tất cả vào where
+        query.where(builder.and(predicates.toArray(new Predicate[0])));
+
 
         Query<Exercise> q = session.createQuery(query);
 

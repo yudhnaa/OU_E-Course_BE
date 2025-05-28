@@ -17,4 +17,6 @@ public interface TestRepository {
     List<Test> searchTestsByName(String name);
     List<Test> getTestsByCreatedDateRange(Date startDate, Date endDate);
     long countTestsInCourse(Integer courseId);
+    long countSearchResults(Map<String, String> filters);
+    boolean isLecturerOfTest(Integer lecturerId, Integer testId);
 }
