@@ -16,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -97,19 +98,20 @@ public class LessonController {
     public String createLessonView(
             Model model,
             @PathVariable("courseId") Integer courseId,
-            RedirectAttributes redirectAttributes
+            RedirectAttributes redirectAttributes,
+            @AuthenticationPrincipal CustomUserDetails principal
     ) {
 
         // Get the course by ID
-        Optional<Course> course = courseService.getCourseById(courseId);
-        if (course.isEmpty()) {
+        Course course = courseService.getCourseByIdWithPermissionCheck(courseId, principal.getUser());
+        if (course == null) {
             // If the course is not found, redirect to the course list with an error message
             redirectAttributes.addFlashAttribute("msg_error", localizationService.getMessage("course.notFound", LocaleContextHolder.getLocale()));
             return "redirect:/admin/course";
         }
 
         Lesson lesson = new Lesson();
-        lesson.setCourseId(course.get());
+        lesson.setCourseId(course);
 
         List<LessonType> lessonTypes = lessonTypeService.getLessonTypes();
 
@@ -120,7 +122,7 @@ public class LessonController {
         // Add the lesson and course to the model
         model.addAttribute("lesson", lesson);
         model.addAttribute("lessonTypes", lessonTypes);
-        model.addAttribute("course", course.get());
+        model.addAttribute("course", course);
 
         return "dashboard/admin/lesson/lesson_create";
     }
@@ -131,9 +133,9 @@ public class LessonController {
             @PathVariable("courseId") Integer courseId,
             @ModelAttribute Lesson lesson,
             BindingResult bindingResult,
-            RedirectAttributes redirectAttributes
+            RedirectAttributes redirectAttributes,
+            @AuthenticationPrincipal CustomUserDetails principal
     ) throws Exception {
-
         // Validate the lesson object
         if (bindingResult.hasErrors()) {
             // If there are validation errors, return to the create lesson view
@@ -142,8 +144,9 @@ public class LessonController {
         }
 
         // Get the course by ID
-        Optional<Course> course = courseService.getCourseById(courseId);
-        if (course.isEmpty()) {
+//        Optional<Course> course = courseService.getCourseById(courseId);
+        Course course = courseService.getCourseByIdWithPermissionCheck(courseId, principal.getUser());
+        if (course == null) {
             // If the course is not found, redirect to the course list with an error message
             redirectAttributes.addFlashAttribute("msg_error", localizationService.getMessage("course.notFound", LocaleContextHolder.getLocale()));
             return "redirect:/admin/course";
@@ -195,8 +198,8 @@ public class LessonController {
         List<LessonType> lessonTypes = lessonTypeService.getLessonTypes();
 
         //Mock login user
-        User u = userService.getUserById(2);
-        model.addAttribute("authUser", u);
+//        User u = userService.getUserById(2);
+//        model.addAttribute("authUser", u);
 
         // Add the lesson and course to the model
         model.addAttribute("lesson", lesson.get());

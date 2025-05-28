@@ -13,10 +13,18 @@ File: Main Js File
 	/**
 	 *  global variables
 	 */
+
+	function getCookie(name) {
+		const value = `; ${document.cookie}`;
+		const parts = value.split(`; ${name}=`);
+		if (parts.length === 2) return parts.pop().split(';').shift();
+	}
+
+
 	var navbarMenuHTML = document.querySelector(".navbar-menu").innerHTML;
 	var horizontalMenuSplit = 7; // after this number all horizontal menus will be moved in More menu options
 	var default_lang = "en"; // set Default Language
-	var language = localStorage.getItem("language");
+	var language = getCookie('lang');
 
 	function initLanguage() {
 		// Set new language
@@ -36,8 +44,8 @@ File: Main Js File
 			} else if (lang === "vi") {
 				document.getElementById("header-lang-img").src = "assets/images/flags/vn.svg";
 			}
-			localStorage.setItem("language", lang);
-			language = localStorage.getItem("language");
+			// localStorage.setItem("lang", lang);
+			language = getCookie('lang');
 			getLanguage();
 		}
 	}
@@ -955,117 +963,6 @@ File: Main Js File
 		}
 	}
 
-	// notification cart dropdown
-	function initTopbarComponents() {
-		if (document.getElementsByClassName("dropdown-item-cart")) {
-			var dropdownItemCart = document.querySelectorAll(".dropdown-item-cart").length;
-			Array.from(document.querySelectorAll("#page-topbar .dropdown-menu-cart .remove-item-btn")).forEach(function (item) {
-				item.addEventListener("click", function (e) {
-					dropdownItemCart--;
-					this.closest(".dropdown-item-cart").remove();
-					Array.from(document.getElementsByClassName("cartitem-badge")).forEach(function (e) {
-						e.innerHTML = dropdownItemCart;
-					});
-					updateCartPrice();
-					if (document.getElementById("empty-cart")) {
-						document.getElementById("empty-cart").style.display = dropdownItemCart == 0 ? "block" : "none";
-					}
-					if (document.getElementById("checkout-elem")) {
-						document.getElementById("checkout-elem").style.display = dropdownItemCart == 0 ? "none" : "block";
-					}
-				});
-			});
-			Array.from(document.getElementsByClassName("cartitem-badge")).forEach(function (e) {
-				e.innerHTML = dropdownItemCart;
-			});
-			if (document.getElementById("empty-cart")) {
-				document.getElementById("empty-cart").style.display = "none";
-			}
-			if (document.getElementById("checkout-elem")) {
-				document.getElementById("checkout-elem").style.display = "block";
-			}
-			function updateCartPrice() {
-				var currencySign = "$";
-				var subtotal = 0;
-				Array.from(document.getElementsByClassName("cart-item-price")).forEach(function (e) {
-					subtotal += parseFloat(e.innerHTML);
-				});
-				if (document.getElementById("cart-item-total")) {
-					document.getElementById("cart-item-total").innerHTML = currencySign + subtotal.toFixed(2);
-				}
-			}
-			updateCartPrice();
-		}
-
-		// notification messages
-		if (document.getElementsByClassName("notification-check")) {
-			function emptyNotification() {
-				Array.from(document.querySelectorAll("#notificationItemsTabContent .tab-pane")).forEach(function (elem) {
-					if (elem.querySelectorAll(".notification-item").length > 0) {
-						if (elem.querySelector(".view-all")) {
-							elem.querySelector(".view-all").style.display = "block";
-						}
-					} else {
-						if (elem.querySelector(".view-all")) {
-							elem.querySelector(".view-all").style.display = "none";
-						}
-						var emptyNotificationElem = elem.querySelector(".empty-notification-elem")
-						if (!emptyNotificationElem) {
-							elem.innerHTML += '<div class="empty-notification-elem">\
-							<div class="w-25 w-sm-50 pt-3 mx-auto">\
-								<img src="assets/images/svg/bell.svg" class="img-fluid" alt="user-pic">\
-							</div>\
-							<div class="text-center pb-5 mt-2">\
-								<h6 class="fs-18 fw-semibold lh-base">Hey! You have no any notifications </h6>\
-							</div>\
-						</div>'
-						}
-					}
-				});
-			}
-			emptyNotification();
-
-
-			Array.from(document.querySelectorAll(".notification-check input")).forEach(function (element) {
-				element.addEventListener("change", function (el) {
-					el.target.closest(".notification-item").classList.toggle("active");
-
-					var checkedCount = document.querySelectorAll('.notification-check input:checked').length;
-
-					if (el.target.closest(".notification-item").classList.contains("active")) {
-						(checkedCount > 0) ? document.getElementById("notification-actions").style.display = 'block' : document.getElementById("notification-actions").style.display = 'none';
-					} else {
-						(checkedCount > 0) ? document.getElementById("notification-actions").style.display = 'block' : document.getElementById("notification-actions").style.display = 'none';
-					}
-					document.getElementById("select-content").innerHTML = checkedCount
-				});
-
-				var notificationDropdown = document.getElementById('notificationDropdown')
-				notificationDropdown.addEventListener('hide.bs.dropdown', function (event) {
-					element.checked = false;
-					document.querySelectorAll('.notification-item').forEach(function (item) {
-						item.classList.remove("active");
-					})
-					document.getElementById('notification-actions').style.display = '';
-				});
-			});
-
-			var removeItem = document.getElementById('removeNotificationModal');
-			removeItem.addEventListener('show.bs.modal', function (event) {
-				document.getElementById("delete-notification").addEventListener("click", function () {
-					Array.from(document.querySelectorAll(".notification-item")).forEach(function (element) {
-						if (element.classList.contains("active")) {
-							element.remove();
-						}
-					});
-					emptyNotification();
-
-					document.getElementById("NotificationModalbtn-close").click();
-				})
-			})
-		}
-	}
-
 	function initComponents() {
 		// tooltip
 		var tooltipTriggerList = [].slice.call(
@@ -1922,7 +1819,6 @@ File: Main Js File
 		windowLoadContent();
 		counter();
 		initLeftMenuCollapse();
-		initTopbarComponents();
 		initComponents();
 		resetLayout();
 		pluginData();

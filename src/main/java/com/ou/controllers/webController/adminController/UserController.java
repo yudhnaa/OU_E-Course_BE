@@ -1,5 +1,6 @@
 package com.ou.controllers.webController.adminController;
 
+import com.ou.exceptions.NotFoundException;
 import com.ou.helpers.PaginationHelper;
 import com.ou.pojo.*;
 import com.ou.services.*;
@@ -84,18 +85,18 @@ public class UserController {
 
             switch (userRole.getName())
             {
-                case "admin":
+                case "ROLE_ADMIN":
                     Admin newAdmin = new Admin();
                     newAdmin.setUserId(createdUser);
                     Admin createdAdmin = adminService.addAdmin(newAdmin);
                     break;
-                case "lecturer":
+                case "ROLE_LECTURER":
                     Lecturer newLecturer = new Lecturer();
                     newLecturer.setUserId(createdUser);
                     newLecturer.setIsActive(true);
                     Lecturer createdLecturer = lecturerService.addLecturer(newLecturer);
                     break;
-                case "student":
+                case "ROLE_STUDENT":
                     Student newStudent = new Student();
                     newStudent.setUserId(createdUser);
                     Student createdStudent = studentService.addStudent(newStudent);
@@ -127,9 +128,9 @@ public class UserController {
             String roleName = deleteUser.getUserRoleId().getName();
 
             boolean roleDeleted = switch (roleName) {
-                case "admin" -> deleteAdmin(deleteUser);
-                case "lecturer" -> deleteLecturer(deleteUser);
-                case "student" -> deleteStudent(deleteUser);
+                case "ROLE_ADMIN" -> deleteAdmin(deleteUser);
+                case "ROLE_LECTURER" -> deleteLecturer(deleteUser);
+                case "ROLE_STUDENT" -> deleteStudent(deleteUser);
                 default -> {
                     redirectAttributes.addFlashAttribute("msg_error", localizationService.getMessage("user.delete.error.notFound", locale));
                     yield false;
@@ -147,7 +148,18 @@ public class UserController {
             } else {
                 redirectAttributes.addFlashAttribute("msg_error", localizationService.getMessage("user.delete.error", locale));
             }
-        } catch (Exception e) {
+        }
+        catch (NotFoundException e){
+            // try to delete user even if the role is not found
+            boolean isDeleted = userService.deleteUser(id);
+            if (isDeleted) {
+                redirectAttributes.addFlashAttribute("msg_success", localizationService.getMessage("user.delete.success", locale));
+            } else {
+                redirectAttributes.addFlashAttribute("msg_error", localizationService.getMessage("user.delete.error", locale));
+            }
+            return "redirect:/admin/users";
+        }
+        catch (Exception e) {
             redirectAttributes.addFlashAttribute("msg_error", localizationService.getMessage("user.delete.error", LocaleContextHolder.getLocale()));
         }
 

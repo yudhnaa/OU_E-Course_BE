@@ -145,137 +145,137 @@ public class UserDto implements Serializable {
                 "userRoleIdId = " + userRoleIdId + ")";
     }
 
-    /**
-     * DTO for {@link com.ou.pojo.Course}
-     */
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class CourseDto implements Serializable {
-        private final Integer id;
-        private final String name;
-        private final String description;
-        private final Date dateAdded;
-        private final Date dateStart;
-        private final Date dateEnd;
-
-        public CourseDto(Integer id, String name, String description, Date dateAdded, Date dateStart, Date dateEnd) {
-            this.id = id;
-            this.name = name;
-            this.description = description;
-            this.dateAdded = dateAdded;
-            this.dateStart = dateStart;
-            this.dateEnd = dateEnd;
-        }
-
-        public Integer getId() {
-            return id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public Date getDateAdded() {
-            return dateAdded;
-        }
-
-        public Date getDateStart() {
-            return dateStart;
-        }
-
-        public Date getDateEnd() {
-            return dateEnd;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            CourseDto entity = (CourseDto) o;
-            return Objects.equals(this.id, entity.id) &&
-                    Objects.equals(this.name, entity.name) &&
-                    Objects.equals(this.description, entity.description) &&
-                    Objects.equals(this.dateAdded, entity.dateAdded) &&
-                    Objects.equals(this.dateStart, entity.dateStart) &&
-                    Objects.equals(this.dateEnd, entity.dateEnd);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(id, name, description, dateAdded, dateStart, dateEnd);
-        }
-
-        @Override
-        public String toString() {
-            return getClass().getSimpleName() + "(" +
-                    "id = " + id + ", " +
-                    "name = " + name + ", " +
-                    "description = " + description + ", " +
-                    "dateAdded = " + dateAdded + ", " +
-                    "dateStart = " + dateStart + ", " +
-                    "dateEnd = " + dateEnd + ")";
-        }
-    }
-
-    /**
-     * DTO for {@link com.ou.pojo.Lesson}
-     */
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class LessonDto implements Serializable {
-        private final Integer id;
-        private final String name;
-        private final String embedLink;
-        private final String description;
-
-        public LessonDto(Integer id, String name, String embedLink, String description) {
-            this.id = id;
-            this.name = name;
-            this.embedLink = embedLink;
-            this.description = description;
-        }
-
-        public Integer getId() {
-            return id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getEmbedLink() {
-            return embedLink;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            LessonDto entity = (LessonDto) o;
-            return Objects.equals(this.id, entity.id) &&
-                    Objects.equals(this.name, entity.name) &&
-                    Objects.equals(this.embedLink, entity.embedLink) &&
-                    Objects.equals(this.description, entity.description);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(id, name, embedLink, description);
-        }
-
-        @Override
-        public String toString() {
-            return getClass().getSimpleName() + "(" +
-                    "id = " + id + ", " +
-                    "name = " + name + ", " +
-                    "embedLink = " + embedLink + ", " +
-                    "description = " + description + ")";
-        }
-    }
+//    /**
+//     * DTO for {@link com.ou.pojo.Course}
+//     */
+//    @JsonIgnoreProperties(ignoreUnknown = true)
+//    public static class CourseDto implements Serializable {
+//        private final Integer id;
+//        private final String name;
+//        private final String description;
+//        private final Date dateAdded;
+//        private final Date dateStart;
+//        private final Date dateEnd;
+//
+//        public CourseDto(Integer id, String name, String description, Date dateAdded, Date dateStart, Date dateEnd) {
+//            this.id = id;
+//            this.name = name;
+//            this.description = description;
+//            this.dateAdded = dateAdded;
+//            this.dateStart = dateStart;
+//            this.dateEnd = dateEnd;
+//        }
+//
+//        public Integer getId() {
+//            return id;
+//        }
+//
+//        public String getName() {
+//            return name;
+//        }
+//
+//        public String getDescription() {
+//            return description;
+//        }
+//
+//        public Date getDateAdded() {
+//            return dateAdded;
+//        }
+//
+//        public Date getDateStart() {
+//            return dateStart;
+//        }
+//
+//        public Date getDateEnd() {
+//            return dateEnd;
+//        }
+//
+//        @Override
+//        public boolean equals(Object o) {
+//            if (this == o) return true;
+//            if (o == null || getClass() != o.getClass()) return false;
+//            CourseDto entity = (CourseDto) o;
+//            return Objects.equals(this.id, entity.id) &&
+//                    Objects.equals(this.name, entity.name) &&
+//                    Objects.equals(this.description, entity.description) &&
+//                    Objects.equals(this.dateAdded, entity.dateAdded) &&
+//                    Objects.equals(this.dateStart, entity.dateStart) &&
+//                    Objects.equals(this.dateEnd, entity.dateEnd);
+//        }
+//
+//        @Override
+//        public int hashCode() {
+//            return Objects.hash(id, name, description, dateAdded, dateStart, dateEnd);
+//        }
+//
+//        @Override
+//        public String toString() {
+//            return getClass().getSimpleName() + "(" +
+//                    "id = " + id + ", " +
+//                    "name = " + name + ", " +
+//                    "description = " + description + ", " +
+//                    "dateAdded = " + dateAdded + ", " +
+//                    "dateStart = " + dateStart + ", " +
+//                    "dateEnd = " + dateEnd + ")";
+//        }
+//    }
+//
+//    /**
+//     * DTO for {@link com.ou.pojo.Lesson}
+//     */
+//    @JsonIgnoreProperties(ignoreUnknown = true)
+//    public static class LessonDto implements Serializable {
+//        private final Integer id;
+//        private final String name;
+//        private final String embedLink;
+//        private final String description;
+//
+//        public LessonDto(Integer id, String name, String embedLink, String description) {
+//            this.id = id;
+//            this.name = name;
+//            this.embedLink = embedLink;
+//            this.description = description;
+//        }
+//
+//        public Integer getId() {
+//            return id;
+//        }
+//
+//        public String getName() {
+//            return name;
+//        }
+//
+//        public String getEmbedLink() {
+//            return embedLink;
+//        }
+//
+//        public String getDescription() {
+//            return description;
+//        }
+//
+//        @Override
+//        public boolean equals(Object o) {
+//            if (this == o) return true;
+//            if (o == null || getClass() != o.getClass()) return false;
+//            LessonDto entity = (LessonDto) o;
+//            return Objects.equals(this.id, entity.id) &&
+//                    Objects.equals(this.name, entity.name) &&
+//                    Objects.equals(this.embedLink, entity.embedLink) &&
+//                    Objects.equals(this.description, entity.description);
+//        }
+//
+//        @Override
+//        public int hashCode() {
+//            return Objects.hash(id, name, embedLink, description);
+//        }
+//
+//        @Override
+//        public String toString() {
+//            return getClass().getSimpleName() + "(" +
+//                    "id = " + id + ", " +
+//                    "name = " + name + ", " +
+//                    "embedLink = " + embedLink + ", " +
+//                    "description = " + description + ")";
+//        }
+//    }
 }
