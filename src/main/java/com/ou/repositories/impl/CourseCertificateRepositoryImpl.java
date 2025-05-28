@@ -195,6 +195,23 @@ public class CourseCertificateRepositoryImpl implements CourseCertificateReposit
                 ));
             }
 
+            if (filters.containsKey("name")){
+                Predicate usernamePredicate = builder.like(
+                        root.get("courseStudentId").get("studentId").get("userId").get("username"),
+                        "%" + filters.get("name") + "%"
+                );
+                Predicate firstNamePredicate = builder.like(
+                        root.get("courseStudentId").get("studentId").get("userId").get("firstName"),
+                        "%" + filters.get("name") + "%"
+                );
+                Predicate lastNamePredicate = builder.like(
+                        root.get("courseStudentId").get("studentId").get("userId").get("lastName"),
+                        "%" + filters.get("name") + "%"
+                );
+
+                predicates.add(builder.or(usernamePredicate, firstNamePredicate, lastNamePredicate));
+            }
+
             if (filters.containsKey("lecturerId")) {
                 Integer lecturerId = Integer.valueOf(filters.get("lecturerId"));
 
