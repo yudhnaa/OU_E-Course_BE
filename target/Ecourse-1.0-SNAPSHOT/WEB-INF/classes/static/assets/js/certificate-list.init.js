@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     let debounceTimer;
-    const searchBox = document.getElementById('searchLessons');
+    const searchBox = document.getElementById('search-box');
 
     searchBox.addEventListener('input', function (e) {
         clearTimeout(debounceTimer);

@@ -2,10 +2,17 @@ package com.ou.mappers;
 
 import com.ou.dto.StudentDto;
 import com.ou.pojo.Student;
+import com.ou.services.CourseStudentService;
 import org.springframework.stereotype.Component;
 
 @Component
 public class StudentMapper {
+
+    private final CourseStudentService courseStudentService;
+
+    public StudentMapper(CourseStudentService courseStudentService) {
+        this.courseStudentService = courseStudentService;
+    }
 
     public StudentDto toDto(Student student) {
         if ( student == null ) {
@@ -23,6 +30,7 @@ public class StudentMapper {
         studentDto.setUserRoleIdId(student.getUserId().getUserRoleId().getId());
         studentDto.setUserRoleIdName(student.getUserId().getUserRoleId().getName());
         studentDto.setUserIdAvatar(student.getUserId().getAvatar());
+        studentDto.setCountCourse(courseStudentService.countCourseStudentsByStudent(student.getId()));
 
         return studentDto;
     }

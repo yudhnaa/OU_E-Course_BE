@@ -123,7 +123,7 @@
                                     </div>
                                 </td>
                                 <td class="client_name" th:text="${user.firstName}">Robert McMahon</td>
-                                <td class="assignedto" th:text="${#dates.format(user.birthday, 'dd-MM-yyyy')}"></td>
+                                <td class="assignedto" th:text="${user.birthday}"></td>
                                 <!--                                <td class="due_date" th:text="${user.password}"></td>-->
                                 <td class="status" th:text="${user.email}"></td>
                                 <td class="priority">
