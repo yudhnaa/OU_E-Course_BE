@@ -1,5 +1,7 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
       layout:decorate="~{layout}">
 
 <th:block layout:fragment="pagetitle">
@@ -315,8 +317,8 @@
                                                 <!--                        </div>-->
 
                                             </div>
-                                            <div class="col-12 text-end">
-                                                <button type="button" class="btn btn-danger" id="custom-sa-warning">
+                                            <div  class="col-12 text-end">
+                                                <button type="button" class="btn btn-danger" id="custom-sa-warning" sec:authorize="hasRole('ADMIN')">
                                                     Remove
                                                 </button>
                                                 <button type="submit" class="btn btn-primary">Save</button>
@@ -336,7 +338,7 @@
                         </div>
                     </div>
 
-                    <div class="card">
+                    <div class="card" sec:authorize="hasRole('ADMIN')">
                         <div class="card-body">
                             <div class="d-flex align-items-center mb-4">
                                 <h5 class="card-title flex-grow-1">Lecturer</h5>
@@ -365,7 +367,7 @@
 
                                             <div class="row g-3" id="lecturer-list">
                                                 <div class="col-md-6 mb-2" th:each="cl, itemStat : *{courseLecturers}">
-                                                    <div class="input-group">
+                                                    <div class="input-group" >
                                                         <!-- Hidden ID (nếu có) -->
                                                         <input type="hidden" th:field="*{courseLecturers[__${itemStat.index}__].id}" />
 

@@ -213,8 +213,17 @@ public class CourseController{
     }
 
     @PostMapping("/course/{id}/delete")
-    public String deleteCourse(@PathVariable("id") int id,
-                                RedirectAttributes redirectAttributes) {
+    public String deleteCourse(
+            @PathVariable("id") int id,
+            RedirectAttributes redirectAttributes,
+            @AuthenticationPrincipal CustomUserDetails principal
+    ) {
+        // Check if the user has permission to delete the course
+        Course course = courseService.getCourseByIdWithPermissionCheck(id, principal.getUser());
+        if (course == null) {
+            redirectAttributes.addFlashAttribute("msg_error", localizationService.getMessage("permission.access.denied", LocaleContextHolder.getLocale()));
+            return "redirect:/admin/courses";
+        }
         boolean isDeleted = courseService.deleteCourse(id);
         if (isDeleted) {
             redirectAttributes.addFlashAttribute("msg_success", "Course deleted successfully.");

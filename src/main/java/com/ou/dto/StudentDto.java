@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Objects;
 
 /**
@@ -24,7 +24,7 @@ public class StudentDto implements Serializable {
     @Size(min = 1, max = 50)
     private String userIdFirstName;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime userIdBirthday;
+    private LocalDate userIdBirthday;
     @NotNull
     @Size(min = 1, max = 50)
     private String userIdUsername;
@@ -34,23 +34,9 @@ public class StudentDto implements Serializable {
     private Integer userRoleIdId;
     private String userRoleIdName;
     private String userIdAvatar;
+    private long countCourse;
 
     public StudentDto() {
-    }
-
-    public StudentDto(Integer id, String userIdLastName, String userIdFirstName, LocalDateTime userIdBirthday, String userIdUsername, String userIdEmail, Integer userRoleIdId, String userRoleIdName,
-                      String userIdAvatar,
-                      Integer userIdId) {
-        this.id = id;
-        this.userIdLastName = userIdLastName;
-        this.userIdFirstName = userIdFirstName;
-        this.userIdBirthday = userIdBirthday;
-        this.userIdUsername = userIdUsername;
-        this.userIdEmail = userIdEmail;
-        this.userRoleIdId = userRoleIdId;
-        this.userRoleIdName = userRoleIdName;
-        this.userIdAvatar = userIdAvatar;
-        this.userIdId = userIdId;
     }
 
     @Override
@@ -70,7 +56,7 @@ public class StudentDto implements Serializable {
     }
 
 
-    public LocalDateTime getUserIdBirthday() {
+    public LocalDate getUserIdBirthday() {
         return userIdBirthday;
     }
 
@@ -107,8 +93,15 @@ public class StudentDto implements Serializable {
         return Objects.hash(id, userIdId, userIdLastName, userIdFirstName, userIdBirthday, userIdUsername, userIdEmail, userRoleIdId, userRoleIdName, userIdAvatar);
     }
 
+    public long getCountCourse() {
+        return countCourse;
+    }
 
-    public void setUserIdBirthday(LocalDateTime userIdBirthday) {
+    public void setCountCourse(long countCourse) {
+        this.countCourse = countCourse;
+    }
+
+    public void setUserIdBirthday(LocalDate userIdBirthday) {
         this.userIdBirthday = userIdBirthday;
     }
 
