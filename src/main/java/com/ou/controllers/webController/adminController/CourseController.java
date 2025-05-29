@@ -51,6 +51,8 @@ public class CourseController{
     private LecturerService lecturerService;
     @Autowired
     private LecturerMapper lecturerMapper;
+    @Autowired
+    private AdminService adminService;
 
 
     @GetMapping("/courses")
@@ -162,12 +164,18 @@ public class CourseController{
                                RedirectAttributes redirectAttributes
     ) throws Exception {
 
+        Course existingCourse = courseService.getCourseById(id).orElseThrow(
+                () -> new NotFoundException(localizationService.getMessage("course.notFound", LocaleContextHolder.getLocale()))
+        );
+
         // Validate course data
         if (bindingResult.hasErrors()) {
             String msg_error = bindingResult.getFieldError().getDefaultMessage();
             redirectAttributes.addAttribute("msg_error", msg_error);
             return "redirect:/admin/course/" + id;
         }
+
+        course.setCreatedByAdminId(existingCourse.getCreatedByAdminId());
 
         Course updateCourse = courseService.updateCourse(course);
         if (updateCourse != null) {
@@ -250,6 +258,7 @@ public class CourseController{
     public String createCourse(
             Model model,
             @Valid @ModelAttribute("course") Course course,
+            @AuthenticationPrincipal CustomUserDetails principal,
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes
     ) throws IOException {
@@ -259,6 +268,8 @@ public class CourseController{
             redirectAttributes.addAttribute("msg_error", msg_error);
             return "redirect:/admin/course/create";
         }
+
+        course.setCreatedByAdminId(adminService.getAdminByUserId(principal.getUser().getId()));
 
         // Save the course
         Course newCourse =  courseService.addCourse(course);

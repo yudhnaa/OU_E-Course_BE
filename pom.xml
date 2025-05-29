@@ -127,15 +127,6 @@
             <version>v3-rev197-1.25.0</version>
         </dependency>
 
-
-        <!--        Others -->
-        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.19.0</version>
-        </dependency>
-
 <!--        HTML TO XHTML TO PDF-->
         <!-- https://mvnrepository.com/artifact/org.xhtmlrenderer/flying-saucer-core -->
         <dependency>
@@ -156,6 +147,25 @@
             <version>1.20.1</version>
         </dependency>
 
+        <!-- JWT -->
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>10.1</version>
+        </dependency>
+
+
+        <!--        Others -->
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.19.0</version>
+        </dependency>
+
+
+
+
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-devtools -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -169,14 +179,6 @@
             <version>1.6.3</version>
         </dependency>
 
-
-
-        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-devtools -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <version>3.4.5</version>
-        </dependency>
     </dependencies>
 
 

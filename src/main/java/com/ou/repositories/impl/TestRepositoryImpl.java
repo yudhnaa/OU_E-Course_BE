@@ -1,7 +1,9 @@
-package com.ou.repositories;
+package com.ou.repositories.impl;
 
 import com.ou.configs.WebApplicationSettings;
 import com.ou.pojo.Test;
+import com.ou.repositories.QuestionRepository;
+import com.ou.repositories.TestRepository;
 import jakarta.persistence.criteria.Predicate;
 import org.hibernate.query.Query;
 import jakarta.persistence.criteria.CriteriaBuilder;

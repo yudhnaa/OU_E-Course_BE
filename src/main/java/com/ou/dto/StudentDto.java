@@ -23,7 +23,7 @@ public class StudentDto implements Serializable {
     @NotNull
     @Size(min = 1, max = 50)
     private String userIdFirstName;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate userIdBirthday;
     @NotNull
     @Size(min = 1, max = 50)

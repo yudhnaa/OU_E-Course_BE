@@ -276,6 +276,29 @@
                                                                 th:selected="${cat.id} == ${course.categoryId?.id}"></option>
                                                     </select>
                                                 </div>
+
+                                                <div class="col-md-3">
+                                                    <label for="dateAdded" class="form-label">Date Added</label>
+                                                    <input type="datetime-local" th:field="*{dateAdded}"
+                                                           class="form-control" id="dateAdded" readonly/>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label for="dateStart" class="form-label">Start Date</label>
+                                                    <input type="datetime-local" th:field="*{dateStart}"
+                                                           class="form-control" id="dateStart"/>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label for="dateEnd" class="form-label">End Date</label>
+                                                    <input type="datetime-local" th:field="*{dateEnd}"
+                                                           class="form-control" id="dateEnd"/>
+                                                </div>
+
+                                                <div class="col-md-3">
+                                                    <label for="price" class="form-label">Price</label>
+                                                    <input type="text" th:field="*{price}"
+                                                           class="form-control" id="price"/>
+                                                </div>
+
                                                 <div class="col-md-12">
                                                     <label for="courseDescription"
                                                            class="form-label">Description</label>
@@ -283,23 +306,14 @@
                                                               id="courseDescription" rows="10"
                                                               placeholder="Course Description"></textarea>
                                                 </div>
-                                                <div class="col-md-4">
-                                                    <label for="dateAdded" class="form-label">Date Added</label>
-                                                    <input type="datetime-local" th:field="*{dateAdded}"
-                                                           class="form-control" id="dateAdded" readonly/>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <label for="dateStart" class="form-label">Start Date</label>
-                                                    <input type="datetime-local" th:field="*{dateStart}"
-                                                           class="form-control" id="dateStart"/>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <label for="dateEnd" class="form-label">End Date</label>
-                                                    <input type="datetime-local" th:field="*{dateEnd}"
-                                                           class="form-control" id="dateEnd"/>
+
+                                                <div class="col-md-3">
+                                                    <label for="createdByAdminId" class="form-label">Created By (Admin)</label>
+                                                    <input type="text" th:value="${course.createdByAdminId.userId.username}"
+                                                           class="form-control" id="createdByAdminId" readonly/>
                                                 </div>
 
-                                                <div class="col-md-6">
+                                                <div class="col-md-3">
                                                     <label for="courseImage" class="form-label">Image</label>
                                                     <div class="mt-2">
                                                         <img th:if="*{image}" th:src="*{image}" id="courseImage"
@@ -309,12 +323,6 @@
                                                     <input type="file" th:field="*{imageFile}" class="form-control mt-3"
                                                            id="imageFile" accept="image/*">
                                                 </div>
-                                                <!--                        <div class="col-md-6">-->
-                                                <!--                          <label for="createdByAdminId" class="form-label">Created By (Admin)</label>-->
-                                                <!--                          <select th:field="*{createdByAdminId.id}" class="form-select" id="createdByAdminId">-->
-                                                <!--                            <option th:each="admin : ${admins}" th:value="${admin.id}" th:text="${admin.name}" th:selected="${admin.id} == ${course.createdByAdminId?.id}"></option>-->
-                                                <!--                          </select>-->
-                                                <!--                        </div>-->
 
                                             </div>
                                             <div  class="col-12 text-end">

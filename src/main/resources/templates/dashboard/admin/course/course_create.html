@@ -49,6 +49,7 @@
       <div class="card">
         <div class="card-body">
           <form th:action="@{/admin/course/create}" th:object="${course}" method="post" enctype="multipart/form-data">
+
             <div class="row g-3">
               <div class="col-md-6">
                 <label for="courseName" class="form-label">Name</label>
@@ -60,38 +61,42 @@
                   <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"></option>
                 </select>
               </div>
+              <div class="col-md-3">
+                <label for="dateAdded" class="form-label">Date Added</label>
+                <input type="datetime-local" th:field="*{dateAdded}" class="form-control" id="dateAdded" readonly value="Now"/>
+              </div>
+              <div class="col-md-3">
+                <label for="dateStart" class="form-label">Start Date</label>
+                <input type="datetime-local" th:field="*{dateStart}" class="form-control" id="dateStart"/>
+              </div>
+              <div class="col-md-3">
+                <label for="dateEnd" class="form-label">End Date</label>
+                <input type="datetime-local" th:field="*{dateEnd}" class="form-control" id="dateEnd"/>
+              </div>
+              <div class="col-md-3">
+                <label for="price" class="form-label">Price</label>
+                <input type="text" th:field="*{price}"
+                       class="form-control" id="price"/>
+              </div>
               <div class="col-md-12">
                 <label for="courseDescription" class="form-label">Description</label>
                 <textarea th:field="*{description}" class="form-control" id="courseDescription" rows="10" placeholder="Course Description"></textarea>
               </div>
-              <div class="col-md-4">
-                <label for="dateAdded" class="form-label">Date Added</label>
-                <input type="datetime-local" th:field="*{dateAdded}" class="form-control" id="dateAdded" readonly value="Now"/>
-              </div>
-              <div class="col-md-4">
-                <label for="dateStart" class="form-label">Start Date</label>
-                <input type="datetime-local" th:field="*{dateStart}" class="form-control" id="dateStart"/>
-              </div>
-              <div class="col-md-4">
-                <label for="dateEnd" class="form-label">End Date</label>
-                <input type="datetime-local" th:field="*{dateEnd}" class="form-control" id="dateEnd"/>
-              </div>
-              <div class="col-md-6">
-                <label for="imageFile" class="form-label">Image</label>
-                <input type="file" th:field="*{imageFile}" class="form-control" id="imageFile" accept="image/*">
-                <div class="mt-2">
-                  <img th:if="*{image}" th:src="@{${course.image}}" alt="Course Image" class="img-thumbnail" style="max-height: 100px;">
-                </div>
-              </div>
-              <!-- Optionally, add createdByAdminId if needed -->
-              <!--
-              <div class="col-md-6">
+              <div class="col-md-3">
                 <label for="createdByAdminId" class="form-label">Created By (Admin)</label>
-                <select th:field="*{createdByAdminId.id}" class="form-select" id="createdByAdminId">
-                  <option th:each="admin : ${admins}" th:value="${admin.id}" th:text="${admin.name}"></option>
-                </select>
+                <input type="text" th:value="${#authentication.principal.user.username}"
+                       class="form-control mt-3" id="createdByAdminId" readonly/>
               </div>
-              -->
+              <div class="col-md-3">
+                <label for="courseImage" class="form-label">Image</label>
+                <div class="mt-2">
+                  <img th:if="*{image}" th:src="*{image}" id="courseImage"
+                       alt="Course Image" class="img-thumbnail"
+                       style="max-height: 100px;">
+                </div>
+                <input type="file" th:field="*{imageFile}" class="form-control mt-3"
+                       id="imageFile" accept="image/*">
+              </div>
             </div>
             <div class="col-12 text-end mt-3">
               <button type="submit" class="btn btn-primary">Save</button>
