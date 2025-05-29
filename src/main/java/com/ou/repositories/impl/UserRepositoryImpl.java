@@ -287,7 +287,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public boolean authenticate(String username, String password) {
         Optional<User> u = this.getUserByUsername(username);
-        if (u.isEmpty()) {
+        if (u.isEmpty() || !u.get().getUserRoleId().getName().contains("STUDENT")) {
             return false;
         }
 
