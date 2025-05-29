@@ -159,8 +159,12 @@ public class ExerciseAttemptController {
                                            @PathVariable(value = "courseId") Integer courseId,
                                            @PathVariable(value = "lessonId") Integer lessonId,
                                            @PathVariable(value = "exerciseId") Integer exerciseId,
+                                           @AuthenticationPrincipal CustomUserDetails principal,
                                            RedirectAttributes redirectAttributes) {
-        // Validate and update the exercise attempt
+        Exercise exercise = exerciseService.getExerciseByIdWithPermissionsCheck(exerciseId, principal.getUser());
+        if (exercise == null) {
+            throw new AccessDeniedException(localizationService.getMessage("exercise.access.denied", LocaleContextHolder.getLocale()));
+        }
         if (exerciseAttempt.getId() == null || exerciseAttempt.getId() <= 0) {
             throw new IllegalArgumentException("Invalid submission ID");
         }
