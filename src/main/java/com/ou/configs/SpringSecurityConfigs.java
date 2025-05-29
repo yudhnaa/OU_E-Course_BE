@@ -1,5 +1,6 @@
 package com.ou.configs;
 
+import com.ou.filters.JwtFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -10,9 +11,16 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -24,7 +32,8 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
         "com.ou.formatters",
         "com.ou.helpers",
         "com.ou.mappers",
-        "com.ou.utils"
+        "com.ou.utils",
+        "com.ou.filters"
 })
 public class SpringSecurityConfigs {
     @Autowired
@@ -41,8 +50,27 @@ public class SpringSecurityConfigs {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(c -> c.disable())
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+
+        config.setAllowedOrigins(List.of("http://localhost:3000")); // neu co credentials, thi khong duoc dung "*"
+        config.setAllowCredentials(true);
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type")); // dung jwt, nen can Authorization header (quan trong vai luon, khong la loi preflight ben react)
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
+        http
+                .cors(c -> c.configurationSource(corsConfigurationSource()))
+//                Chuyen JwtFilter sang day
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .csrf(c -> c.disable())
                 .authorizeHttpRequests(requests -> requests
                                 .requestMatchers("/assets/**").permitAll()
                                 .requestMatchers("/register").permitAll()

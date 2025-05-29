@@ -1,13 +1,19 @@
 package com.ou.controllers.restController;
 
 import com.ou.dto.StudentDto;
+import com.ou.dto.StudentSignUpFormDto;
 import com.ou.mappers.StudentMapper;
+import com.ou.mappers.StudentSignUpFormMapper;
+import com.ou.pojo.CustomUserDetails;
 import com.ou.pojo.Student;
 import com.ou.pojo.User;
 import com.ou.services.StudentService;
 import com.ou.services.UserDetailService;
+import com.ou.services.UserRoleService;
 import com.ou.services.UserService;
 import com.ou.utils.JwtUtils;
+
+import java.io.IOException;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.Map;
@@ -16,19 +22,14 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin
 public class RestAuthenticationController {
     @Autowired
     private UserService userService;
@@ -38,14 +39,43 @@ public class RestAuthenticationController {
     private StudentService studentService;
     @Autowired
     private StudentMapper studentMapper;
+    @Autowired
+    private StudentSignUpFormMapper studentSignUpFormMapper;
+    @Autowired
+    private UserRoleService userRoleService;
 
-//    @PostMapping("/users")
-//    public ResponseEntity<User> create(@RequestParam Map<String, String> params,
-//                                       @RequestParam("avatar") MultipartFile avatar) {
-//        User u = this.userService.addUser(params, avatar);
-//
-//        return new ResponseEntity<>(u, HttpStatus.CREATED);
-//    }
+    @PostMapping("/user/create")
+    public ResponseEntity<StudentDto> create(
+            @ModelAttribute StudentSignUpFormDto studentSignUpFormDto,
+            BindingResult result
+    ) throws IOException {
+
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
+        // Convert DTO to User entity
+
+        Student student = studentSignUpFormMapper.toEntity(studentSignUpFormDto);
+        // set role to "ROLE_STUDENT"
+        student.getUserId().setUserRoleId(userRoleService.getUserRoleByName("ROLE_STUDENT"));
+
+        User createdUser = userService.addUser(student.getUserId());
+        if (createdUser == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+        // Create student from user
+        student.setUserId(createdUser);
+        Student createdStudent = studentService.addStudent(student);
+        if (createdStudent == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+
+        // Map to DTO
+        StudentDto studentDto = studentMapper.toDto(createdStudent);
+
+        return new ResponseEntity<>(studentDto, HttpStatus.CREATED);
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User u) {
@@ -61,10 +91,13 @@ public class RestAuthenticationController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Sai thông tin đăng nhập");
     }
 
-    @RequestMapping("/secure/profile")
+    @GetMapping("/secure/profile")
     @ResponseBody
-    public ResponseEntity<StudentDto> getProfile(Principal principal) {
-        Student student = studentService.getStudentById(1);
+    public ResponseEntity<StudentDto> getProfile(
+            @AuthenticationPrincipal CustomUserDetails principal
+            ) {
+
+        Student student = studentService.getStudentByUserId(principal.getUser().getId());
 
         if (student == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

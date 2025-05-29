@@ -3,6 +3,7 @@ package com.ou.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.ou.pojo.User;
+import jakarta.mail.Multipart;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -35,6 +36,8 @@ public class StudentDto implements Serializable {
     private String userRoleIdName;
     private String userIdAvatar;
     private long countCourse;
+
+
 
     public StudentDto() {
     }
