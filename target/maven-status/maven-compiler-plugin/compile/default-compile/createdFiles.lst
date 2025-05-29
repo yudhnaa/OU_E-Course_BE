@@ -65,6 +65,7 @@ com/ou/pojo/Lecturer.class
 com/ou/pojo/Lesson.class
 com/ou/pojo/LessonType.class
 com/ou/pojo/UserRole.class
+com/ou/mappers/StudentSignUpFormMapperImpl.class
 com/ou/repositories/AttachmentRepository.class
 com/ou/filters/JwtFilter.class
 com/ou/dto/CourseDto.class
@@ -158,6 +159,7 @@ com/ou/services/impl/UserDetailServiceImpl.class
 com/ou/repositories/TestQuestionRepository.class
 com/ou/services/impl/MultipleChoiceAnswerServiceImpl.class
 com/ou/repositories/impl/QuestionTypeRepositoryImpl.class
+com/ou/controllers/restController/RestAuthenticationController.class
 com/ou/controllers/webController/adminController/TestAttemptController.class
 com/ou/formBean/CourseLecturerForm.class
 com/ou/dto/AttemptDetailDto.class
@@ -165,7 +167,6 @@ com/ou/services/UserService.class
 com/ou/mappers/StudentMapper.class
 com/ou/repositories/impl/TestAttemptRepositoryImpl.class
 com/ou/services/TestAttemptAnswerService.class
-com/ou/repositories/TestRepositoryImpl.class
 com/ou/services/LessonAttachmentService.class
 com/ou/helpers/PaginationHelper.class
 com/ou/pojo/WritingAnswer.class
@@ -202,6 +203,7 @@ com/ou/formatters/UserFormatter.class
 com/ou/services/impl/QuestionServiceImpl.class
 com/ou/services/LessonTypeService.class
 com/ou/repositories/impl/CourseRepositoryImpl.class
+com/ou/dto/StudentSignUpFormDto.class
 com/ou/services/impl/LocalizationServiceImpl.class
 com/ou/services/QuestionTypeService.class
 com/ou/services/impl/CourseRateServiceImpl.class
@@ -214,6 +216,7 @@ com/ou/configs/SpringSecurityConfigs.class
 com/ou/repositories/ExerciseScoreStatusRepository.class
 com/ou/repositories/TestAttemptRepository.class
 com/ou/repositories/impl/CourseLecturerRepositoryImpl.class
+com/ou/repositories/impl/TestRepositoryImpl.class
 com/ou/repositories/CourseRateRepository.class
 com/ou/services/impl/ExerciseScoreStatusServiceImpl.class
 com/ou/pojo/CourseStudent.class

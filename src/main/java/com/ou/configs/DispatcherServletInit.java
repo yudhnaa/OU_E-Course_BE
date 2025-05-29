@@ -5,6 +5,7 @@ import jakarta.servlet.Filter;
 import jakarta.servlet.MultipartConfigElement;
 import jakarta.servlet.ServletRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 public class DispatcherServletInit extends AbstractAnnotationConfigDispatcherServletInitializer {
@@ -41,8 +42,21 @@ public class DispatcherServletInit extends AbstractAnnotationConfigDispatcherSer
         registration.setMultipartConfig(new MultipartConfigElement(location, maxFileSize, maxRequestSize, fileSizeThreshold));
     }
 
-    @Override
-    protected Filter[] getServletFilters() {
-        return new Filter[] {new JwtFilter()};
-    }
+//    // Dung CustomUserDetails, nen o JwtFilter dung UserDetailsService
+      //    nen phai bien JwtFilter thanh bean, nhung o day khong wire vao duoc, nen lay thu cong tu AppContext => Failed
+
+//    // Cach tren khong duoc nen chuyen JwtFilter sang SpringSecurityConfigs ==> OK
+
+//    @Override
+//    protected Filter[] getServletFilters() {
+//
+//        // lấy ApplicationContext của Spring
+//        AnnotationConfigWebApplicationContext ctx = new AnnotationConfigWebApplicationContext();
+//        ctx.register(SpringSecurityConfigs.class);
+//
+//        // lấy JwtFilter từ context
+//        JwtFilter jwtFilter = ctx.getBean(JwtFilter.class);
+//
+//        return new Filter[]{ jwtFilter };
+//    }
 }
