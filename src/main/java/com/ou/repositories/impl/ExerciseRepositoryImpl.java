@@ -235,10 +235,8 @@ public class ExerciseRepositoryImpl implements ExerciseRepository {
         // Gộp tất cả vào where
         query.where(builder.and(predicates.toArray(new Predicate[0])));
 
-
         Query<Exercise> q = session.createQuery(query);
 
-        // Process pagination parameters
         if (params != null) {
             int page = Integer.parseInt(params.getOrDefault("page", "1"));
             int pageSize = Integer.parseInt(params.getOrDefault("pageSize", String.valueOf(PAGE_SIZE)));

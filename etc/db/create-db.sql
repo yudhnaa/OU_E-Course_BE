@@ -18,7 +18,7 @@ CREATE TABLE `user`
     username     NVARCHAR(50) NOT NULL UNIQUE,
     password     VARCHAR(255) NOT NULL,
     avatar       VARCHAR(255) NULL,
-                        public_id varchar(100) null,
+    public_id varchar(100) null,
     email        VARCHAR(100) NOT NULL UNIQUE,
 
     user_role_id INT          NOT NULL,
@@ -68,11 +68,11 @@ CREATE TABLE `course`
     name                NVARCHAR(50) NOT NULL,
     description         TEXT         NULL,
     image               VARCHAR(255) NULL,
-                         public_id varchar(100) null,
+    public_id varchar(100) null,
 
-                         date_added DATETIME DEFAULT CURRENT_TIMESTAMP,
-                         date_start DATETIME DEFAULT CURRENT_TIMESTAMP,
-                         date_end DATETIME DEFAULT CURRENT_TIMESTAMP,
+    date_added DATETIME DEFAULT CURRENT_TIMESTAMP,
+    date_start DATETIME DEFAULT CURRENT_TIMESTAMP,
+    date_end DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     created_by_admin_id INT,
     FOREIGN KEY (created_by_admin_id) REFERENCES admin (id) ON DELETE RESTRICT,
@@ -135,7 +135,7 @@ CREATE TABLE attachment
     id          INT AUTO_INCREMENT PRIMARY KEY,
     name        NVARCHAR(50) NOT NULL,
     link        VARCHAR(255) NOT NULL,
-                           public_id varchar(100) null,
+    public_id varchar(100) null,
     description TEXT         NULL
 );
 
@@ -155,7 +155,7 @@ CREATE TABLE `lesson`
     embed_link     VARCHAR(255) NOT NULL,
     description    TEXT         NULL,
     image          VARCHAR(255) NULL,
-                         public_id varchar(100) null,
+    public_id varchar(100) null,
     order_index INT NOT NULL DEFAULT 0,
 
     lesson_type_id INT          NOT NULL,
@@ -185,7 +185,7 @@ CREATE TABLE `lesson_student`
 (
     id         INT AUTO_INCREMENT PRIMARY KEY,
     is_learn   BOOL DEFAULT FALSE,
-                                 learned_at DATETIME NULL,
+    learned_at DATETIME NULL,
 
     lesson_id  INT       NOT NULL,
     FOREIGN KEY (lesson_id) REFERENCES lesson (id) ON DELETE CASCADE,
@@ -275,9 +275,9 @@ CREATE TABLE exercise_score_status
 
 CREATE TABLE exercise_attempt
 (
-     id INT AUTO_INCREMENT PRIMARY KEY,
-     started_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-     submitted_at DATETIME NULL,
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    started_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    submitted_at DATETIME NULL,
     total_score      DECIMAL(5, 2),
     response         TEXT      NULL,
 
@@ -301,7 +301,7 @@ CREATE TABLE test
     name               NVARCHAR(100) NOT NULL,
     description        TEXT,
     duration_minutes   INT           NOT NULL,
-                      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     max_score          DECIMAL(5, 2) NOT NULL,
 
     created_by_user_id INT           NOT NULL,
@@ -324,9 +324,9 @@ CREATE TABLE test_question
 
 CREATE TABLE test_attempt
 (
-                              id INT AUTO_INCREMENT PRIMARY KEY,
-                              started_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                              submitted_at DATETIME NULL,
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    started_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    submitted_at DATETIME NULL,
     total_score  DECIMAL(5, 2),
 
     test_id      INT       NOT NULL,
