@@ -62,19 +62,19 @@ SET @default_img_id := 'java_logo_default';
 SET @description := 'Môn này cung cấp cho sinh viên những kiến thức lập trình Java từ căn bản đến nâng cao, tập trung phát triển ứng dụng Web với framework phổ biến Spring, đặc biệt là phát triển Restful API với Spring và xây dựng phân hệ client bằng công nghệ ReactJS.';
 
 -- Chèn dữ liệu vào bảng course với đầy đủ các trường
-INSERT INTO course (name, description, created_by_admin_id, category_id, image, public_id, date_added, date_start, date_end)
+INSERT INTO course (name, description, created_by_admin_id, category_id, image, public_id, date_added, date_start, date_end, price)
 VALUES
-('Web System Development', @description, 1, 1, @default_img, @default_img_id, '2023-09-01', '2023-09-15', '2024-01-15'),
-('Java Basics', 'Learn Java from scratch', 1, 1, @default_img, @default_img_id, '2023-09-05', '2023-09-20', '2024-01-20'),
-('Algebra I', 'Basic algebra course', 1, 2, @default_img, @default_img_id, '2023-08-15', '2023-09-01', '2023-12-31'),
-('Calculus I', 'Introduction to calculus', 1, 2, @default_img, @default_img_id, '2023-08-20', '2023-09-05', '2024-01-05'),
-('Data Structures', 'Learn data structures in Java', 1, 1, @default_img, @default_img_id, '2023-09-10', '2023-09-25', '2024-01-25'),
-('Algorithms', 'Introduction to algorithms', 1, 1, @default_img, @default_img_id, '2023-09-12', '2023-09-27', '2024-01-27'),
-('Web Development', 'Learn HTML, CSS, and JavaScript', 1, 1, @default_img, @default_img_id, '2023-09-15', '2023-10-01', '2024-02-01'),
-('Database Management', 'Learn SQL and database design', 1, 1, @default_img, @default_img_id, '2023-09-18', '2023-10-03', '2024-02-03'),
-('Machine Learning', 'Introduction to machine learning concepts', 1, 1, @default_img, @default_img_id, '2023-09-20', '2023-10-05', '2024-02-05'),
-('Cybersecurity Basics', 'Learn the fundamentals of cybersecurity', 1, 1, @default_img, @default_img_id, '2023-09-22', '2023-10-07', '2024-02-07'),
-('Cloud Computing', 'Introduction to cloud services and architecture', 1, 1, @default_img, @default_img_id, '2023-09-25', '2023-10-10', '2024-02-10');
+('Web System Development', @description, 1, 1, @default_img, @default_img_id, '2023-09-01', '2023-09-15', '2024-01-15', 1000.00),
+('Java Basics', 'Learn Java from scratch', 1, 1, @default_img, @default_img_id, '2023-09-05', '2023-09-20', '2024-01-20', 1000.00),
+('Algebra I', 'Basic algebra course', 1, 2, @default_img, @default_img_id, '2023-08-15', '2023-09-01', '2023-12-31', 1000.00),
+('Calculus I', 'Introduction to calculus', 1, 2, @default_img, @default_img_id, '2023-08-20', '2023-09-05', '2024-01-05', 1000.00),
+('Data Structures', 'Learn data structures in Java', 1, 1, @default_img, @default_img_id, '2023-09-10', '2023-09-25', '2024-01-25', 1000.00),
+('Algorithms', 'Introduction to algorithms', 1, 1, @default_img, @default_img_id, '2023-09-12', '2023-09-27', '2024-01-27', 1000.00),
+('Web Development', 'Learn HTML, CSS, and JavaScript', 1, 1, @default_img, @default_img_id, '2023-09-15', '2023-10-01', '2024-02-01', 1000.00),
+('Database Management', 'Learn SQL and database design', 1, 1, @default_img, @default_img_id, '2023-09-18', '2023-10-03', '2024-02-03', 1000.00),
+('Machine Learning', 'Introduction to machine learning concepts', 1, 1, @default_img, @default_img_id, '2023-09-20', '2023-10-05', '2024-02-05', 1000.00),
+('Cybersecurity Basics', 'Learn the fundamentals of cybersecurity', 1, 1, @default_img, @default_img_id, '2023-09-22', '2023-10-07', '2024-02-07', 1000.00),
+('Cloud Computing', 'Introduction to cloud services and architecture', 1, 1, @default_img, @default_img_id, '2023-09-25', '2023-10-10', '2024-02-10', 1000.00);
 
 -- Sample data for course_lecturer
 INSERT INTO course_lecturer (course_id, lecturer_id) VALUES

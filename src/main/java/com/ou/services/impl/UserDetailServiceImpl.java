@@ -47,4 +47,9 @@ public class UserDetailServiceImpl implements UserDetailService {
         // Return UserDetails object
         return new CustomUserDetails(user);
     }
+
+    @Override
+    public boolean authenticate(String username, String password) {
+        return this.userRepo.authenticate(username, password);
+    }
 }

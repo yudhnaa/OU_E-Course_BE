@@ -24,6 +24,7 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
         "com.ou.formatters",
         "com.ou.helpers",
         "com.ou.mappers",
+        "com.ou.utils"
 })
 public class SpringSecurityConfigs {
     @Autowired
@@ -64,6 +65,8 @@ public class SpringSecurityConfigs {
                                 ).hasAnyRole("ADMIN", "LECTURER")
 
                                 .requestMatchers("/access-denied").permitAll()
+
+                                .requestMatchers("/api/**").permitAll()
 
                                 .anyRequest().hasAnyRole("LECTURER", "ADMIN")
                 )
