@@ -39,4 +39,7 @@ public interface UserRepository{
     long countActiveUsers(String locale);
     long countUsersByRole(Integer roleId);
     long countSearchResults(Map<String, String> filters);
+
+    // Authentication method
+    boolean authenticate(String username, String password);
 }

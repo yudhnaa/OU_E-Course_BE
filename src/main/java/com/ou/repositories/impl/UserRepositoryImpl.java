@@ -15,6 +15,7 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,8 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Autowired
     private LocalSessionFactoryBean sessionFactory;
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
     public User addUser(User user) {
@@ -279,5 +282,15 @@ public class UserRepositoryImpl implements UserRepository {
         query.where(builder.equal(root.get("userRoleId").get("id"), roleId));
         query.select(builder.count(root));
         return session.createQuery(query).getSingleResult();
+    }
+
+    @Override
+    public boolean authenticate(String username, String password) {
+        Optional<User> u = this.getUserByUsername(username);
+        if (u.isEmpty()) {
+            return false;
+        }
+
+        return bCryptPasswordEncoder.matches(password, u.get().getPassword());
     }
 }

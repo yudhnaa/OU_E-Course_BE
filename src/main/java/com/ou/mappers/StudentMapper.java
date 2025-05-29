@@ -22,6 +22,7 @@ public class StudentMapper {
         StudentDto studentDto = new StudentDto();
 
         studentDto.setId( student.getId() );
+        studentDto.setUserIdId( student.getUserId().getId() );
         studentDto.setUserIdLastName(student.getUserId().getLastName());
         studentDto.setUserIdFirstName(student.getUserId().getFirstName());
         studentDto.setUserIdBirthday(student.getUserId().getBirthday());

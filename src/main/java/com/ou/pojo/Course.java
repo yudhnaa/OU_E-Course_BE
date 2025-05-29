@@ -7,10 +7,12 @@ package com.ou.pojo;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -77,9 +79,21 @@ public class Course implements Serializable {
     private Set<Lesson> lessonSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseId")
     private Set<CourseStudent> courseStudentSet;
+    @NotNull
+    @ColumnDefault("0.00")
+    @Column(name = "price", nullable = false, precision = 10, scale = 2)
+    private BigDecimal price;
 
     @Transient
     private MultipartFile imageFile;
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
 
     public Course() {
     }
