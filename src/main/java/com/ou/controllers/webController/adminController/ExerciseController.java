@@ -8,7 +8,9 @@ import com.ou.services.*;
 import com.ou.utils.Pagination;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,7 +24,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/course/{courseId}/lessons/{lessonId}/exercises")
+@RequestMapping("/admin/courses/{courseId}/lessons/{lessonId}/exercises")
 public class ExerciseController {
     @Autowired
     private ExerciseService exerciseService;
@@ -45,18 +47,36 @@ public class ExerciseController {
     @Autowired
     private LessonService lessonService;
 
+    @Autowired
+    private LecturerService lecturerService;
+
+    @Autowired
+    private LocalizationService localizationService;
+
 
     @GetMapping
     public String getExercises(Model model,
                                @PathVariable("courseId") Integer courseId,
                                @PathVariable("lessonId") Integer lessonId,
-                               @RequestParam Map<String, String> params) {
-        Optional<Course> course = courseService.getCourseById(courseId);
+                               @RequestParam Map<String, String> params,
+                               @AuthenticationPrincipal CustomUserDetails principal) throws Exception {
+        // Check if the user has permission to view the course
+        Course course = courseService.getCourseByIdWithPermissionCheck(courseId, principal.getUser());
+        params.put("courseId", String.valueOf(courseId));
+        // Check if the user has permission to view exercises for this course and lesson
+        if(principal.getUser().getUserRoleId().getName().contains("LECTURER")){
+            Lecturer lecturer = lecturerService.getLecturerByUserId(principal.getUser().getId())
+                    .orElseThrow(() -> new NotFoundException(localizationService.getMessage("lecturer.notFound", LocaleContextHolder.getLocale())));
 
-        if (course.isEmpty()) {
-            model.addAttribute("msg_error", "Course not found.");
-            return "dashboard/lecturer/exercise/exercise";
+            params.put("createdByUserId", String.valueOf(lecturer.getId()));
         }
+
+//        Optional<Course> course = courseService.getCourseById(courseId);
+
+//        if (course.isEmpty()) {
+//            model.addAttribute("msg_error", "Course not found.");
+//            return "dashboard/lecturer/exercise/exercise";
+//        }
 
         Optional<Lesson> lesson = lessonService.getLessonById(lessonId);
         if (lesson.isEmpty()) {
@@ -64,7 +84,9 @@ public class ExerciseController {
             return "dashboard/lecturer/exercise/exercise";
         }
 
-        long totalExercises = exerciseService.countExercisesByLesson(lessonId);
+
+        List<Exercise> exercises = exerciseService.getExercisesByLesson(lessonId,params);
+        long totalExercises = exerciseService.countSearchResults(params);
 
         if(totalExercises == 0){
             model.addAttribute("msg_error", "No exercises found for this course.");
@@ -72,17 +94,13 @@ public class ExerciseController {
         }
 
         Pagination pagination = paginationHelper.getPagination(params, totalExercises);
-
-        List<Exercise> exercises = exerciseService.getExercisesByLesson(lessonId,params);
-
         Map<Integer, String> lecturerNames = exercises.stream().collect(
                 Collectors.toMap(
                         Exercise::getId,
                         ex -> {
                             if(ex.getCreatedByUserId() != null && ex.getCreatedByUserId().getUserId() != null){
                                 return ex.getCreatedByUserId().getUserId().getUsername();
-                            }
-                            else{
+                            }else{
                                 return "Unknown";
                             }
                         }
@@ -92,7 +110,8 @@ public class ExerciseController {
         model.addAttribute("lecturerNames", lecturerNames);
         model.addAttribute("courseId", courseId);
         model.addAttribute("lessonId", lessonId);
-        model.addAttribute("courseName", course.get().getName());
+//        model.addAttribute("courseName", course.get().getName());
+        model.addAttribute("courseName", course.getName());
         model.addAttribute("currentPage", pagination.getCurrentPage());
         model.addAttribute("totalPages", pagination.getTotalPages());
         model.addAttribute("startIndex", pagination.getStartIndex());
@@ -104,15 +123,10 @@ public class ExerciseController {
     public String getExerciseDetails(Model model,
                                      @PathVariable("courseId") Integer courseId,
                                      @PathVariable("lessonId") Integer lessonId,
-                                     @PathVariable("exerciseId") Integer exerciseId) throws Exception {
-        Optional<Exercise> exercise = exerciseService.getExerciseById(exerciseId);
-
-        if (exercise.isEmpty()) {
-            model.addAttribute("msg_error", "Exercise not found.");
-            return "dashboard/lecturer/exercise/exercise";
-        }
-
-        Optional<User> creator = Optional.ofNullable(userService.getUserById(exercise.get().getCreatedByUserId().getUserId().getId()));
+                                     @PathVariable("exerciseId") Integer exerciseId,
+                                     @AuthenticationPrincipal CustomUserDetails principal) throws Exception {
+        Exercise exercise = exerciseService.getExerciseByIdWithPermissionsCheck(exerciseId, principal.getUser());
+        Optional<User> creator = Optional.ofNullable(userService.getUserById(exercise.getCreatedByUserId().getUserId().getId()));
         Optional<Course> course = courseService.getCourseById(courseId);
         if (course.isEmpty()) {
             model.addAttribute("msg_error", "Course not found.");
@@ -128,7 +142,7 @@ public class ExerciseController {
         List<Question> questions = questionService.getQuestionsByExercise(exerciseId);
         List<QuestionType> questionTypes = questionTypeService.getAllQuestionTypes();
 
-        model.addAttribute("exercise", exercise.get());
+        model.addAttribute("exercise", exercise);
         model.addAttribute("creator", creator.orElse(null));
         model.addAttribute("courseId", courseId);
         model.addAttribute("lessonId", lessonId);
@@ -165,34 +179,41 @@ public class ExerciseController {
     public String createExercise(@PathVariable("courseId") Integer courseId,
                                  @PathVariable("lessonId") Integer lessonId,
                                  @Valid @ModelAttribute("exercise") Exercise exercise,
+                                 @AuthenticationPrincipal CustomUserDetails principal,
                                  BindingResult result,
                                  RedirectAttributes redirectAttributes,
                                  Model model) {
-        Optional<Course> course = courseService.getCourseById(courseId);
-        if (course.isEmpty()) {
-            model.addAttribute("msg_error", "Course not found.");
-            return "dashboard/lecturer/exercise/exercise";
+        // Check if the user has permission to create exercises for the course
+        Course course = courseService.getCourseByIdWithPermissionCheck(courseId, principal.getUser());
+//        Optional<Course> course = courseService.getCourseById(courseId);
+//        if (course.isEmpty()) {
+//            model.addAttribute("msg_error", "Course not found.");
+//            return "dashboard/lecturer/exercise/exercise";
+//        }
+
+        // Check if the user has permission to create exercises for the lesson
+        if (principal.getUser().getUserRoleId().getName().contains("LECTURER")) {
+            Lecturer lecturer = lecturerService.getLecturerByUserId(principal.getUser().getId())
+                    .orElseThrow(() -> new NotFoundException(localizationService.getMessage("lecturer.notFound", LocaleContextHolder.getLocale())));
+
+            exercise.setCreatedByUserId(lecturer);
         }
-        Optional<Lesson> lesson = lessonService.getLessonById(lessonId);
-        if (lesson.isEmpty()) {
-            model.addAttribute("msg_error", "Lesson not found.");
-            return "dashboard/lecturer/exercise/exercise";
-        }
+
+        Lesson lesson = lessonService.getLessonById(lessonId)
+                .orElseThrow(() -> new NotFoundException("Lesson not found"));
+        exercise.setLessonId(lesson);
         if (result.hasErrors()) {
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.exercise", result);
             redirectAttributes.addFlashAttribute("exercise", exercise);
-            return "redirect:/course/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/add";
+            return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/add";
         }
         try {
-            exercise.setLessonId(lesson.get());
-            // Giả sử có một đối tượng Lecturer với ID 1, thay thế bằng logic lấy ID người dùng thực tế
-            exercise.setCreatedByUserId(new Lecturer(1));
             exerciseService.createExercise(exercise);
             redirectAttributes.addFlashAttribute("msg_success", "Exercise created successfully!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("msg_error", "Error creating exercise: " + e.getMessage());
         }
-        return "redirect:/course/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exercise.getId();
+        return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exercise.getId();
     }
 
     @PostMapping("/exercise/{exerciseId}/update")
@@ -201,11 +222,10 @@ public class ExerciseController {
                                  @PathVariable("exerciseId") Integer exerciseId,
                                  @Valid @ModelAttribute("exercise") Exercise exerciseUpdate,
                                  BindingResult result,
+                                    @AuthenticationPrincipal CustomUserDetails principal,
                                  RedirectAttributes redirectAttributes,
                                  Model model) throws Exception {
-        Exercise existingExercise = exerciseService.getExerciseById(exerciseId)
-                .orElseThrow(() -> new NotFoundException("Exercise not found"));
-
+        Exercise existingExercise = exerciseService.getExerciseByIdWithPermissionsCheck(exerciseId, principal.getUser());
         existingExercise.setName(exerciseUpdate.getName());
         existingExercise.setDurationMinutes(exerciseUpdate.getDurationMinutes());
         existingExercise.setMaxScore(exerciseUpdate.getMaxScore());
@@ -213,7 +233,7 @@ public class ExerciseController {
         if (result.hasErrors()) {
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.exercise", result);
             redirectAttributes.addFlashAttribute("exercise", exerciseUpdate);
-            return "redirect:/course/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId + "#exercise-detail";
+            return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId + "#exercise-detail";
         }
 
         try {
@@ -222,13 +242,14 @@ public class ExerciseController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("msg_error", "Error: " + e.getMessage());
         }
-        return "redirect:/course/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId;
+        return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId;
     }
 
     @PostMapping("/exercise/{exerciseId}/delete")
     public String deleteExercise(@PathVariable("courseId") Integer courseId,
                                  @PathVariable("lessonId") Integer lessonId,
                                  @PathVariable("exerciseId") Integer exerciseId,
+                                 @AuthenticationPrincipal CustomUserDetails principal,
                                  RedirectAttributes redirectAttributes) {
         try {
             if (!exerciseService.deleteExercise(exerciseId)) {
@@ -239,7 +260,7 @@ public class ExerciseController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("msg_error", "Error: " + e.getMessage());
         }
-        return "redirect:/course/" + courseId + "/lessons/" + lessonId + "/exercises";
+        return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises";
     }
 
 }

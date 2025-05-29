@@ -18,7 +18,7 @@ CREATE TABLE `user`
     username     NVARCHAR(50) NOT NULL UNIQUE,
     password     VARCHAR(255) NOT NULL,
     avatar       VARCHAR(255) NULL,
-    public_id    varchar(100) null,
+                        public_id varchar(100) null,
     email        VARCHAR(100) NOT NULL UNIQUE,
 
     user_role_id INT          NOT NULL,

@@ -196,7 +196,7 @@
       </h2>
     </div>
     <div class="card-body p-4">
-      <form th:object="${testAttempt}" th:action="@{/course/{courseId}/tests/test/{testId}/submissions/{submissionId}/update(courseId=${courseId}, testId=${testId}, submissionId=${testAttempt.id})}" method="post">
+      <form th:object="${testAttempt}" th:action="@{/admin/courses/{courseId}/tests/test/{testId}/submissions/{submissionId}/update(courseId=${courseId}, testId=${testId}, submissionId=${testAttempt.id})}" method="post">
         <input type="hidden" th:value="*{id}" name="id" />
         <input type="hidden" name="userId" th:value="${testAttempt.userId.id}" />
         <input type="hidden" name="submittedAt" th:value="${testAttempt.submittedAt}" />
@@ -215,7 +215,7 @@
     </div>
   </div>
 
-  <a th:href="@{/course/{courseId}/tests/test/{testId}/submissions(courseId=${courseId}, testId=${testId})}" class="btn btn-secondary mt-3">Back to Submission List</a>
+  <a th:href="@{/admin/courses/{courseId}/tests/test/{testId}/submissions(courseId=${courseId}, testId=${testId})}" class="btn btn-secondary mt-3">Back to Submission List</a>
 
 </div>
 </body>

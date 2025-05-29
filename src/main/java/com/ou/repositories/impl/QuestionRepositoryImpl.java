@@ -100,6 +100,7 @@ public class QuestionRepositoryImpl implements QuestionRepository {
         String hql = "SELECT q FROM Question q "
                 + "WHERE q.exerciseId.courseId.id = :courseId";
 
+
         Query<Question> query = session.createQuery(hql, Question.class);
         query.setParameter("courseId", courseId);
 

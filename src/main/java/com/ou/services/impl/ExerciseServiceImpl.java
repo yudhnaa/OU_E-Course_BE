@@ -1,11 +1,15 @@
 package com.ou.services.impl;
 
 import com.ou.pojo.Exercise;
+import com.ou.pojo.Lecturer;
+import com.ou.pojo.User;
 import com.ou.repositories.ExerciseRepository;
+import com.ou.repositories.LecturerRepository;
 import com.ou.services.ExerciseService;
 import com.ou.services.LocalizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -20,6 +24,9 @@ public class ExerciseServiceImpl implements ExerciseService {
 
     @Autowired
     private LocalizationService localizationService;
+
+    @Autowired
+    private LecturerRepository lecturerRepositoryimpl;
 
     @Override
     public Exercise createExercise(Exercise exercise) throws Exception {
@@ -43,6 +50,25 @@ public class ExerciseServiceImpl implements ExerciseService {
     @Override
     public Optional<Exercise> getExerciseById(Integer id) throws Exception {
         return exerciseRepositoryImpl.getExerciseById(id);
+    }
+
+    @Override
+    public Exercise getExerciseByIdWithPermissionsCheck(Integer exerciseId, User user) {
+        Optional<Exercise> optionalExercise = exerciseRepositoryImpl.getExerciseById(exerciseId);
+
+        if (optionalExercise.isEmpty()) {
+            throw new IllegalArgumentException(localizationService.getMessage("exercise.notfound", LocaleContextHolder.getLocale()));
+        }
+
+        if(user.getUserRoleId().getName().contains("LECTURER")) {
+            Lecturer lecturer = lecturerRepositoryimpl.getLecturerByUserId(user.getId())
+                    .orElseThrow(() -> new AccessDeniedException(localizationService.getMessage("lecturer.notFound", LocaleContextHolder.getLocale())));
+            boolean isLecturerOfExercise = exerciseRepositoryImpl.isCreatorOfExercise(lecturer.getId(), exerciseId);
+            if (!isLecturerOfExercise) {
+                throw new AccessDeniedException(localizationService.getMessage("exercise.access.denied", LocaleContextHolder.getLocale()));
+            }
+        }
+        return optionalExercise.get();
     }
 
     @Override
@@ -109,7 +135,10 @@ public class ExerciseServiceImpl implements ExerciseService {
 
     @Override
     public long countSearchResults(Map<String, String> filters) {
-        return 0;
+        if (filters == null || filters.isEmpty()) {
+            throw new IllegalArgumentException(localizationService.getMessage("exercise.filters.invalid", LocaleContextHolder.getLocale()));
+        }
+        return exerciseRepositoryImpl.countSearchResults(filters);
     }
 
     @Override

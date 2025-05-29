@@ -125,7 +125,7 @@
                         <div class="col-xl-9 col-lg-8">
                             <div class="card">
                                 <div class="card-body">
-                                    <form th:action="@{'/course/' + ${test.courseId.id} + '/tests/test/' + ${test.id}}"
+                                    <form th:action="@{'/admin/courses/' + ${test.courseId.id} + '/tests/test/' + ${test.id}}"
                                           th:object="${test}" method="post">
                                         <input type="hidden" id = "courseId" th:name="courseId" th:value="${test.courseId.id}"/>
                                         <input type="hidden" id="testId" th:value="${test.id}">
@@ -162,7 +162,7 @@
                                         <div class="text-end">
                                             <button type="submit" class="btn btn-primary">Save Changes</button>
                                             <a type="button" class="btn btn-danger" id="delete-test-btn"
-                                                    th:data-url="@{'/course/' + ${test.courseId.id} + '/tests/test/' + ${test.id} + '/delete'}">
+                                                    th:data-url="@{'/admin/courses/' + ${test.courseId.id} + '/tests/test/' + ${test.id} + '/delete'}">
                                                 Delete test
                                             </a>
                                         </div>
@@ -226,7 +226,7 @@
                                                             <li>
                                                                 <a class="dropdown-item text-danger delete-question"
                                                                    th:data-id="${question.id}"
-                                                                   th:data-url="@{'/course/' + ${test.courseId.id} + '/tests/test/' + ${test.id} + '/question/' + ${question.id} + '/delete'}">
+                                                                   th:data-url="@{'/admin/courses/' + ${test.courseId.id} + '/tests/test/' + ${test.id} + '/question/' + ${question.id} + '/delete'}">
                                                                     Delete
                                                                 </a>
                                                             </li>

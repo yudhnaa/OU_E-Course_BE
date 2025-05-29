@@ -288,7 +288,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
 
-            fetch(`/Ecourse/course/${courseId}/tests/test/${testId}/questions/add-multiple`, {
+            fetch(`/Ecourse/admin/courses/${courseId}/tests/test/${testId}/questions/add-multiple`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

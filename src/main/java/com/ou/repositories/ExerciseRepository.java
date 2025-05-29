@@ -30,4 +30,5 @@ public interface ExerciseRepository {
     long countExercisesByLesson(Integer lessonId);
     long countExercisesByCreator(Integer userId);
     long countSearchResults(Map<String, String> filters);
+    boolean isCreatorOfExercise(Integer lecturerId, Integer exerciseId);
 }

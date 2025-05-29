@@ -1,5 +1,8 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      layout:decorate="~{layout}">
 <th:block layout:fragment="pagetitle" >
     <div th:replace="partials/title-meta :: title-meta('Exercise')"></div>
 </th:block>
@@ -26,7 +29,7 @@
             <input class="form-control" type="text" id="search-box" placeholder="Search...">
         </div>
         <div>
-            <a th:href="@{'/course/' + ${courseId} + '/lessons/' + ${lessonId} + '/exercises/exercise/add'}"
+            <a th:href="@{'/admin/courses/' + ${courseId} + '/lessons/' + ${lessonId} + '/exercises/exercise/add'}"
                class="btn btn-primary">
                 <i class="ri-add-line align-bottom me-1"></i> Add Exercise
             </a>
@@ -60,7 +63,7 @@
                     Duration: 30 minutes
                 </span>
             </p>
-            <a th:href="@{/course/{courseId}/lessons/{lessonId}/exercises/exercise/{exerciseId}(courseId=${courseId}, exerciseId=${exercise.id},lessonId=${lessonId})}"
+            <a th:href="@{/admin/courses/{courseId}/lessons/{lessonId}/exercises/exercise/{exerciseId}(courseId=${courseId}, exerciseId=${exercise.id},lessonId=${lessonId})}"
                class="btn btn-primary btn-label waves-effect right waves-light">
                 <span>Detail</span>
                 <i class="fa-solid fa-circle-info label-icon align-middle fs-16 ms-2"></i>
@@ -68,7 +71,7 @@
 
             <!-- Form delete cho từng exercise -->
             <form th:id="'deleteForm-' + ${exercise.id}" method="post"
-                  th:action="@{/course/{courseId}/lessons/{lessonId}/exercises/exercise/{exerciseId}/delete(courseId=${courseId}, exerciseId=${exercise.id}, lessonId=${lessonId})}"
+                  th:action="@{/admin/courses/{courseId}/lessons/{lessonId}/exercises/exercise/{exerciseId}/delete(courseId=${courseId}, exerciseId=${exercise.id}, lessonId=${lessonId})}"
                   style="display: inline;">
                 <button type="button"
                         class="btn btn-danger btn-label waves-effect right waves-light delete-exercise-btn"
@@ -79,7 +82,7 @@
                 </button>
             </form>
 
-            <a th:href="@{/course/{courseId}/lessons/{lessonId}/exercises/exercise/{exerciseId}/submissions(courseId=${courseId}, lessonId=${lessonId}, exerciseId=${exercise.id})}">
+            <a th:href="@{/admin/courses/{courseId}/lessons/{lessonId}/exercises/exercise/{exerciseId}/submissions(courseId=${courseId}, lessonId=${lessonId}, exerciseId=${exercise.id})}">
                 <button class="btn btn-secondary btn-label waves-effect right waves-light">
                     <span>All Submissions</span>
                     <i class="fa-solid fa-file-lines label-icon align-middle fs-16 ms-2"></i>
@@ -91,17 +94,17 @@
     <div class = "col-sm-6">
         <ul class = "pagination pagination-separated justify-content-center justify-content-sm-end mb-sm-0">
             <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                <a th:href="@{/course/{courseId}/lessons/{lessonId}/exercises(courseId=${courseId}, page=${currentPage - 1})}" class="page-link">
+                <a th:href="@{/admin/courses/{courseId}/lessons/{lessonId}/exercises(courseId=${courseId}, page=${currentPage - 1})}" class="page-link">
                     <i class="mdi mdi-chevron-left"></i>
                 </a>
             </li>
 
             <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}" th:classappend="${page == currentPage} ? 'active'">
-                <a th:href="@{/course/{courseId}/lessons/{lessonId}/exercises(courseId=${courseId}, lessonId = ${lessonId},page=${page})}" class="page-link" th:text="${page}"></a>
+                <a th:href="@{/admin/courses/{courseId}/lessons/{lessonId}/exercises(courseId=${courseId}, lessonId = ${lessonId},page=${page})}" class="page-link" th:text="${page}"></a>
             </li>
 
             <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                <a th:href="@{/course/{courseId}/lessons/{lessonId}/exercises(courseId=${courseId}, lessonId = ${lessonId},page=${currentPage + 1})}" class="page-link">
+                <a th:href="@{/admin/courses/{courseId}/lessons/{lessonId}/exercises(courseId=${courseId}, lessonId = ${lessonId},page=${currentPage + 1})}" class="page-link">
                     <i class="mdi mdi-chevron-right"></i>
                 </a>
             </li>

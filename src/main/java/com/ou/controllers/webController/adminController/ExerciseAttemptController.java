@@ -5,6 +5,9 @@ import com.ou.pojo.*;
 import com.ou.services.*;
 import com.ou.utils.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +17,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/course/{courseId}/lessons/{lessonId}/exercises/exercise/{exerciseId}/submissions")
+@RequestMapping("/admin/courses/{courseId}/lessons/{lessonId}/exercises/exercise/{exerciseId}/submissions")
 public class ExerciseAttemptController {
     @Autowired
     private ExerciseAttemptService exerciseAttemptService;
@@ -34,6 +37,12 @@ public class ExerciseAttemptController {
     @Autowired
     private ExerciseAttemptAnswerService exerciseAttemptAnswerService;
 
+    @Autowired
+    private LocalizationService localizationService;
+
+    @Autowired
+    private ExerciseService exerciseService;
+
 
 
     @GetMapping
@@ -41,7 +50,18 @@ public class ExerciseAttemptController {
                                          @PathVariable(value = "courseId") Integer courseId,
                                          @PathVariable(value = "lessonId") Integer lessonId,
                                          @PathVariable(value = "exerciseId") Integer exerciseId,
-                                         @RequestParam Map<String,String> params) {
+                                         @RequestParam Map<String,String> params,
+                                         @AuthenticationPrincipal CustomUserDetails principal) {
+        // Validate course, lesson, and exercise IDs
+        if (courseId == null || lessonId == null || exerciseId == null) {
+            throw new IllegalArgumentException("Invalid course, lesson, or exercise ID");
+        }
+        // Check if the user has permission to view submissions for this exercise
+        Exercise exercise = exerciseService.getExerciseByIdWithPermissionsCheck(exerciseId, principal.getUser());
+        if (exercise == null) {
+            throw new AccessDeniedException(localizationService.getMessage("exercise.access.denied", LocaleContextHolder.getLocale()));
+        }
+
         // Fetch exercise attempts for the given exerciseId
         List<ExerciseAttempt> exerciseAttempts = exerciseAttemptService.getExerciseAttemptsByExerciseId(exerciseId, params);
         if (exerciseAttempts.isEmpty()) {
@@ -85,7 +105,17 @@ public class ExerciseAttemptController {
                                               @PathVariable(value = "courseId") Integer courseId,
                                               @PathVariable(value = "lessonId") Integer lessonId,
                                               @PathVariable(value = "exerciseId") Integer exerciseId,
-                                              @PathVariable(value = "submissionId") Integer submissionId) {
+                                              @PathVariable(value = "submissionId") Integer submissionId,
+                                              @AuthenticationPrincipal CustomUserDetails principal) {
+        // Validate course, lesson, exercise, and submission IDs
+        if (courseId == null || lessonId == null || exerciseId == null || submissionId == null) {
+            throw new IllegalArgumentException("Invalid course, lesson, exercise, or submission ID");
+        }
+        // Check if the user has permission to view this submission
+        Exercise exercise = exerciseService.getExerciseByIdWithPermissionsCheck(exerciseId, principal.getUser());
+        if (exercise == null) {
+            throw new AccessDeniedException(localizationService.getMessage("exercise.access.denied", LocaleContextHolder.getLocale()));
+        }
         // Fetch the specific exercise attempt by submissionId
         ExerciseAttempt exerciseAttempt = exerciseAttemptService.getExerciseAttemptById(submissionId)
                 .orElseThrow(() -> new IllegalArgumentException("Submission not found"));
@@ -129,8 +159,12 @@ public class ExerciseAttemptController {
                                            @PathVariable(value = "courseId") Integer courseId,
                                            @PathVariable(value = "lessonId") Integer lessonId,
                                            @PathVariable(value = "exerciseId") Integer exerciseId,
+                                           @AuthenticationPrincipal CustomUserDetails principal,
                                            RedirectAttributes redirectAttributes) {
-        // Validate and update the exercise attempt
+        Exercise exercise = exerciseService.getExerciseByIdWithPermissionsCheck(exerciseId, principal.getUser());
+        if (exercise == null) {
+            throw new AccessDeniedException(localizationService.getMessage("exercise.access.denied", LocaleContextHolder.getLocale()));
+        }
         if (exerciseAttempt.getId() == null || exerciseAttempt.getId() <= 0) {
             throw new IllegalArgumentException("Invalid submission ID");
         }
@@ -143,7 +177,7 @@ public class ExerciseAttemptController {
         }
 
         // Redirect to the submission detail page after update
-        return "redirect:/course/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId + "/submissions/" + updatedAttempt.getId();
+        return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId + "/submissions/" + updatedAttempt.getId();
     }
 
 

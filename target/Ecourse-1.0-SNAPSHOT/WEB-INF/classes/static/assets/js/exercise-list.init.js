@@ -49,6 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 url.searchParams.delete("name");
             }
+            url.searchParams.set("page", "1");
             window.location.href = url.toString();
         }, 1000);
     });

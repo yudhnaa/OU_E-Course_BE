@@ -20,7 +20,7 @@ import java.beans.PropertyEditorSupport;
 import java.util.List;
 
 @Controller
-@RequestMapping("/course/{courseId}/lessons/{lessonId}/exercises/exercise/{exerciseId}/question")
+@RequestMapping("/admin/courses/{courseId}/lessons/{lessonId}/exercises/exercise/{exerciseId}/question")
 public class QuestionController {
 
     @Autowired
@@ -82,7 +82,7 @@ public class QuestionController {
             Question question = questionService.getQuestionById(questionId);
             if (question == null) {
                 redirectAttributes.addFlashAttribute("msg_error", "Question not found.");
-                return "redirect:/course/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId;
+                return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId;
             }
 
             // Update question properties
@@ -106,7 +106,7 @@ public class QuestionController {
                     multipleChoiceAnswerService.updateMultipleChoiceAnswer(questionId, answerIds, options, correctOption);
                 } else {
                     redirectAttributes.addFlashAttribute("msg_error", "Options and answer IDs don't match.");
-                    return "redirect:/course/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId + "/question/" + questionId;
+                    return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId + "/question/" + questionId;
                 }
             } else if (questionType.equals("writing") && sampleAnswer != null) {
                 writingAnswerService.updateWritingAnswer(questionId,writingAnswerId,sampleAnswer);
@@ -117,7 +117,7 @@ public class QuestionController {
             redirectAttributes.addFlashAttribute("msg_error", "Error updating question: " + e.getMessage());
         }
 
-        return "redirect:/course/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId + "/question/" + questionId;
+        return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId + "/question/" + questionId;
     }
 
     @GetMapping("/add")
@@ -159,7 +159,7 @@ public class QuestionController {
             // Basic validation
             if (question.getContent() == null || question.getContent().trim().isEmpty()) {
                 redirectAttributes.addFlashAttribute("msg_error", "Question content is required.");
-                return "redirect:/course/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId + "/question/add";
+                return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId + "/question/add";
             }
 
             String questionTypeName = type.getName();
@@ -169,37 +169,37 @@ public class QuestionController {
                     questionService.addQuestion(question);
                     if (multipleChoiceAnswerService.addMultipleChoiceAnswer(question, options, correctOption)) {
                         redirectAttributes.addFlashAttribute("msg_success", "Question added successfully!");
-                        return "redirect:/course/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId;
+                        return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId;
                     } else {
                         redirectAttributes.addFlashAttribute("msg_error", "Failed to add question.");
-                        return "redirect:/course/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId + "/question/add";
+                        return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId + "/question/add";
                     }
                 } else {
                     redirectAttributes.addFlashAttribute("msg_error", "Please provide answer options.");
-                    return "redirect:/course/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId + "/question/add";
+                    return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId + "/question/add";
                 }
             } else if (questionTypeName.equals("writing")) {
                 if (sampleAnswer != null && !sampleAnswer.isEmpty()) {
                     questionService.addQuestion(question);
                     if (writingAnswerService.addWritingAnswer(question, sampleAnswer)) {
                         redirectAttributes.addFlashAttribute("msg_success", "Question added successfully!");
-                        return "redirect:/course/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId;
+                        return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId;
                     } else {
                         redirectAttributes.addFlashAttribute("msg_error", "Failed to add writing answer.");
-                        return "redirect:/course/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId + "/question/add";
+                        return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId + "/question/add";
                     }
                 } else {
                     redirectAttributes.addFlashAttribute("msg_error", "Please provide a sample answer.");
-                    return "redirect:/course/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId + "/question/add";
+                    return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId + "/question/add";
                 }
             } else {
                 redirectAttributes.addFlashAttribute("msg_error", "Unsupported question type.");
-                return "redirect:/course/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId + "/question/add";
+                return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId + "/question/add";
             }
 
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("msg_error", "Error adding question: " + e.getMessage());
-            return "redirect:/course/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId + "/question/add";
+            return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId + "/question/add";
         }
     }
 
@@ -216,7 +216,7 @@ public class QuestionController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("msg_error", "Error deleting question: " + e.getMessage());
         }
-        return "redirect:/course/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId;
+        return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId;
     }
 
 }

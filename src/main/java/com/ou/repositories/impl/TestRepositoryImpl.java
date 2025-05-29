@@ -32,11 +32,32 @@ public class TestRepositoryImpl implements TestRepository {
 
     @Override
     public List<Test> getAllTests(Map<String, String> params) {
+//        Session session = sessionFactory.getObject().getCurrentSession();
+//        CriteriaBuilder builder = session.getCriteriaBuilder();
+//        CriteriaQuery<Test> query = builder.createQuery(Test.class);
+//        Root<Test> root = query.from(Test.class);
+//        query.select(root);
+//        Query<Test> q = session.createQuery(query);
+//
+//        // Apply pagination
+//        if(params != null) {
+//            int page = Integer.parseInt(params.getOrDefault("page","1"));
+//            int pageSize = Integer.parseInt(params.getOrDefault("pageSize", String.valueOf(PAGE_SIZE)));
+//            int start = (page - 1) * pageSize;
+//            q.setMaxResults(pageSize);
+//            q.setFirstResult(start);
+//        }
+//        return q.getResultList();
+
         Session session = sessionFactory.getObject().getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Test> query = builder.createQuery(Test.class);
         Root<Test> root = query.from(Test.class);
         query.select(root);
+        List<Predicate> predicates = buildSearchPredicates(builder, root, params);
+        if(!predicates.isEmpty()) {
+            query.where(builder.and(predicates.toArray(new Predicate[0])));
+        }
         Query<Test> q = session.createQuery(query);
 
         // Apply pagination
@@ -47,7 +68,9 @@ public class TestRepositoryImpl implements TestRepository {
             q.setMaxResults(pageSize);
             q.setFirstResult(start);
         }
+
         return q.getResultList();
+
     }
 
     @Override
@@ -88,13 +111,13 @@ public class TestRepositoryImpl implements TestRepository {
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Test> query = builder.createQuery(Test.class);
         Root<Test> root = query.from(Test.class);
-        query.select(root).where(builder.equal(root.get("courseId").get("id"), courseId));
-
+        query.select(root).where();
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(builder.equal(root.get("courseId").get("id"), courseId));
         // Apply filters if any
-        List<Predicate> predicates = buildSearchPredicates(builder,root, params);
-        if(!predicates.isEmpty()) {
-            query.where(builder.and(predicates.toArray(new Predicate[0])));
-        }
+        predicates.addAll(buildSearchPredicates(builder,root, params));
+
+        query.where(builder.and(predicates.toArray(new Predicate[0])));
 
         Query<Test> q = session.createQuery(query);
 
@@ -142,6 +165,38 @@ public class TestRepositoryImpl implements TestRepository {
         return session.createQuery(query).getSingleResult();
     }
 
+    @Override
+    public long countSearchResults(Map<String, String> filters) {
+        Session session = sessionFactory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Long> query = builder.createQuery(Long.class);
+        Root<Test> root = query.from(Test.class);
+
+        List<Predicate> predicates = buildSearchPredicates(builder, root, filters);
+        if (!predicates.isEmpty()) {
+            query.where(builder.and(predicates.toArray(new Predicate[0])));
+        }
+
+        query.select(builder.count(root));
+        return session.createQuery(query).getSingleResult();
+    }
+
+    @Override
+    public boolean isLecturerOfTest(Integer lecturerId, Integer testId) {
+        Session session = sessionFactory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Test> query = builder.createQuery(Test.class);
+        Root<Test> root = query.from(Test.class);
+        query.where(
+                builder.and(
+                        builder.equal(root.get("id"), testId),
+                        builder.equal(root.get("createdByUserId").get("id"), lecturerId)
+                )
+        );
+        List<Test> results = session.createQuery(query).getResultList();
+        return !results.isEmpty();
+    }
+
     private List<Predicate> buildSearchPredicates(CriteriaBuilder builder, Root<Test> root, Map<String, String> filters) {
         List<Predicate> predicates = new ArrayList<>();
 
@@ -164,7 +219,8 @@ public class TestRepositoryImpl implements TestRepository {
         }
 
         if (filters.containsKey("courseId")) {
-            predicates.add(builder.equal(root.get("courseId").get("id"), Integer.valueOf(filters.get("courseId"))));
+            Integer courseId = Integer.parseInt(filters.get("courseId"));
+            predicates.add(builder.equal(root.get("courseId").get("id"), courseId));
         }
 
         if(filters.containsKey("createdByUserId")){
