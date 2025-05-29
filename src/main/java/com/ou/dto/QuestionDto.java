@@ -13,31 +13,20 @@ import java.util.Set;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class QuestionDto implements Serializable {
-    private final Integer id;
+    private Integer id;
     @NotNull
     @Size(min = 1, max = 65535)
-    private final String content;
-    private final Set<WritingAnswerDto> writingAnswerSet;
-    private final Set<Integer> testQuestionSetIds;
-    private final Integer exerciseIdId;
-    private final String exerciseIdName;
-    private final int exerciseIdDurationMinutes;
-    private final Integer questionTypeIdId;
-    private final String questionTypeIdName;
-    private final String questionTypeIdDescription;
-    private final Set<MultipleChoiceAnswerDto1> multipleChoiceAnswerSet;
+    private String content;
+    private Set<WritingAnswerDto1> writingAnswerSet;
+    private Set<MultipleChoiceAnswerDto1> multipleChoiceAnswerSet;
 
-    public QuestionDto(Integer id, String content, Set<WritingAnswerDto> writingAnswerSet, Set<Integer> testQuestionSetIds, Integer exerciseIdId, String exerciseIdName, int exerciseIdDurationMinutes, Integer questionTypeIdId, String questionTypeIdName, String questionTypeIdDescription, Set<MultipleChoiceAnswerDto1> multipleChoiceAnswerSet) {
+    public QuestionDto() {
+    }
+
+    public QuestionDto(Integer id, String content, Set<WritingAnswerDto1> writingAnswerSet, Set<MultipleChoiceAnswerDto1> multipleChoiceAnswerSet) {
         this.id = id;
         this.content = content;
         this.writingAnswerSet = writingAnswerSet;
-        this.testQuestionSetIds = testQuestionSetIds;
-        this.exerciseIdId = exerciseIdId;
-        this.exerciseIdName = exerciseIdName;
-        this.exerciseIdDurationMinutes = exerciseIdDurationMinutes;
-        this.questionTypeIdId = questionTypeIdId;
-        this.questionTypeIdName = questionTypeIdName;
-        this.questionTypeIdDescription = questionTypeIdDescription;
         this.multipleChoiceAnswerSet = multipleChoiceAnswerSet;
     }
 
@@ -45,44 +34,32 @@ public class QuestionDto implements Serializable {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public String getContent() {
         return content;
     }
 
-    public Set<WritingAnswerDto> getWritingAnswerSet() {
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public Set<WritingAnswerDto1> getWritingAnswerSet() {
         return writingAnswerSet;
     }
 
-    public Set<Integer> getTestQuestionSetIds() {
-        return testQuestionSetIds;
-    }
-
-    public Integer getExerciseIdId() {
-        return exerciseIdId;
-    }
-
-    public String getExerciseIdName() {
-        return exerciseIdName;
-    }
-
-    public int getExerciseIdDurationMinutes() {
-        return exerciseIdDurationMinutes;
-    }
-
-    public Integer getQuestionTypeIdId() {
-        return questionTypeIdId;
-    }
-
-    public String getQuestionTypeIdName() {
-        return questionTypeIdName;
-    }
-
-    public String getQuestionTypeIdDescription() {
-        return questionTypeIdDescription;
+    public void setWritingAnswerSet(Set<WritingAnswerDto1> writingAnswerSet) {
+        this.writingAnswerSet = writingAnswerSet;
     }
 
     public Set<MultipleChoiceAnswerDto1> getMultipleChoiceAnswerSet() {
         return multipleChoiceAnswerSet;
+    }
+
+    public void setMultipleChoiceAnswerSet(Set<MultipleChoiceAnswerDto1> multipleChoiceAnswerSet) {
+        this.multipleChoiceAnswerSet = multipleChoiceAnswerSet;
     }
 
     @Override
@@ -93,19 +70,12 @@ public class QuestionDto implements Serializable {
         return Objects.equals(this.id, entity.id) &&
                 Objects.equals(this.content, entity.content) &&
                 Objects.equals(this.writingAnswerSet, entity.writingAnswerSet) &&
-                Objects.equals(this.testQuestionSetIds, entity.testQuestionSetIds) &&
-                Objects.equals(this.exerciseIdId, entity.exerciseIdId) &&
-                Objects.equals(this.exerciseIdName, entity.exerciseIdName) &&
-                Objects.equals(this.exerciseIdDurationMinutes, entity.exerciseIdDurationMinutes) &&
-                Objects.equals(this.questionTypeIdId, entity.questionTypeIdId) &&
-                Objects.equals(this.questionTypeIdName, entity.questionTypeIdName) &&
-                Objects.equals(this.questionTypeIdDescription, entity.questionTypeIdDescription) &&
                 Objects.equals(this.multipleChoiceAnswerSet, entity.multipleChoiceAnswerSet);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, content, writingAnswerSet, testQuestionSetIds, exerciseIdId, exerciseIdName, exerciseIdDurationMinutes, questionTypeIdId, questionTypeIdName, questionTypeIdDescription, multipleChoiceAnswerSet);
+        return Objects.hash(id, content, writingAnswerSet, multipleChoiceAnswerSet);
     }
 
     @Override
@@ -114,13 +84,6 @@ public class QuestionDto implements Serializable {
                 "id = " + id + ", " +
                 "content = " + content + ", " +
                 "writingAnswerSet = " + writingAnswerSet + ", " +
-                "testQuestionSetIds = " + testQuestionSetIds + ", " +
-                "exerciseIdId = " + exerciseIdId + ", " +
-                "exerciseIdName = " + exerciseIdName + ", " +
-                "exerciseIdDurationMinutes = " + exerciseIdDurationMinutes + ", " +
-                "questionTypeIdId = " + questionTypeIdId + ", " +
-                "questionTypeIdName = " + questionTypeIdName + ", " +
-                "questionTypeIdDescription = " + questionTypeIdDescription + ", " +
                 "multipleChoiceAnswerSet = " + multipleChoiceAnswerSet + ")";
     }
 
@@ -128,11 +91,14 @@ public class QuestionDto implements Serializable {
      * DTO for {@link com.ou.pojo.WritingAnswer}
      */
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class WritingAnswerDto implements Serializable {
-        private final Integer id;
-        private final String content;
+    public static class WritingAnswerDto1 implements Serializable {
+        private Integer id;
+        private String content;
 
-        public WritingAnswerDto(Integer id, String content) {
+        public WritingAnswerDto1() {
+        }
+
+        public WritingAnswerDto1(Integer id, String content) {
             this.id = id;
             this.content = content;
         }
@@ -141,15 +107,23 @@ public class QuestionDto implements Serializable {
             return id;
         }
 
+        public void setId(Integer id) {
+            this.id = id;
+        }
+
         public String getContent() {
             return content;
+        }
+
+        public void setContent(String content) {
+            this.content = content;
         }
 
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            WritingAnswerDto entity = (WritingAnswerDto) o;
+            WritingAnswerDto1 entity = (WritingAnswerDto1) o;
             return Objects.equals(this.id, entity.id) &&
                     Objects.equals(this.content, entity.content);
         }
@@ -172,9 +146,12 @@ public class QuestionDto implements Serializable {
      */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class MultipleChoiceAnswerDto1 implements Serializable {
-        private final Integer id;
-        private final String content;
-        private final boolean isCorrect;
+        private Integer id;
+        private String content;
+        private boolean isCorrect;
+
+        public MultipleChoiceAnswerDto1() {
+        }
 
         public MultipleChoiceAnswerDto1(Integer id, String content, boolean isCorrect) {
             this.id = id;
@@ -186,12 +163,24 @@ public class QuestionDto implements Serializable {
             return id;
         }
 
+        public void setId(Integer id) {
+            this.id = id;
+        }
+
         public String getContent() {
             return content;
         }
 
+        public void setContent(String content) {
+            this.content = content;
+        }
+
         public boolean getIsCorrect() {
             return isCorrect;
+        }
+
+        public void setIsCorrect(boolean isCorrect) {
+            this.isCorrect = isCorrect;
         }
 
         @Override

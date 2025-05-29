@@ -7,10 +7,12 @@ import com.ou.repositories.WritingAnswerRepository;
 import com.ou.services.WritingAnswerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class WritingAnswerServiceImpl implements WritingAnswerService {
     @Autowired
     private WritingAnswerRepository writingAnswerRepository;

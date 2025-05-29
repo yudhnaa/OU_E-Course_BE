@@ -7,10 +7,12 @@ import com.ou.repositories.MultipleChoiceAnswerRepository;
 import com.ou.services.MultipleChoiceAnswerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class MultipleChoiceAnswerServiceImpl implements MultipleChoiceAnswerService {
     @Autowired
     private MultipleChoiceAnswerRepository multipleChoiceAnswerRepository;
