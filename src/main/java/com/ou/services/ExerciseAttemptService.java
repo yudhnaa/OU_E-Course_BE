@@ -12,7 +12,7 @@ public interface ExerciseAttemptService {
     // Read operations with pagination
     List<ExerciseAttempt> getExerciseAttempts(Map<String, String> params);
     List<ExerciseAttempt> searchExerciseAttempts(Map<String, String> filters, Map<String, String> params);
-    
+    List<ExerciseAttempt> getExerciseAttemptsByStudentId(Integer studentId, Map<String, String> params);
     Optional<ExerciseAttempt> getExerciseAttemptById(Integer id);
     List<ExerciseAttempt> getExerciseAttemptsByExerciseId(Integer exerciseId, Map<String, String> params);
     List<ExerciseAttempt> getExerciseAttemptsByScoreByUserId(Integer userId, Map<String, String> params);
