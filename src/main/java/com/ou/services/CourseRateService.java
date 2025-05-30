@@ -28,6 +28,9 @@ public interface CourseRateService {
     long countCourseRatesByCourse(Integer courseId);
     long countCourseRatesByStudent(Integer studentId);
     long countSearchResults(Map<String, String> filters);
+
+    //calculate average rate for a course
+    double calculateAverageRate(Integer courseId);
     
     // Validation methods
     boolean isValidRate(double rate);

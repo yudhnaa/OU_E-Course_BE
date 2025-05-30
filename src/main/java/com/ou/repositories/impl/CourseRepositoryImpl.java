@@ -5,6 +5,7 @@ import com.ou.pojo.Course;
 import com.ou.pojo.CourseLecturer;
 import com.ou.pojo.Lecturer;
 import com.ou.repositories.CourseRepository;
+import com.ou.services.CategoryService;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.criteria.*;
 import org.hibernate.Session;
@@ -27,6 +28,8 @@ public class CourseRepositoryImpl implements CourseRepository {
 
     @Autowired
     private LocalSessionFactoryBean sessionFactory;
+    @Autowired
+    private CategoryService categoryService;
 
     @Override
     public Course addCourse(Course course) {
@@ -83,7 +86,8 @@ public class CourseRepositoryImpl implements CourseRepository {
         // Process pagination parameters
         if (params != null) {
             int page = Integer.parseInt(params.getOrDefault("page", "1"));
-            int pageSize = Integer.parseInt(params.getOrDefault("pageSize", String.valueOf(PAGE_SIZE)));
+            // Default page size if not specified
+            int pageSize = params.containsKey("pageSize") ? Integer.parseInt(params.get("pageSize")) : Integer.parseInt(params.getOrDefault("pageSize", String.valueOf(PAGE_SIZE)));
             int start = (page - 1) * pageSize;
             q.setMaxResults(pageSize);
             q.setFirstResult(start);
@@ -125,7 +129,7 @@ public class CourseRepositoryImpl implements CourseRepository {
         // Process pagination parameters
         if (params != null) {
             int page = Integer.parseInt(params.getOrDefault("page", "1"));
-            int pageSize = Integer.parseInt(params.getOrDefault("pageSize", String.valueOf(PAGE_SIZE)));
+            int pageSize = params.containsKey("pageSize") ? Integer.parseInt(params.get("pageSize")) : Integer.parseInt(params.getOrDefault("pageSize", String.valueOf(PAGE_SIZE)));
             int start = (page - 1) * pageSize;
             q.setMaxResults(pageSize);
             q.setFirstResult(start);
@@ -183,6 +187,20 @@ public class CourseRepositoryImpl implements CourseRepository {
             if (filters.containsKey("lecturerId")) {
                 Join<Course, CourseLecturer> courseCourseLecturerJoin = root.join("courseLecturerSet", JoinType.INNER);
                 predicates.add(builder.equal(courseCourseLecturerJoin.get("lecturerId").get("id"), Integer.valueOf(filters.get("lecturerId"))));
+            }
+
+            if (filters.containsKey("lecturerName")) {
+                Join<Course, CourseLecturer> courseCourseLecturerJoin = root.join("courseLecturerSet", JoinType.INNER);
+                Predicate lecturerFN = builder.like(courseCourseLecturerJoin.get("lecturerId").get("userId").get("firstName"), String.format("%%%s%%", filters.get("lecturerName")));
+                Predicate lectyrerLN = builder.like(courseCourseLecturerJoin.get("lecturerId").get("userId").get("lastName"), String.format("%%%s%%", filters.get("lecturerName")));
+
+                predicates.add(builder.or(lecturerFN, lectyrerLN));
+            }
+
+            if (filters.containsKey("category")) {
+                categoryService.getCategoryByName(filters.get("category")).ifPresent(category -> {
+                    predicates.add(builder.equal(root.get("categoryId").get("id"), category.getId()));
+                });
             }
         }
 

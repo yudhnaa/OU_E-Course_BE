@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -306,6 +307,30 @@ public class CourseServiceImpl implements CourseService {
         // If only one date is set or none are set, consider it valid
         return true;
     }
+
+    @Override
+    public BigDecimal calculateTotalPrice(Set<Integer> courseIds) {
+        if (courseIds == null || courseIds.isEmpty()) {
+            String message = localizationService.getMessage("course.notFound", LocaleContextHolder.getLocale());
+            throw new IllegalArgumentException(message);
+        }
+
+        BigDecimal totalPrice = BigDecimal.ZERO;
+
+        for (Integer courseId : courseIds) {
+            Optional<Course> courseOpt = courseRepository.getCourseById(courseId);
+
+            if (courseOpt.isPresent()) {
+                totalPrice = totalPrice.add(courseOpt.get().getPrice());
+            } else {
+                String message = localizationService.getMessage("course.notFound", LocaleContextHolder.getLocale());
+                throw new NotFoundException(message);
+            }
+        }
+
+        return totalPrice;
+    }
+
 
     private void validateFilterParams(Map<String, String> filters) {
         if (filters == null) {

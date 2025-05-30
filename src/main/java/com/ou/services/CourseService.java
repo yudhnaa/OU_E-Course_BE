@@ -5,9 +5,11 @@ import com.ou.pojo.User;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public interface CourseService {
     // Create operations with validation
@@ -39,5 +41,8 @@ public interface CourseService {
     boolean isValidCourse(Course course);
     boolean isNameUnique(String name, Integer excludeId);
     boolean hasValidDates(Course course);
+
+    // calculate courses price
+    BigDecimal calculateTotalPrice(Set<Integer> courseIds);
 
 }

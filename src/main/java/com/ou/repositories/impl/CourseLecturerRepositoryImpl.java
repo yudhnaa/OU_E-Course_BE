@@ -2,6 +2,7 @@ package com.ou.repositories.impl;
 
 import com.ou.configs.WebApplicationSettings;
 import com.ou.pojo.CourseLecturer;
+import com.ou.pojo.Lecturer;
 import com.ou.repositories.CourseLecturerRepository;
 import jakarta.persistence.criteria.*;
 import org.hibernate.Session;
@@ -81,7 +82,31 @@ public class CourseLecturerRepositoryImpl implements CourseLecturerRepository {
         
         return q.getResultList();
     }
-    
+
+    @Override
+    public List<Lecturer> getLecturersByCourseId(Integer courseId, Map<String, String> params) {
+        Session session = sessionFactory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Lecturer> query = builder.createQuery(Lecturer.class);
+        Root<CourseLecturer> root = query.from(CourseLecturer.class);
+
+        Join<CourseLecturer, Lecturer> lecturerJoin = root.join("lecturerId", JoinType.INNER);
+        query.select(lecturerJoin)
+             .where(builder.equal(root.get("courseId").get("id"), courseId));
+
+        Query<Lecturer> q = session.createQuery(query);
+
+//        // Process pagination parameters
+//        if (params != null) {
+//            int page = Integer.parseInt(params.getOrDefault("page", "1"));
+//            int pageSize = Integer.parseInt(params.getOrDefault("pageSize", String.valueOf(PAGE_SIZE)));
+//            int start = (page - 1) * pageSize;
+//            q.setMaxResults(pageSize);
+//            q.setFirstResult(start);
+//        }
+        return q.getResultList();
+    }
+
     @Override
     @Transactional(readOnly = true)
     public long countCourseLecturers() {
