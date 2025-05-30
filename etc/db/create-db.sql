@@ -368,7 +368,7 @@ CREATE TABLE test_attempt_answer
 
 CREATE TABLE payment_receipts
 (
-    id             BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id             INT AUTO_INCREMENT PRIMARY KEY,
     receipt_id     VARCHAR(255)                                   NOT NULL UNIQUE, -- Stripe session hoặc paymentIntent ID
     amount         DECIMAL(15, 2)                                 NOT NULL,        -- Số tiền thanh toán
     currency       VARCHAR(10)                                    NOT NULL,        -- Mã tiền tệ (USD, VND, ...)
@@ -379,6 +379,19 @@ CREATE TABLE payment_receipts
 
     student_id     INT                                            NOT NULL,         -- ID sinh viên / user
     FOREIGN KEY (student_id) REFERENCES student (id) ON DELETE NO ACTION
+);
+
+CREATE TABLE payment_receipt_course
+(
+    id             INT AUTO_INCREMENT PRIMARY KEY,
+
+    payment_receipt_id INT NOT NULL,
+    FOREIGN KEY (payment_receipt_id) REFERENCES payment_receipts (id) ON DELETE CASCADE,
+
+    course_id      INT NOT NULL,
+    FOREIGN KEY (course_id) REFERENCES course (id) ON DELETE CASCADE,
+
+    UNIQUE KEY unique_payment_receipt_course (payment_receipt_id, course_id)
 );
 
 

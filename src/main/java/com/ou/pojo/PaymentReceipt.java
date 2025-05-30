@@ -14,7 +14,7 @@ public class PaymentReceipt {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private Long id;
+    private Integer id;
 
     @Size(max = 255)
     @NotNull
@@ -53,11 +53,11 @@ public class PaymentReceipt {
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

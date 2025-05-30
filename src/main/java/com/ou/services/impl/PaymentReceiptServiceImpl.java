@@ -29,7 +29,7 @@ public class PaymentReceiptServiceImpl implements PaymentReceiptService {
     private LocalizationService localizationService;
 
     @Override
-    public PaymentReceipt getPaymentReceiptById(Long id) {
+    public PaymentReceipt getPaymentReceiptById(Integer id) {
         return paymentReceiptRepo.getPaymentReceiptById(id)
                 .orElseThrow(() -> new NotFoundException(
                         localizationService.getMessage("paymentReceipt.notFound", LocaleContextHolder.getLocale())));
@@ -68,7 +68,7 @@ public class PaymentReceiptServiceImpl implements PaymentReceiptService {
     }
 
     @Override
-    public boolean deletePaymentReceipt(Long id) {
+    public boolean deletePaymentReceipt(Integer id) {
         if (paymentReceiptRepo.getPaymentReceiptById(id).isPresent()) {
             return paymentReceiptRepo.deletePaymentReceipt(id);
         } else {

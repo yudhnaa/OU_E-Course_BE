@@ -42,7 +42,7 @@ public class PaymentReceiptRepositoryImpl implements PaymentReceiptRepository {
     }
 
     @Override
-    public boolean deletePaymentReceipt(Long id) {
+    public boolean deletePaymentReceipt(Integer id) {
         Session session = sessionFactory.getObject().getCurrentSession();
         PaymentReceipt paymentReceipt = session.get(PaymentReceipt.class, id);
         if (paymentReceipt != null) {
@@ -54,7 +54,7 @@ public class PaymentReceiptRepositoryImpl implements PaymentReceiptRepository {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<PaymentReceipt> getPaymentReceiptById(Long id) {
+    public Optional<PaymentReceipt> getPaymentReceiptById(Integer id) {
         Session session = sessionFactory.getObject().getCurrentSession();
         PaymentReceipt paymentReceipt = session.get(PaymentReceipt.class, id);
         return Optional.ofNullable(paymentReceipt);

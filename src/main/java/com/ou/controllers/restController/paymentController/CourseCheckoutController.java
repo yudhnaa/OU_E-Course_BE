@@ -2,8 +2,12 @@ package com.ou.controllers.restController.paymentController;
 
 import com.ou.dto.CartDto;
 import com.ou.dto.StripeResponseDto;
+import com.ou.pojo.CourseStudent;
 import com.ou.pojo.CustomUserDetails;
 import com.ou.pojo.PaymentReceipt;
+import com.ou.pojo.PaymentReceiptCourse;
+import com.ou.services.CourseStudentService;
+import com.ou.services.PaymentReceiptCourseService;
 import com.ou.services.PaymentReceiptService;
 import com.ou.services.StripeService;
 import com.ou.services.impl.StripeServiceImpl;
@@ -21,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -34,6 +39,10 @@ public class CourseCheckoutController {
     private PaymentReceiptService paymentReceiptService;
     @Autowired
     private Environment env;
+    @Autowired
+    private CourseStudentService courseStudentService;
+    @Autowired
+    private PaymentReceiptCourseService paymentReceiptCourseService;
 
     @PostMapping("/secure/payment/checkout")
     public ResponseEntity<StripeResponseDto> checkoutProducts(
@@ -48,7 +57,7 @@ public class CourseCheckoutController {
     }
 
     @PostMapping("/webhook/stripe")
-    public ResponseEntity<String> webhook(@RequestBody String payload, @RequestHeader("Stripe-Signature") String sigHeader) {
+    public ResponseEntity<String> webhook(@RequestBody String payload, @RequestHeader("Stripe-Signature") String sigHeader) throws Exception {
         Event event = null;
         try {
             event = Webhook.constructEvent(payload, sigHeader, env.getProperty("Stripe.webhookKey"));
@@ -80,7 +89,18 @@ public class CourseCheckoutController {
                     if (paymentReceiptOpt.isPresent()) {
                         PaymentReceipt paymentReceipt = paymentReceiptOpt.get();
                         paymentReceipt.setStatus("succeeded"); // hoặc "completed"
-                        paymentReceiptService.updatePaymentReceipt(paymentReceipt);
+                        PaymentReceipt updatePaymentReceipt = paymentReceiptService.updatePaymentReceipt(paymentReceipt);
+
+                        List<PaymentReceiptCourse> paymentReceiptCourses = paymentReceiptCourseService.getCoursesByPaymentReceipt(updatePaymentReceipt.getId(), null);
+                        for (PaymentReceiptCourse paymentReceiptCourse : paymentReceiptCourses) {
+                            Integer courseId = paymentReceiptCourse.getCourse().getId();
+                            CourseStudent courseStudent = new CourseStudent();
+                            courseStudent.setStudentId(updatePaymentReceipt.getStudent());
+                            courseStudent.setCourseId(paymentReceiptCourse.getCourse());
+                            courseStudent.setProgress(0);
+                            courseStudentService.addCourseStudent(courseStudent);
+                        }
+
                     } else {
                         // handle receipt not found
                     }

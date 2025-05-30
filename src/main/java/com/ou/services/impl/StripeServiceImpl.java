@@ -5,12 +5,10 @@ import com.ou.dto.StripeResponseDto;
 import com.ou.exceptions.NotFoundException;
 import com.ou.pojo.Course;
 import com.ou.pojo.PaymentReceipt;
+import com.ou.pojo.PaymentReceiptCourse;
 import com.ou.repositories.CourseRepository;
 import com.ou.repositories.PaymentReceiptRepository;
-import com.ou.services.CourseService;
-import com.ou.services.LocalizationService;
-import com.ou.services.StripeService;
-import com.ou.services.StudentService;
+import com.ou.services.*;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
@@ -41,6 +39,8 @@ public class StripeServiceImpl implements StripeService {
     private PaymentReceiptRepository paymentReceiptRepository;
     @Autowired
     private StudentService studentService;
+    @Autowired
+    private PaymentReceiptCourseService paymentReceiptCourseService;
 
     //stripe -API
     //-> productName , amount , quantity , currency
@@ -54,6 +54,7 @@ public class StripeServiceImpl implements StripeService {
         }
 
         List<SessionCreateParams.LineItem> lineItems = new ArrayList<>();
+        List<Course> courses = new ArrayList<>();
 
         for (Integer courseId : cartDto.getCourseIds()) {
             Course course = courseRepository.getCourseById(courseId)
@@ -62,6 +63,7 @@ public class StripeServiceImpl implements StripeService {
                                 "course.notFoundById", LocaleContextHolder.getLocale());
                         return new NotFoundException(msg);
                     });
+            courses.add(course);
 
 
             SessionCreateParams.LineItem.PriceData.ProductData productData =
@@ -109,6 +111,15 @@ public class StripeServiceImpl implements StripeService {
             paymentReceipt.setStudent(studentService.getStudentById(Integer.parseInt(cartDto.getStudentId())));
 
             PaymentReceipt created = paymentReceiptRepository.addPaymentReceipt(paymentReceipt);
+
+            courses.forEach(course -> {
+//                PaymentReceiptCourse paymentReceiptCourse = new PaymentReceiptCourse();
+//                paymentReceiptCourse.setCourse(course);
+//                paymentReceiptCourse.setPaymentReceipt(created);
+
+                paymentReceiptCourseService.addCourseToPaymentReceipt(created,course );
+            });
+
             if (created == null) {
                 throw new RuntimeException("Failed to create payment receipt.");
             }

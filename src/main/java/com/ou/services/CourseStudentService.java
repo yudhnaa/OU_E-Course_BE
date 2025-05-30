@@ -20,6 +20,7 @@ public interface CourseStudentService {
     List<CourseStudent> getCourseStudentsByCourse(Integer courseId, Map<String, String> params);
     List<CourseStudent> getCourseStudentsByStudent(Integer studentId, Map<String, String> params);
     Optional<CourseStudent> getCourseStudentByCourseAndStudent(Integer courseId, Integer studentId);
+    Optional<CourseStudent> getCourseStudentByCourseAndUser(Integer courseId, Integer userId);
 
     // Update operation
     CourseStudent updateCourseStudent(CourseStudent courseStudent) throws Exception;

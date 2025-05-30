@@ -14,7 +14,7 @@ public interface PaymentReceiptRepository {
     List<PaymentReceipt> searchPaymentReceipts(Map<String, String> filters, Map<String, String> params);
 
     // Return an Optional<PaymentReceipt> to handle cases where the receipt is not found to avoid null checks
-    Optional<PaymentReceipt> getPaymentReceiptById(Long id);
+    Optional<PaymentReceipt> getPaymentReceiptById(Integer id);
     Optional<PaymentReceipt> getPaymentReceiptByReceiptId(String receiptId);
     List<PaymentReceipt> getPaymentReceiptsByStudent(Long studentId, Map<String, String> params);
     List<PaymentReceipt> getPaymentReceiptsByStatus(String status, Map<String, String> params);
@@ -23,7 +23,7 @@ public interface PaymentReceiptRepository {
     PaymentReceipt updatePaymentReceipt(PaymentReceipt paymentReceipt);
 
     // Delete operation
-    boolean deletePaymentReceipt(Long id);
+    boolean deletePaymentReceipt(Integer id);
 
     // Count methods for pagination
     long countPaymentReceipts();

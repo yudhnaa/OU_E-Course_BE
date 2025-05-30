@@ -2,16 +2,14 @@ package com.ou.services.impl;
 
 import com.ou.pojo.CourseStudent;
 import com.ou.pojo.Lesson;
+import com.ou.pojo.Student;
 import com.ou.repositories.CourseStudentRepository;
-import com.ou.services.CourseService;
-import com.ou.services.CourseStudentService;
+import com.ou.services.*;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.ou.services.LessonService;
-import com.ou.services.LessonStudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +26,8 @@ public class CourseStudentServiceImpl implements CourseStudentService {
     private CourseService courseService;
     @Autowired
     private LessonService lessonService;
+    @Autowired
+    private StudentService studentService;
 
     @Override
     public CourseStudent addCourseStudent(CourseStudent courseStudent) throws Exception {
@@ -97,6 +97,17 @@ public class CourseStudentServiceImpl implements CourseStudentService {
             throw new IllegalArgumentException("Course ID and Student ID cannot be null");
         }
         return courseStudentRepository.getCourseStudentByCourseAndStudent(courseId, studentId);
+    }
+
+    @Override
+    public Optional<CourseStudent> getCourseStudentByCourseAndUser(Integer courseId, Integer userId) {
+        if (courseId == null || userId == null) {
+            throw new IllegalArgumentException("Course ID and Student ID cannot be null");
+        }
+
+        Student student = studentService.getStudentByUserId(userId);
+
+        return courseStudentRepository.getCourseStudentByCourseAndStudent(courseId, student.getId());
     }
 
     @Override

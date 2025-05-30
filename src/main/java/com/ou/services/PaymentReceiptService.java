@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface PaymentReceiptService {
     // Retrieve a payment receipt by ID
-    PaymentReceipt getPaymentReceiptById(Long id);
+    PaymentReceipt getPaymentReceiptById(Integer id);
     
     // Add a new payment receipt
     PaymentReceipt addPaymentReceipt(PaymentReceipt paymentReceipt);
@@ -17,7 +17,7 @@ public interface PaymentReceiptService {
     PaymentReceipt updatePaymentReceipt(PaymentReceipt paymentReceipt);
     
     // Delete a payment receipt by ID
-    boolean deletePaymentReceipt(Long id);
+    boolean deletePaymentReceipt(Integer id);
     
     // Retrieve a list of payment receipts with optional filters and pagination
     List<PaymentReceipt> getPaymentReceipts(Map<String, String> params);

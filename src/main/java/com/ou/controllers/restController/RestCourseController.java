@@ -119,8 +119,9 @@ public class RestCourseController {
             @AuthenticationPrincipal CustomUserDetails principal) {
 
 
-        Optional<CourseStudent> courseStudent = courseStudentService.getCourseStudentByCourseAndStudent(courseId, principal.getUser().getId());
-        boolean isEnrolled = courseStudent.isPresent() && courseStudent.get().getStudentId().getId().equals(principal.getUser().getId());
+
+        Optional<CourseStudent> courseStudent = courseStudentService.getCourseStudentByCourseAndUser(courseId, principal.getUser().getId());
+        boolean isEnrolled = courseStudent.isPresent() && courseStudent.get().getStudentId().getUserId().getId().equals(principal.getUser().getId());
 
         return new ResponseEntity<>(isEnrolled, HttpStatus.OK);
     }
