@@ -23,7 +23,19 @@ public class ExerciseAttemptAnswerServiceImpl implements ExerciseAttemptAnswerSe
 
     @Override
     public ExerciseAttemptAnswer addExerciseAttemptAnswer(ExerciseAttemptAnswer exerciseAttemptAnswer) {
-        return null;
+        if (exerciseAttemptAnswer == null || exerciseAttemptAnswer.getAttemptId() == null || exerciseAttemptAnswer.getAttemptId().getId() <= 0) {
+            throw new IllegalArgumentException("Invalid exercise attempt answer");
+        }
+
+        try {
+            if (!isValidExerciseAttemptAnswer(exerciseAttemptAnswer)) {
+                throw new IllegalArgumentException(localizationService.getMessage("exerciseAttemptAnswer.invalid", LocaleContextHolder.getLocale()));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Validation failed: " + e.getMessage());
+        }
+
+        return exerciseAttemptAnswerRepository.addExerciseAttemptAnswer(exerciseAttemptAnswer);
     }
 
     @Override

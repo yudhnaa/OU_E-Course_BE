@@ -3,11 +3,8 @@ package com.ou.controllers.restController;
 
 import com.ou.dto.ExerciseAttemptDto;
 import com.ou.mappers.ExerciseAttemptMapper;
-import com.ou.pojo.CustomUserDetails;
-import com.ou.pojo.ExerciseAttempt;
-import com.ou.pojo.Student;
-import com.ou.services.ExerciseAttemptService;
-import com.ou.services.StudentService;
+import com.ou.pojo.*;
+import com.ou.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/secure/courses/{courseId}/exercises/{exerciseId}")
@@ -28,6 +26,12 @@ public class RestExerciseAttemptController {
 
     @Autowired
     private ExerciseAttemptMapper exerciseAttemptMapper;
+
+    @Autowired
+    private ExerciseScoreStatusService exerciseScoreStatusService;
+
+    @Autowired
+    private ExerciseService exerciseService;
 
 
     @GetMapping("/attempts")
@@ -52,12 +56,30 @@ public class RestExerciseAttemptController {
             @PathVariable("courseId") Integer courseId,
             @PathVariable("exerciseId") Integer exerciseId,
             @AuthenticationPrincipal CustomUserDetails principal,
-            @RequestBody ExerciseAttemptDto exerciseAttemptDto) {
-        Student student = studentService.getStudentByUserId(principal.getUser().getId());;
+            @RequestBody ExerciseAttemptDto exerciseAttemptDto) throws Exception {
+        Student student = studentService.getStudentByUserId(principal.getUser().getId());
+        Exercise exercise = exerciseService.getExerciseById(exerciseId)
+                .orElseThrow(() -> new IllegalArgumentException("Exercise not found with ID: " + exerciseId));
+        // Map DTO to entity
         ExerciseAttempt exerciseAttempt = exerciseAttemptMapper.toEntity(exerciseAttemptDto);
-        ExerciseAttempt savedAttempt = exerciseAttemptService.addExerciseAttempt(exerciseAttempt);
-        ExerciseAttemptDto savedAttemptDto = exerciseAttemptMapper.toDto(savedAttempt);
-        return new ResponseEntity<>(savedAttemptDto, HttpStatus.CREATED);
+        exerciseAttempt.setStudentId(student);
+        exerciseAttempt.setExerciseId(exercise);
+        exerciseAttempt.setScoreByUserId(exercise.getCreatedByUserId());
+
+        Optional<ExerciseScoreStatus> exerciseScoreStatus = exerciseScoreStatusService.getExerciseScoreStatusById(3);
+        if (exerciseScoreStatus.isEmpty()) {
+            throw new IllegalArgumentException("Exercise score status not found with ID: 3");
+        }
+        exerciseAttempt.setStatusId(exerciseScoreStatus.get());
+
+        exerciseAttemptMapper.linkExerciseAttemptAnswerSet(exerciseAttempt);
+
+        ExerciseAttempt addedAttempt = exerciseAttemptService.addExerciseAttempt(exerciseAttempt);
+
+
+        ExerciseAttemptDto addedAttemptDto = exerciseAttemptMapper.toDto(addedAttempt);
+
+        return new ResponseEntity<>(addedAttemptDto, HttpStatus.CREATED);
     }
 
 }
