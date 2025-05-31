@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.ou.configs.WebApplicationSettings.PAGE_SIZE;
+
 @Repository
 @Transactional
 public class TestAttemptRepositoryImpl implements TestAttemptRepository {
@@ -31,26 +33,56 @@ public class TestAttemptRepositoryImpl implements TestAttemptRepository {
         CriteriaBuilder cb = session.getCriteriaBuilder();
         CriteriaQuery<TestAttempt> query = cb.createQuery(TestAttempt.class);
         Root<TestAttempt> root = query.from(TestAttempt.class);
-        query.where(cb.equal(root.get("testId").get("id"),testId));
+
+        // Tạo list predicates và thêm điều kiện testId vào
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(cb.equal(root.get("testId").get("id"), testId));
+
+        // Thêm các predicates khác từ params
+        List<Predicate> additionalPredicates = buildPredicates(cb, root, params);
+        predicates.addAll(additionalPredicates);
+
+        // Áp dụng tất cả predicates cùng lúc
+        query.where(cb.and(predicates.toArray(new Predicate[0])));
         query.orderBy(cb.desc(root.get("submittedAt")));
-
-        List<Predicate> predicates = buildPredicates(cb, root, params);
-
-        if (!predicates.isEmpty()) {
-            query.where(cb.and(predicates.toArray(new Predicate[0])));
-        }
 
         Query<TestAttempt> q = session.createQuery(query);
 
+        // Pagination logic...
         if (params != null) {
             int page = Integer.parseInt(params.getOrDefault("page", "1"));
-            int pageSize = Integer.parseInt(params.getOrDefault("pageSize", "10"));
+            int pageSize = Integer.parseInt(params.getOrDefault("pageSize", String.valueOf(PAGE_SIZE)));
+            int start = (page - 1) * pageSize;
+            q.setMaxResults(pageSize);
+            q.setFirstResult(start);
+        }
+        return q.getResultList();
+    }
+
+    @Override
+    public List<TestAttempt> getTestAttemptsByStudentId(Integer studentId, Map<String, String> params) {
+        Session session = factory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<TestAttempt> query = builder.createQuery(TestAttempt.class);
+        Root<TestAttempt> root = query.from(TestAttempt.class);
+
+        List<Predicate> predicates = buildPredicates(builder, root, params);
+        predicates.add(builder.equal(root.get("userId").get("id"), studentId));
+        query.where(builder.and(predicates.toArray(new Predicate[0])));
+        query.orderBy(builder.desc(root.get("submittedAt")));
+
+        Query<TestAttempt> q = session.createQuery(query);
+
+        if (params != null && params.containsKey("page")) {
+            int page = Integer.parseInt(params.getOrDefault("page", "1"));
+            int pageSize = Integer.parseInt(params.getOrDefault("pageSize", String.valueOf(PAGE_SIZE)));
             int start = (page - 1) * pageSize;
             q.setMaxResults(pageSize);
             q.setFirstResult(start);
         }
 
         return q.getResultList();
+
     }
 
 
@@ -60,10 +92,9 @@ public class TestAttemptRepositoryImpl implements TestAttemptRepository {
         CriteriaBuilder cb = session.getCriteriaBuilder();
         CriteriaQuery<Long> query = cb.createQuery(Long.class);
         Root<TestAttempt> root = query.from(TestAttempt.class);
-        query.select(cb.count(root)).where(cb.equal(root.get("testId").get("id"), testId));
-
-        Query<Long> q = session.createQuery(query);
-        return q.getSingleResult() != null ? q.getSingleResult() : 0L;
+        query.where(cb.equal(root.get("testId").get("id"), testId));
+        query.select(cb.count(root));
+        return session.createQuery(query).getSingleResult();
     }
 
     @Override
