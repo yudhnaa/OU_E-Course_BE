@@ -23,6 +23,7 @@ public class AttachmentDto implements Serializable {
     private String link;
     @Size(max = 65535)
     private String description;
+
     private Set<Integer> exerciseAttachmentSetIds;
     private Set<Integer> exerciseSetIds;
     private Set<Integer> lessonAttachmentSetIds;

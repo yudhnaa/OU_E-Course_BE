@@ -1,5 +1,6 @@
 package com.ou.services;
 
+import com.ou.pojo.Attachment;
 import com.ou.pojo.LessonAttachment;
 
 import java.io.IOException;
@@ -13,6 +14,8 @@ public interface LessonAttachmentService {
     LessonAttachment getLessonAttachmentById(Integer id);
     List<LessonAttachment> getAllLessonAttachments();
     List<LessonAttachment> getLessonAttachmentsByLesson(Integer lessonId);
+
+    List<Attachment> getAttachmentsByLesson(Integer lessonId);
 
     // update
     LessonAttachment updateLessonAttachment(LessonAttachment lessonAttachment);

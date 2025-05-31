@@ -31,6 +31,7 @@ public class CourseDto implements Serializable {
     private List<LecturerDto> lecturers;
     private double averageRate;
 
+
     @NotNull
     private  BigDecimal price;
 

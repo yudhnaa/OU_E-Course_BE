@@ -1,20 +1,31 @@
 package com.ou.mappers;
 
+import com.ou.dto.AttachmentDto;
 import com.ou.dto.LessonDto;
+import com.ou.dto.LessonWithAttachmentsDto;
 import com.ou.pojo.Lesson;
 
 import com.ou.services.ExerciseAttachmentService;
+import com.ou.services.ExerciseService;
 import com.ou.services.LessonAttachmentService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class LessonMapper {
     private final LessonAttachmentService lessonAttachmentService;
     private final ExerciseAttachmentService exerciseAttachmentService;
+    private final AttachmentMapper attachmentMapper;
+    private final ExerciseService exerciseService;
 
-    public LessonMapper(LessonAttachmentService lessonAttachmentService, ExerciseAttachmentService exerciseAttachmentService) {
+    public LessonMapper(LessonAttachmentService lessonAttachmentService, ExerciseAttachmentService exerciseAttachmentService, AttachmentMapper attachmentMapper, ExerciseService exerciseService) {
         this.lessonAttachmentService = lessonAttachmentService;
         this.exerciseAttachmentService = exerciseAttachmentService;
+        this.attachmentMapper = attachmentMapper;
+        this.exerciseService = exerciseService;
     }
 
 
@@ -58,9 +69,44 @@ public class LessonMapper {
         lessonDto.setImage( lesson.getImage() );
         lessonDto.setName( lesson.getName() );
         lessonDto.setCountAttachment(lessonAttachmentService.countLessonAttachmentsByLesson(lesson.getId()));
-        lessonDto.setCountExercise(exerciseAttachmentService.countExerciseAttachmentsByLesson(lesson.getId()));
+//        lessonDto.setCountExercise(exerciseAttachmentService.countExerciseAttachmentsByLesson(lesson.getId()));
+        lessonDto.setCountExercise(exerciseService.countExercisesByLesson(lesson.getId()));
+
+
 
         return lessonDto;
+    }
+
+    public LessonWithAttachmentsDto toDtoWithExtraData(Lesson lesson) {
+        if ( lesson == null ) {
+            return null;
+        }
+
+        LessonDto lessonDto = toDto(lesson);
+
+        lessonDto.setCourseIdId(lesson.getCourseId().getId());
+        lessonDto.setCourseIdName(lesson.getCourseId().getName());
+        lessonDto.setLessonTypeIdId(lesson.getLessonTypeId().getId());
+        lessonDto.setLessonTypeIdName(lesson.getLessonTypeId().getName());
+        lessonDto.setUserUploadIdId(lesson.getUserUploadId().getId());
+        lessonDto.setUserUploadIdUsername(lesson.getUserUploadId().getUsername());
+        lessonDto.setOrderIndex(lesson.getOrderIndex());
+
+        LessonWithAttachmentsDto lessonWithAttachmentDto = new LessonWithAttachmentsDto();
+        BeanUtils.copyProperties(lessonDto, lessonWithAttachmentDto);
+
+        List<AttachmentDto> attachmentDtos = lessonAttachmentService.getAttachmentsByLesson(lesson.getId()).stream().map(attachmentMapper::toDto).toList();
+//        List<AttachmentDto> attachmentDtos =
+
+
+//                lesson.getLessonAttachmentSet().stream()
+//                .map(attachmentMapper::toDto)
+//                .collect(Collectors.toList());
+
+        lessonWithAttachmentDto.setAttachmentDtos(attachmentDtos);
+
+
+        return lessonWithAttachmentDto;
     }
 
     public Lesson toEntity(LessonDto lessonDto) {

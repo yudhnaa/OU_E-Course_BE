@@ -2,6 +2,7 @@ package com.ou.services.impl;
 
 import com.ou.exceptions.NotFoundException;
 import com.ou.helpers.CloudinaryHelper;
+import com.ou.pojo.Attachment;
 import com.ou.pojo.LessonAttachment;
 import com.ou.repositories.LessonAttachmentRepository;
 import com.ou.services.AttachmentService;
@@ -66,6 +67,23 @@ public class LessonAttachmentServiceImpl implements LessonAttachmentService {
         List<LessonAttachment> res = lessonAttachmentRepo.getLessonAttachmentsByLesson(lessonId);
 
         return res;
+    }
+
+    @Override
+    public List<Attachment> getAttachmentsByLesson(Integer lessonId) {
+        // Verify that the lesson exists before fetching attachments
+        if (lessonService.getLessonById(lessonId) == null) {
+            throw new NotFoundException(localizationService.getMessage("lesson.notFound", LocaleContextHolder.getLocale()));
+        }
+
+        List<LessonAttachment> lessonAttachments = lessonAttachmentRepo.getLessonAttachmentsByLesson(lessonId);
+        if (lessonAttachments.isEmpty()) {
+            return List.of(); // Return an empty list if no attachments found
+        }
+
+        return lessonAttachments.stream()
+                .map(LessonAttachment::getAttachmentId)
+                .toList();
     }
 
     @Override

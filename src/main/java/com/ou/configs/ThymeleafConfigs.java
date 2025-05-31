@@ -31,7 +31,7 @@ public class ThymeleafConfigs {
 //        templateResolver.setTemplateMode("HTML");
 //        templateResolver.setCharacterEncoding("UTF-8");
 //        return templateResolver;
-//    }
+//    }cour
 //
 //    @Bean
 //    public SpringTemplateEngine templateEngine() {
@@ -53,8 +53,8 @@ public class ThymeleafConfigs {
     @Bean
     public ITemplateResolver fileTemplateResolver() {
         FileTemplateResolver templateResolver = new FileTemplateResolver();
-//        templateResolver.setPrefix("/Users/yudhna/E_Course/Backend/src/main/resources/templates/");
-        templateResolver.setPrefix("D:\\Y3S2\\Web_system_development\\E_Course_Backend\\src\\main\\resources\\templates\\");
+        templateResolver.setPrefix("/Users/yudhna/E_Course/Backend/src/main/resources/templates/");
+//        templateResolver.setPrefix("D:\\Y3S2\\Web_system_development\\E_Course_Backend\\src\\main\\resources\\templates\\");
         templateResolver.setSuffix(".html");
         templateResolver.setTemplateMode("HTML");
         templateResolver.setCharacterEncoding("UTF-8");

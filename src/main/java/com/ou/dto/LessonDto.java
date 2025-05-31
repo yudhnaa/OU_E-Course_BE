@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -33,9 +34,28 @@ public class LessonDto implements Serializable {
     private String userUploadIdUsername;
     private long countAttachment;
     private long countExercise;
-
+    private int orderIndex;
 
     public LessonDto() {
+    }
+
+    public LessonDto(Integer id, String name, String embedLink, String description, String image, Integer courseIdId, String courseIdName, Integer lessonTypeIdId, String lessonTypeIdName, Integer userUploadIdId, String userUploadIdLastName, String userUploadIdFirstName, String userUploadIdUsername, long countAttachment, long countExercise, int orderIndex) {
+        this.id = id;
+        this.name = name;
+        this.embedLink = embedLink;
+        this.description = description;
+        this.image = image;
+        this.courseIdId = courseIdId;
+        this.courseIdName = courseIdName;
+        this.lessonTypeIdId = lessonTypeIdId;
+        this.lessonTypeIdName = lessonTypeIdName;
+        this.userUploadIdId = userUploadIdId;
+        this.userUploadIdLastName = userUploadIdLastName;
+        this.userUploadIdFirstName = userUploadIdFirstName;
+        this.userUploadIdUsername = userUploadIdUsername;
+        this.countAttachment = countAttachment;
+        this.countExercise = countExercise;
+        this.orderIndex = orderIndex;
     }
 
     public LessonDto(Integer id, String name, String embedLink, String description, String image, Integer courseIdId, String courseIdName, Integer lessonTypeIdId, String lessonTypeIdName, Integer userUploadIdId, String userUploadIdLastName, String userUploadIdFirstName, String userUploadIdUsername) {
@@ -215,5 +235,13 @@ public class LessonDto implements Serializable {
                 "userUploadIdLastName = " + userUploadIdLastName + ", " +
                 "userUploadIdFirstName = " + userUploadIdFirstName + ", " +
                 "userUploadIdUsername = " + userUploadIdUsername + ")";
+    }
+
+    public int getOrderIndex() {
+        return orderIndex;
+    }
+
+    public void setOrderIndex(int orderIndex) {
+        this.orderIndex = orderIndex;
     }
 }
