@@ -3,6 +3,7 @@ package com.ou.repositories.impl;
 import com.ou.configs.WebApplicationSettings;
 import com.ou.pojo.Course;
 import com.ou.pojo.CourseLecturer;
+import com.ou.pojo.CourseStudent;
 import com.ou.pojo.Lecturer;
 import com.ou.repositories.CourseRepository;
 import com.ou.services.CategoryService;
@@ -156,6 +157,29 @@ public class CourseRepositoryImpl implements CourseRepository {
         return session.createQuery(query).getSingleResult();
     }
 
+    @Override
+    public long countCoursesByStudentId(Integer studentId, Map<String, String> filters) {
+        Session session = sessionFactory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Long> query = builder.createQuery(Long.class);
+        Root<Course> root = query.from(Course.class);
+        Join<Course, CourseStudent> courseStudentJoin = root.join("courseStudentSet", JoinType.INNER);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        predicates.add(builder.equal(courseStudentJoin.get("studentId").get("id"), studentId));
+
+        predicates.addAll(buildSearchPredicates(builder, root, filters));
+
+        // Apply all predicates at once
+        if (!predicates.isEmpty()) {
+            query.where(builder.and(predicates.toArray(new Predicate[0])));
+        }
+
+        query.select(builder.countDistinct(root)); // optional: distinct course count
+        return session.createQuery(query).getSingleResult();
+    }
+
     private List<Predicate> buildSearchPredicates(CriteriaBuilder builder, Root<Course> root, Map<String, String> filters) {
         List<Predicate> predicates = new ArrayList<>();
 
@@ -279,7 +303,71 @@ public class CourseRepositoryImpl implements CourseRepository {
         
         return q.getResultList();
     }
-    
+
+    @Override
+    public List<Course> getCoursesByStudentId(Integer studentId, Map<String, String> params) {
+        Session session = sessionFactory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Course> query = builder.createQuery(Course.class);
+        Root<Course> root = query.from(Course.class);
+
+        Join<Course, CourseStudent> courseLecturerJoin = root.join("courseStudentSet", JoinType.INNER);
+        query.where(builder.equal(courseLecturerJoin.get("studentId").get("id"), studentId));
+
+        List<Predicate> predicates =  buildSearchPredicates(builder, root, params);
+
+        // Apply predicates if any
+        if (!predicates.isEmpty()) {
+            query.where(builder.and(predicates.toArray(new Predicate[0])));
+        }
+
+        Query<Course> q = session.createQuery(query);
+
+        // Process pagination parameters
+        if (params != null) {
+            int page = Integer.parseInt(params.getOrDefault("page", "1"));
+            int pageSize = params.containsKey("pageSize") ? Integer.parseInt(params.get("pageSize")) : Integer.parseInt(params.getOrDefault("pageSize", String.valueOf(PAGE_SIZE)));
+            int start = (page - 1) * pageSize;
+            q.setMaxResults(pageSize);
+            q.setFirstResult(start);
+        }
+        return q.getResultList();
+    }
+
+    @Override
+    public List<Object[]> getCoursesWithProgressByStudentId(Integer studentId, Map<String, String> params) {
+        Session session = sessionFactory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Object[]> query = builder.createQuery(Object[].class);
+
+        Root<Course> courseRoot = query.from(Course.class);
+        Join<Course, CourseStudent> courseStudentJoin = courseRoot.join("courseStudentSet", JoinType.INNER);
+
+        List<Predicate> predicates =  buildSearchPredicates(builder, courseRoot, params);
+        predicates.add(builder.equal(courseStudentJoin.get("studentId").get("id"), studentId));
+
+        // Apply predicates if any
+        if (!predicates.isEmpty()) {
+            query.where(builder.and(predicates.toArray(new Predicate[0])));
+        }
+
+        query.select(builder.array(courseRoot, courseStudentJoin.get("progress")));
+
+        Query<Object[]> q = session.createQuery(query);
+
+        // Pagination
+        if (params != null) {
+            int page = Integer.parseInt(params.getOrDefault("page", "1"));
+            int pageSize = params.containsKey("pageSize") ? Integer.parseInt(params.get("pageSize")) : Integer.parseInt(params.getOrDefault("pageSize", String.valueOf(PAGE_SIZE)));
+            int start = (page - 1) * pageSize;
+            q.setMaxResults(pageSize);
+            q.setFirstResult(start);
+        }
+
+        return q.getResultList(); // List<Object[]>: [Course, progress]
+    }
+
+
     @Override
     @Transactional(readOnly = true)
     public long countCoursesCreatedByUser(Integer userId) {

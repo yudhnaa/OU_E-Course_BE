@@ -91,6 +91,15 @@ public class CourseStudentServiceImpl implements CourseStudentService {
     }
 
     @Override
+    public List<CourseStudent> getCourseStudentsByUser(Integer userId, Map<String, String> params) {
+        if (userId == null) {
+            throw new IllegalArgumentException("User ID cannot be null");
+        }
+
+        return courseStudentRepository.getCourseStudentsByUserId(userId, params);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Optional<CourseStudent> getCourseStudentByCourseAndStudent(Integer courseId, Integer studentId) {
         if (courseId == null || studentId == null) {
@@ -105,9 +114,7 @@ public class CourseStudentServiceImpl implements CourseStudentService {
             throw new IllegalArgumentException("Course ID and Student ID cannot be null");
         }
 
-        Student student = studentService.getStudentByUserId(userId);
-
-        return courseStudentRepository.getCourseStudentByCourseAndStudent(courseId, student.getId());
+        return courseStudentRepository.getCourseStudentByCourseAndUser(courseId, userId);
     }
 
     @Override

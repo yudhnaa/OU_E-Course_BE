@@ -47,6 +47,10 @@ public class CourseDto implements Serializable {
         this.price = price;
     }
 
+    public CourseDto() {
+
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

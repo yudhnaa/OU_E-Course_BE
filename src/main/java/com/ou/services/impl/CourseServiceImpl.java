@@ -180,6 +180,18 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    public long countCoursesByStudentId(Integer studentId, Map<String, String> filters) {
+        if (studentId == null) {
+            throw new IllegalArgumentException("Student ID cannot be null");
+        }
+
+        // Validate filter parameters
+        validateFilterParams(filters);
+
+        return courseRepository.countCoursesByStudentId(studentId, filters);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Optional<Course> getCourseByName(String name) {
         if (name == null || name.trim().isEmpty()) {
@@ -241,6 +253,32 @@ public class CourseServiceImpl implements CourseService {
             }
         }
         return courseOpt.get();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Course> getCoursesByStudentId(Integer studentId, Map<String, String> filters) {
+        if (studentId == null) {
+            throw new IllegalArgumentException("Student ID cannot be null");
+        }
+
+        // Validate filter parameters
+        validateFilterParams(filters);
+
+        return courseRepository.getCoursesByStudentId(studentId, filters);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Object[]> getCoursesWithProgressByStudentId(Integer studentId, Map<String, String> params){
+        if (studentId == null) {
+            throw new IllegalArgumentException("Student ID cannot be null");
+        }
+
+        // Validate pagination parameters
+        ValidateUtils.validatePaginationParams(params);
+
+        return courseRepository.getCoursesWithProgressByStudentId(studentId, params);
     }
 
     @Override

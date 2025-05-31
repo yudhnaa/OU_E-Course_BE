@@ -90,7 +90,7 @@ public class StripeServiceImpl implements StripeService {
         // Tạo phiên thanh toán
         SessionCreateParams params = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl("http://localhost:3000/my-enrollments")
+                .setSuccessUrl("http://localhost:3000/payment-success?session_id={CHECKOUT_SESSION_ID}")
                 .setCancelUrl("http://localhost:3000/my-enrollments")
                 .addAllLineItem(lineItems)
                 .build();
