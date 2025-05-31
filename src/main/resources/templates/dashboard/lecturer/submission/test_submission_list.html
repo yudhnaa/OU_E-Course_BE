@@ -63,7 +63,7 @@
 
             <!-- Các số trang -->
             <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}" th:classappend="${page == currentPage} ? 'active'">
-                <a th:href="@{/admin/courses/{courseId}/tests/test/{testId}/submissions(courseId=${courseId}, testId=${testId} page=${page})}" class="page-link" th:text="${page}"></a>
+                <a th:href="@{/admin/courses/{courseId}/tests/test/{testId}/submissions(courseId=${courseId}, testId=${testId}, page=${page})}" class="page-link" th:text="${page}"></a>
             </li>
 
             <!-- Nút Next -->

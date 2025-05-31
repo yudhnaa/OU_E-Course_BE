@@ -271,7 +271,35 @@ public class ExerciseAttemptRepositoryImpl implements ExerciseAttemptRepository 
         
         return q.getResultList();
     }
-    
+
+    @Override
+    public List<ExerciseAttempt> getExerciseAttemptsByStudentId(Integer studentId, Map<String, String> params) {
+        Session session = sessionFactory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<ExerciseAttempt> query = builder.createQuery(ExerciseAttempt.class);
+        Root<ExerciseAttempt> root = query.from(ExerciseAttempt.class);
+
+        List<Predicate> predicates = buildSearchPredicates(builder, root, params);
+
+        predicates.add(builder.equal(root.get("studentId").get("id"), studentId));
+
+        query.where(builder.and(predicates.toArray(new Predicate[0])));
+        query.orderBy(builder.desc(root.get("submittedAt")));
+
+        Query<ExerciseAttempt> q = session.createQuery(query);
+
+        if (params != null && params.containsKey("page")) {
+            int page = Integer.parseInt(params.getOrDefault("page", "1"));
+            int pageSize = Integer.parseInt(params.getOrDefault("pageSize", String.valueOf(PAGE_SIZE)));
+            int start = (page - 1) * pageSize;
+            q.setMaxResults(pageSize);
+            q.setFirstResult(start);
+        }
+
+        return q.getResultList();
+    }
+
+
     @Override
     @Transactional(readOnly = true)
     public long countExerciseAttemptsByStatusId(Integer statusId) {

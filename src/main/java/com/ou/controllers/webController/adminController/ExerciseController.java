@@ -63,6 +63,8 @@ public class ExerciseController {
         // Check if the user has permission to view the course
         Course course = courseService.getCourseByIdWithPermissionCheck(courseId, principal.getUser());
         params.put("courseId", String.valueOf(courseId));
+        params.put("lessonId", String.valueOf(lessonId));
+        params.put("page", params.getOrDefault("page", "1"));
         // Check if the user has permission to view exercises for this course and lesson
         if(principal.getUser().getUserRoleId().getName().contains("LECTURER")){
             Lecturer lecturer = lecturerService.getLecturerByUserId(principal.getUser().getId())
@@ -85,7 +87,7 @@ public class ExerciseController {
         }
 
 
-        List<Exercise> exercises = exerciseService.getExercisesByLesson(lessonId,params);
+        List<Exercise> exercises = exerciseService.getExercises(params);
         long totalExercises = exerciseService.countSearchResults(params);
 
         if(totalExercises == 0){

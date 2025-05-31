@@ -53,6 +53,14 @@ public class ExerciseAttemptServiceImpl implements ExerciseAttemptService {
     }
 
     @Override
+    public List<ExerciseAttempt> getExerciseAttemptsByStudentId(Integer studentId, Map<String, String> params) {
+        if (studentId == null || studentId <= 0) {
+            throw new IllegalArgumentException("Invalid student ID");
+        }
+        return exerciseAttemptRepository.getExerciseAttemptsByStudentId(studentId, params);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Optional<ExerciseAttempt> getExerciseAttemptById(Integer id) {
         if (id == null || id <= 0) {

@@ -21,7 +21,10 @@ public class ExerciseAttemptAnswerRepositoryImpl implements ExerciseAttemptAnswe
 
     @Override
     public ExerciseAttemptAnswer addExerciseAttemptAnswer(ExerciseAttemptAnswer exerciseAttemptAnswer) {
-        return null;
+        Session session = factory.getObject().getCurrentSession();
+        session.persist(exerciseAttemptAnswer);
+        session.flush();
+        return exerciseAttemptAnswer;
     }
 
     @Override

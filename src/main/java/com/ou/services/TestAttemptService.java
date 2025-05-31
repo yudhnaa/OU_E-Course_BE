@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface TestAttemptService {
     List<TestAttempt> getAllTestAttemptsByTestId(Integer testId, Map<String, String> params);
+    List<TestAttempt> getTestAttemptsByStudentId(Integer studentId, Map<String, String> params);
     long countTestAttemptsByTestId(Integer testId);
     Optional<TestAttempt> getTestAttemptById(Integer id);
     TestAttempt updateTestAttempt(TestAttempt testAttempt);

@@ -18,6 +18,7 @@ public interface ExerciseAttemptRepository {
     List<ExerciseAttempt> getExerciseAttemptsByExerciseId(Integer exerciseId, Map<String, String> params);
     List<ExerciseAttempt> getExerciseAttemptsByScoreByUserId(Integer userId, Map<String, String> params);
     List<ExerciseAttempt> getExerciseAttemptsByStatusId(Integer statusId, Map<String, String> params);
+    List<ExerciseAttempt> getExerciseAttemptsByStudentId(Integer studentId, Map<String, String> params);
 
     // Update operation
     ExerciseAttempt updateExerciseAttempt(ExerciseAttempt exerciseAttempt);
@@ -31,4 +32,5 @@ public interface ExerciseAttemptRepository {
     long countExerciseAttemptsByScoreByUserId(Integer userId);
     long countExerciseAttemptsByStatusId(Integer statusId);
     long countSearchResults(Map<String, String> filters);
+
 }

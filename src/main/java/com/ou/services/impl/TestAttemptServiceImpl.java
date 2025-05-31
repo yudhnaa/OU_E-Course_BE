@@ -28,6 +28,14 @@ public class TestAttemptServiceImpl implements TestAttemptService {
     }
 
     @Override
+    public List<TestAttempt> getTestAttemptsByStudentId(Integer studentId, Map<String, String> params) {
+        if (studentId == null || studentId <= 0) {
+            throw new IllegalArgumentException(localizationService.getMessage("student.invalidData", LocaleContextHolder.getLocale()));
+        }
+        return testAttemptRepository.getTestAttemptsByStudentId(studentId, params);
+    }
+
+    @Override
     public long countTestAttemptsByTestId(Integer testId) {
         return testAttemptRepository.countTestAttemptsByTestId(testId);
     }

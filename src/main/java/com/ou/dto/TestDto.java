@@ -1,7 +1,6 @@
 package com.ou.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.ou.pojo.Test;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -15,21 +14,22 @@ import java.util.Objects;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TestDto implements Serializable {
-    private final Integer id;
+    private Integer id;
     @NotNull
     @Size(min = 1, max = 100)
-    private final String name;
+    private String name;
     @Size(max = 65535)
-    private final String description;
-    private final int durationMinutes;
-    private final LocalDateTime createdAt;
+    private String description;
+    private int durationMinutes;
+    private LocalDateTime createdAt;
     @NotNull
-    private final BigDecimal maxScore;
-    private final Integer courseIdId;
-    private final String courseIdName;
-    private final String courseIdDescription;
+    private BigDecimal maxScore;
+    private Integer courseIdId;
 
-    public TestDto(Integer id, String name, String description, int durationMinutes, LocalDateTime createdAt, BigDecimal maxScore, Integer courseIdId, String courseIdName, String courseIdDescription) {
+    public TestDto() {
+    }
+
+    public TestDto(Integer id, String name, String description, int durationMinutes, LocalDateTime createdAt, BigDecimal maxScore, Integer courseIdId) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -37,44 +37,62 @@ public class TestDto implements Serializable {
         this.createdAt = createdAt;
         this.maxScore = maxScore;
         this.courseIdId = courseIdId;
-        this.courseIdName = courseIdName;
-        this.courseIdDescription = courseIdDescription;
     }
 
     public Integer getId() {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {
         return description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public int getDurationMinutes() {
         return durationMinutes;
+    }
+
+    public void setDurationMinutes(int durationMinutes) {
+        this.durationMinutes = durationMinutes;
     }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public BigDecimal getMaxScore() {
         return maxScore;
+    }
+
+    public void setMaxScore(BigDecimal maxScore) {
+        this.maxScore = maxScore;
     }
 
     public Integer getCourseIdId() {
         return courseIdId;
     }
 
-    public String getCourseIdName() {
-        return courseIdName;
-    }
-
-    public String getCourseIdDescription() {
-        return courseIdDescription;
+    public void setCourseIdId(Integer courseIdId) {
+        this.courseIdId = courseIdId;
     }
 
     @Override
@@ -88,14 +106,12 @@ public class TestDto implements Serializable {
                 Objects.equals(this.durationMinutes, entity.durationMinutes) &&
                 Objects.equals(this.createdAt, entity.createdAt) &&
                 Objects.equals(this.maxScore, entity.maxScore) &&
-                Objects.equals(this.courseIdId, entity.courseIdId) &&
-                Objects.equals(this.courseIdName, entity.courseIdName) &&
-                Objects.equals(this.courseIdDescription, entity.courseIdDescription);
+                Objects.equals(this.courseIdId, entity.courseIdId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, durationMinutes, createdAt, maxScore, courseIdId, courseIdName, courseIdDescription);
+        return Objects.hash(id, name, description, durationMinutes, createdAt, maxScore, courseIdId);
     }
 
     @Override
@@ -107,23 +123,6 @@ public class TestDto implements Serializable {
                 "durationMinutes = " + durationMinutes + ", " +
                 "createdAt = " + createdAt + ", " +
                 "maxScore = " + maxScore + ", " +
-                "courseIdId = " + courseIdId + ", " +
-                "courseIdName = " + courseIdName + ", " +
-                "courseIdDescription = " + courseIdDescription + ")";
-    }
-
-    // Chuyen tu entity sang dto
-    public static TestDto toDTO(Test test) {
-        return new TestDto(
-                test.getId(),
-                test.getName(),
-                test.getDescription(),
-                test.getDurationMinutes(),
-                test.getCreatedAt(),
-                test.getMaxScore(),
-                test.getCourseId() != null ? test.getCourseId().getId() : null,
-                test.getCourseId() != null ? test.getCourseId().getName() : null,
-                test.getCourseId() != null ? test.getCourseId().getDescription() : null
-        );
+                "courseIdId = " + courseIdId + ")";
     }
 }

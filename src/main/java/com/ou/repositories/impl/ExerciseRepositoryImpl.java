@@ -68,10 +68,14 @@ public class ExerciseRepositoryImpl implements ExerciseRepository {
         Root<Exercise> root = query.from(Exercise.class);
         query.select(root);
         
+        List<Predicate> predicates = buildSearchPredicates(builder,root,params);
+        if (!predicates.isEmpty()) {
+            query.where(builder.and(predicates.toArray(new Predicate[0])));
+        }
         Query<Exercise> q = session.createQuery(query);
-        
+
         // Process pagination parameters
-        if (params != null) {
+        if (params != null && params.containsKey("page")) {
             int page = Integer.parseInt(params.getOrDefault("page", "1"));
             int pageSize = Integer.parseInt(params.getOrDefault("pageSize", String.valueOf(PAGE_SIZE)));
             int start = (page - 1) * pageSize;
@@ -172,6 +176,10 @@ public class ExerciseRepositoryImpl implements ExerciseRepository {
             
             if (filters.containsKey("courseId")) {
                 predicates.add(builder.equal(root.get("courseId").get("id"), Integer.valueOf(filters.get("courseId"))));
+            }
+
+            if (filters.containsKey("lessonId")) {
+                predicates.add(builder.equal(root.get("lessonId").get("id"), Integer.valueOf(filters.get("lessonId"))));
             }
             
             if (filters.containsKey("createdByUserId")) {
