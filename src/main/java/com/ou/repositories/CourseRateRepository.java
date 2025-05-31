@@ -18,6 +18,9 @@ public interface CourseRateRepository {
     List<CourseRate> getCourseRatesByCourse(Integer courseId, Map<String, String> params);
     List<CourseRate> getCourseRatesByStudent(Integer studentId, Map<String, String> params);
 
+    // Calculate average rate for a course
+    double calculateAverageRate(Integer courseId);
+
     // Update operation
     CourseRate updateCourseRate(CourseRate courseRate);
 

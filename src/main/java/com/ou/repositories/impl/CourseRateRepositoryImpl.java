@@ -232,7 +232,24 @@ public class CourseRateRepositoryImpl implements CourseRateRepository {
         
         return q.getResultList();
     }
-    
+
+    @Override
+    public double calculateAverageRate(Integer courseId) {
+        Session session = sessionFactory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Double> query = builder.createQuery(Double.class);
+        Root<CourseRate> root = query.from(CourseRate.class);
+
+        query.select(builder.avg(root.get("rate")));
+        query.where(builder.equal(root.get("courseStudentId").get("courseId").get("id"), courseId));
+
+        try {
+            return session.createQuery(query).getSingleResult();
+        } catch (NoResultException e) {
+            return 0.0;
+        }
+    }
+
     @Override
     @Transactional(readOnly = true)
     public long countCourseRatesByStudent(Integer studentId) {

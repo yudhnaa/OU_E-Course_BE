@@ -16,7 +16,7 @@ import java.util.Optional;
 public class CourseRateServiceImpl implements CourseRateService {
 
     @Autowired
-    private CourseRateRepository courseRateRepository;
+   private  CourseRateRepository courseRateRepository;
     
     @Override
     public CourseRate addCourseRate(CourseRate courseRate) throws Exception {
@@ -133,6 +133,16 @@ public class CourseRateServiceImpl implements CourseRateService {
     @Transactional(readOnly = true)
     public long countSearchResults(Map<String, String> filters) {
         return courseRateRepository.countSearchResults(filters);
+    }
+
+    @Override
+    public double calculateAverageRate(Integer courseId) {
+        List<CourseRate> rates = courseRateRepository.getCourseRatesByCourse(courseId, null);
+        if (rates.isEmpty()) {
+            return 0.0;
+        }
+
+       return courseRateRepository.calculateAverageRate(courseId);
     }
 
     @Override

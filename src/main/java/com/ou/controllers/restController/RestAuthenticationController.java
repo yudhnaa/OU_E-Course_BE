@@ -90,19 +90,4 @@ public class RestAuthenticationController {
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Sai thông tin đăng nhập");
     }
-
-    @GetMapping("/secure/profile")
-    @ResponseBody
-    public ResponseEntity<StudentDto> getProfile(
-            @AuthenticationPrincipal CustomUserDetails principal
-            ) {
-
-        Student student = studentService.getStudentByUserId(principal.getUser().getId());
-
-        if (student == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity<>(studentMapper.toDto(student), HttpStatus.OK);
-    }
 }

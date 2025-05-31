@@ -18,7 +18,7 @@ CREATE TABLE `user`
     username     NVARCHAR(50) NOT NULL UNIQUE,
     password     VARCHAR(255) NOT NULL,
     avatar       VARCHAR(255) NULL,
-                        public_id varchar(100) null,
+    public_id    varchar(100) null,
     email        VARCHAR(100) NOT NULL UNIQUE,
 
     user_role_id INT          NOT NULL,
@@ -65,20 +65,20 @@ CREATE TABLE `category`
 CREATE TABLE `course`
 (
     id                  INT AUTO_INCREMENT PRIMARY KEY,
-    name                NVARCHAR(50) NOT NULL,
-    description         TEXT         NULL,
-    image               VARCHAR(255) NULL,
-    public_id           varchar(100) null,
+    name                NVARCHAR(50)   NOT NULL,
+    description         TEXT           NULL,
+    image               VARCHAR(255)   NULL,
+    public_id           varchar(100)   null,
     price               DECIMAL(10, 2) NOT NULL DEFAULT 0,
 
-    date_added          DATETIME DEFAULT CURRENT_TIMESTAMP,
-    date_start          DATETIME DEFAULT CURRENT_TIMESTAMP,
-    date_end            DATETIME DEFAULT CURRENT_TIMESTAMP,
+    date_added          DATETIME                DEFAULT CURRENT_TIMESTAMP,
+    date_start          DATETIME                DEFAULT CURRENT_TIMESTAMP,
+    date_end            DATETIME                DEFAULT CURRENT_TIMESTAMP,
 
     created_by_admin_id INT,
     FOREIGN KEY (created_by_admin_id) REFERENCES admin (id) ON DELETE RESTRICT,
 
-    category_id         INT          NULL,
+    category_id         INT            NULL,
     FOREIGN KEY (category_id) REFERENCES category (id) ON DELETE RESTRICT
 );
 
@@ -364,6 +364,36 @@ CREATE TABLE test_attempt_answer
     is_correct  BOOL          NULL,
     score       DECIMAL(5, 2) NULL
 );
+
+
+CREATE TABLE payment_receipts
+(
+    id             INT AUTO_INCREMENT PRIMARY KEY,
+    receipt_id     VARCHAR(255)                                   NOT NULL UNIQUE, -- Stripe session hoặc paymentIntent ID
+    amount         DECIMAL(15, 2)                                 NOT NULL,        -- Số tiền thanh toán
+    currency       VARCHAR(10)                                    NOT NULL,        -- Mã tiền tệ (USD, VND, ...)
+    status         ENUM ('succeeded', 'requires_payment_method', 'requires_action', 'processing') NOT NULL DEFAULT 'processing',
+    payment_method VARCHAR(100),                                                   -- Phương thức thanh toán
+    created_at     TIMESTAMP                                               DEFAULT CURRENT_TIMESTAMP,
+    updated_at     TIMESTAMP                                               DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    student_id     INT                                            NOT NULL,         -- ID sinh viên / user
+    FOREIGN KEY (student_id) REFERENCES student (id) ON DELETE NO ACTION
+);
+
+CREATE TABLE payment_receipt_course
+(
+    id             INT AUTO_INCREMENT PRIMARY KEY,
+
+    payment_receipt_id INT NOT NULL,
+    FOREIGN KEY (payment_receipt_id) REFERENCES payment_receipts (id) ON DELETE CASCADE,
+
+    course_id      INT NOT NULL,
+    FOREIGN KEY (course_id) REFERENCES course (id) ON DELETE CASCADE,
+
+    UNIQUE KEY unique_payment_receipt_course (payment_receipt_id, course_id)
+);
+
 
 # Triger
 

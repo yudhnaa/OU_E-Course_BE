@@ -134,6 +134,14 @@ public class CourseLecturerServiceImpl implements CourseLecturerService {
     }
 
     @Override
+    public List<Lecturer> getLecturersByCourseId(Integer courseId, Map<String, String> params) {
+        if (courseId == null || courseId <= 0) {
+            throw new IllegalArgumentException("Invalid course ID");
+        }
+        return courseLecturerRepository.getLecturersByCourseId(courseId, params);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<CourseLecturer> searchCourseLecturers(Map<String, String> filters, Map<String, String> params) {
         return courseLecturerRepository.searchCourseLecturers(filters, params);

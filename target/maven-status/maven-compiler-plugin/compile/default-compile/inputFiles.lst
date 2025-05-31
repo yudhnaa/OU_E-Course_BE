@@ -9,6 +9,7 @@
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/configs/WebAppContextConfigs.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/configs/WebApplicationSettings.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/controllers/restController/RestAuthenticationController.java
+/Users/yudhna/E_Course/Backend/src/main/java/com/ou/controllers/restController/RestCourseController.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/controllers/restController/RestExceptionHandler.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/controllers/restController/RestStudentController.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/controllers/webController/AuthenticationController.java
@@ -44,6 +45,7 @@
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/LessonStudentDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/LessonTypeDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/MultipleChoiceAnswerDto.java
+/Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/PaginationDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/QuestionDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/QuestionTypeDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/StudentDto.java
@@ -51,7 +53,6 @@
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/TestAttemptDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/TestDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/TestQuestionDto.java
-/Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/UserDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/dto/WritingAnswerDto.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/ecourse/JakartaRestConfiguration.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/ecourse/resources/JakartaEE11Resource.java
@@ -75,10 +76,12 @@
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/helpers/GoogleDriveHelper.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/helpers/PaginationHelper.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/mappers/CourseCertificateMapper.java
+/Users/yudhna/E_Course/Backend/src/main/java/com/ou/mappers/CourseMapper.java
+/Users/yudhna/E_Course/Backend/src/main/java/com/ou/mappers/CourseRateMapper.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/mappers/LecturerMapper.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/mappers/LessonMapper.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/mappers/StudentMapper.java
-/Users/yudhna/E_Course/Backend/src/main/java/com/ou/mappers/StudentSignUpFormMapperImpl.java
+/Users/yudhna/E_Course/Backend/src/main/java/com/ou/mappers/StudentSignUpFormMapper.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/pojo/Admin.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/pojo/Attachment.java
 /Users/yudhna/E_Course/Backend/src/main/java/com/ou/pojo/Category.java

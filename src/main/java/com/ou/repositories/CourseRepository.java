@@ -18,6 +18,9 @@ public interface CourseRepository {
     Optional<Course> getCourseByName(String name);
     List<Course> getCoursesByCategory(Integer categoryId, Map<String, String> params);
     List<Course> getCoursesCreatedByUser(Integer userId, Map<String, String> params);
+    List<Course> getCoursesByStudentId(Integer studentId, Map<String, String> params);
+    List<Object[]> getCoursesWithProgressByStudentId(Integer studentId, Map<String, String> params);
+
     
     // Update operation
     Course updateCourse(Course course);
@@ -30,6 +33,7 @@ public interface CourseRepository {
     long countCoursesByCategory(Integer categoryId);
     long countCoursesCreatedByUser(Integer userId);
     long countSearchResults(Map<String, String> filters);
+    long countCoursesByStudentId(Integer studentId, Map<String, String> filters);
 
 
 }
