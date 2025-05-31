@@ -64,7 +64,7 @@ public class ExerciseController {
         Course course = courseService.getCourseByIdWithPermissionCheck(courseId, principal.getUser());
         params.put("courseId", String.valueOf(courseId));
         params.put("lessonId", String.valueOf(lessonId));
-        params.put("page", params.getOrDefault("page", "1"));
+//        params.put("page", params.getOrDefault("page", "1"));
         // Check if the user has permission to view exercises for this course and lesson
         if(principal.getUser().getUserRoleId().getName().contains("LECTURER")){
             Lecturer lecturer = lecturerService.getLecturerByUserId(principal.getUser().getId())

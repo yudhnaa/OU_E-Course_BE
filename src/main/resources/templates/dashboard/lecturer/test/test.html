@@ -1,94 +1,498 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
-<th:block layout:fragment="pagetitle" >
-    <div th:replace="partials/title-meta :: title-meta('Test')"></div>
+<!--<!doctype html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"-->
+<!--      layout:decorate="~{layout}">-->
+
+<!--<th:block layout:fragment="pagetitle">-->
+<!--    &lt;!&ndash;page title&ndash;&gt;-->
+<!--    <div th:replace="partials/title-meta :: title-meta('Course Detail')"></div>-->
+<!--</th:block>-->
+
+<!--<head>-->
+<!--    &lt;!&ndash; Sweet Alert css&ndash;&gt;-->
+<!--    <link th:href="@{/assets/libs/sweetalert2/sweetalert2.min.css}" rel="stylesheet" type="text/css"/>-->
+<!--</head>-->
+
+<!--<body>-->
+<!--<div layout:fragment="content">-->
+<!--    &lt;!&ndash; end row &ndash;&gt;-->
+<!--    <div class="row">-->
+<!--        <div class="col-lg-12">-->
+<!--            <div class="tab-content text-muted">-->
+<!--                <div class="row tab-pane fade show active" id="course-tests">-->
+<!--                    <div class="row">-->
+<!--                        <div class="col-lg-12">-->
+<!--                            <div class="card mt-n4 mx-n4 border-0">-->
+<!--                                <div class="bg-soft-primary">-->
+<!--                                    <div class="card-body pb-0 px-4">-->
+<!--                                        <div class="row mb-3">-->
+<!--                                            <div class="col-md">-->
+<!--                                                <div class="row align-items-center g-3">-->
+<!--                                                    <div class="col-md-auto">-->
+<!--                                                        <div class="avatar-md">-->
+<!--                                                            <div class="avatar-title bg-white rounded-circle">-->
+<!--                                                                <img th:src="${course.image}" alt="" class="avatar-xs">-->
+<!--                                                            </div>-->
+<!--                                                        </div>-->
+<!--                                                    </div>-->
+<!--                                                    <div class="col-md">-->
+<!--                                                        <div>-->
+<!--                                                            <h4 class="fw-bold" th:text="${course.name}"></h4>-->
+<!--                                                            <div class="hstack gap-3 flex-wrap">-->
+<!--                                                                <div>-->
+<!--                                                                    <i class="ri-building-line align-bottom me-1"></i>-->
+<!--                                                                    <span th:text="${course.categoryId.name}"></span>-->
+<!--                                                                </div>-->
+<!--                                                                <div class="vr"></div>-->
+<!--                                                                <div>Create Date : <span class="fw-medium"-->
+<!--                                                                                         th:text="${@dateTimeFormatter.format(course.dateAdded, 'dd-MM-yyyy')}"></span>-->
+<!--                                                                </div>-->
+<!--                                                                <div class="vr"></div>-->
+<!--                                                                <div>Due Date : <span class="fw-medium"-->
+<!--                                                                                      th:text="${@dateTimeFormatter.format(course.dateEnd, 'dd-MM-yyyy')}"></span>-->
+<!--                                                                </div>-->
+<!--                                                                <div class="vr"></div>-->
+<!--                                                            </div>-->
+<!--                                                        </div>-->
+<!--                                                    </div>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                            <div class="col-md-auto">-->
+<!--                                                <div class="hstack gap-1 flex-wrap">-->
+<!--                                                    <button type="button" class="btn py-0 fs-16 favourite-btn active">-->
+<!--                                                        <i class="ri-star-fill"></i>-->
+<!--                                                    </button>-->
+<!--                                                    <button type="button" class="btn py-0 fs-16 text-body">-->
+<!--                                                        <i class="ri-share-line"></i>-->
+<!--                                                    </button>-->
+<!--                                                    <button type="button" class="btn py-0 fs-16 text-body">-->
+<!--                                                        <i class="ri-flag-line"></i>-->
+<!--                                                    </button>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+
+<!--                                        <ul class="nav nav-tabs-custom border-bottom-0" role="tablist">-->
+<!--                                            <li class="nav-item">-->
+<!--                                                <a class="nav-link fw-semibold"-->
+<!--                                                   th:href="@{/admin/course/{courseId}#course-overview(courseId=${course.id})}"-->
+<!--                                                   role="tab">-->
+<!--                                                    Overview-->
+<!--                                                </a>-->
+<!--                                            </li>-->
+<!--                                            <li class="nav-item">-->
+<!--                                                <a class="nav-link fw-semibold"-->
+<!--                                                   th:href="@{/admin/course/{courseId}#course-details(courseId=${course.id})}"-->
+<!--                                                   role="tab">-->
+<!--                                                    Details-->
+<!--                                                </a>-->
+<!--                                            </li>-->
+<!--                                            <li class="nav-item">-->
+<!--                                                <a class="nav-link fw-semibold"-->
+<!--                                                   th:href="@{/admin/course/{courseId}#course-team(courseId=${course.id})}" role="tab">-->
+<!--                                                    Students-->
+<!--                                                </a>-->
+<!--                                            </li>-->
+<!--                                            <li class="nav-item">-->
+<!--                                                <a class="nav-link fw-semibold"-->
+<!--                                                   th:href="@{/admin/course/{courseId}/lessons(courseId=${course.id})}">-->
+<!--                                                    Content Manager-->
+<!--                                                </a>-->
+<!--                                            </li>-->
+<!--                                            <li class="nav-item" role="presentation">-->
+<!--                                                <a class="nav-link fw-semibold" data-bs-toggle="tab" role="tab"-->
+<!--                                                   aria-selected="true" href="#course-tests">-->
+<!--                                                    Tests-->
+<!--                                                </a>-->
+<!--                                            </li>-->
+<!--                                        </ul>-->
+<!--                                    </div>-->
+<!--                                    &lt;!&ndash; end card body &ndash;&gt;-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            &lt;!&ndash; end card &ndash;&gt;-->
+<!--                        </div>-->
+<!--                        &lt;!&ndash; end col &ndash;&gt;-->
+<!--                    </div>-->
+<!--                    <div class="col-lg-12">-->
+
+<!--                        <div class="row">-->
+<!--                            &lt;!&ndash; Danger Alert &ndash;&gt;-->
+<!--                            <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${msg_error}">-->
+<!--                                <b th:text="${msg_error}">Dismissible danger Alert </b>-->
+<!--                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>-->
+<!--                            </div>-->
+
+<!--                            &lt;!&ndash; Success Alert &ndash;&gt;-->
+<!--                            <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${msg_success}">-->
+<!--                                <b th:text="${msg_success}"></b>-->
+<!--                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>-->
+<!--                            </div>-->
+<!--                        </div>-->
+
+<!--                        <div class="card">-->
+<!--                            <div class="card-body">-->
+<!--                                <div class="d-flex justify-content-between align-items-center mb-3">-->
+<!--                                    <div class="flex-grow-1 me-3">-->
+<!--                                        <input class="form-control" type="text" id="search-box" placeholder="Search...">-->
+<!--                                    </div>-->
+<!--                                    <div>-->
+<!--                                        <a th:href="@{'/admin/courses/' + ${courseId} + '/tests/add'}"-->
+<!--                                           class="btn btn-primary btn-animation waves-effect waves-light" data-text="Add Test">-->
+<!--                                            <span>Add Test</span>-->
+<!--                                        </a>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <div class="row">-->
+<!--                    <div class="col-xxl-9">-->
+<!--                        <div id="job-list">-->
+<!--                            &lt;!&ndash; Lesson List &ndash;&gt;-->
+<!--                            <div class="card d-flex" th:each="test : ${tests}">-->
+<!--                                <div class="h-100">-->
+<!--                                    <div class="card-body d-flex flex-column" style="min-height: 200px;"> &lt;!&ndash; Thêm min-height nếu cần &ndash;&gt;-->
+<!--                                        <div>-->
+<!--                                            <h2 class="card-title" th:text="${test.name}">Card title</h2>-->
+<!--                                            <p class="card-text" th:text="${test.description}">Some example text</p>-->
+<!--                                            <p class="card-text">-->
+<!--                                                Duration minutes: <span th:text="${test.durationMinutes}"></span> minutes<br>-->
+<!--                                                Max score: <span th:text="${test.maxScore}"></span>-->
+<!--                                            </p>-->
+<!--                                        </div>-->
+<!--                                        <div class="mt-auto pt-3"> &lt;!&ndash; Thêm mt-auto và padding-top &ndash;&gt;-->
+<!--                                            <div class="d-flex flex-wrap gap-2"> &lt;!&ndash; Sử dụng flexbox cho các nút &ndash;&gt;-->
+<!--                                                <a th:href="@{'/admin/courses/' + ${test.courseId.id} + '/tests/test/' + ${test.id}}"-->
+<!--                                                   class="btn btn-primary btn-animation waves-effect waves-light" data-text="Detail">-->
+<!--                                                    <span>Detail</span>-->
+<!--                                                </a>-->
+
+<!--                                                <a th:href="@{'/admin/courses/' + ${test.courseId.id} + '/tests/test/' + ${test.id} + '/submissions'}"-->
+<!--                                                   class="btn btn-secondary btn-label waves-effect waves-light">-->
+<!--                                                    <span>All Submissions</span>-->
+<!--                                                    <i class="fa-solid fa-file-lines label-icon align-middle fs-16 ms-2"></i>-->
+<!--                                                </a>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            &lt;!&ndash; End Lesson List &ndash;&gt;-->
+
+<!--                        </div>-->
+
+<!--                        <div class="row g-0 justify-content-end mb-4" id="pagination-element">-->
+<!--                            &lt;!&ndash; end col &ndash;&gt;-->
+<!--                            <div class="row g-0 text-center text-sm-start align-items-center mb-3">-->
+<!--                                <div class = "col-sm-6">-->
+<!--                                    <ul class = "pagination pagination-separated justify-content-center justify-content-sm-end mb-sm-0">-->
+<!--                                        <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">-->
+<!--                                            <a th:href="@{/admin/courses/{courseId}/tests(courseId=${courseId}, page=${currentPage - 1})}" class="page-link">-->
+<!--                                                <i class="mdi mdi-chevron-left"></i>-->
+<!--                                            </a>-->
+<!--                                        </li>-->
+
+<!--                                        &lt;!&ndash; Các số trang &ndash;&gt;-->
+<!--                                        <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}" th:classappend="${page == currentPage} ? 'active'">-->
+<!--                                            <a th:href="@{/admin/courses/{courseId}/tests(courseId=${courseId}, page=${page})}" class="page-link" th:text="${page}"></a>-->
+<!--                                        </li>-->
+
+<!--                                        &lt;!&ndash; Nút Next &ndash;&gt;-->
+<!--                                        <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">-->
+<!--                                            <a th:href="@{/admin/courses/{courseId}/tests(courseId=${courseId}, page=${currentPage + 1})}" class="page-link">-->
+<!--                                                <i class="mdi mdi-chevron-right"></i>-->
+<!--                                            </a>-->
+<!--                                        </li>-->
+<!--                                    </ul>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        &lt;!&ndash; end row &ndash;&gt;-->
+<!--                    </div>-->
+<!--                    &lt;!&ndash;end col&ndash;&gt;-->
+<!--                </div>-->
+<!--                &lt;!&ndash;        end tab-pane&ndash;&gt;-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        &lt;!&ndash; end col &ndash;&gt;-->
+<!--        &lt;!&ndash; end row &ndash;&gt;-->
+<!--    </div>-->
+
+
+<!--    <th:block layout:fragment="pagejs">-->
+
+
+<!--        &lt;!&ndash; Sweet Alerts js &ndash;&gt;-->
+<!--        <script th:src="@{/assets/libs/sweetalert2/sweetalert2.min.js}"></script>-->
+
+<!--        <script th:src="@{/assets/js/lesson-list.init.js}"></script>-->
+
+<!--        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
+<!--        <script th:src="@{/assets/js/exercise-list.init.js}"></script>-->
+
+
+<!--        &lt;!&ndash;  &lt;!&ndash; Sweet alert init js&ndash;&gt;&ndash;&gt;-->
+<!--        &lt;!&ndash;  <script th:src="@{/assets/js/pages/sweetalerts.init.js}"></script>&ndash;&gt;-->
+
+<!--    </th:block>-->
+<!--</body>-->
+
+<!--</html>-->
+
+
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<th:block layout:fragment="pagetitle">
+    <!--page title-->
+    <div th:replace="partials/title-meta :: title-meta('Course Detail')"></div>
 </th:block>
+
 <head>
+    <!-- Sweet Alert css-->
+    <link th:href="@{/assets/libs/sweetalert2/sweetalert2.min.css}" rel="stylesheet" type="text/css"/>
+    <style>
+        .main-content-wrapper {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
+        .cards-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pagination-bottom-right {
+            margin-top: auto;
+            display: flex;
+            justify-content: flex-end;
+            padding-top: 2rem;
+        }
+    </style>
 </head>
+
 <body>
-    <div layout:fragment="content">
-        <div th:replace="~{partials/page-title :: page-title('Test','Admin')}"></div>
-
-        <!-- Danger Alert -->
-        <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${msg_error}">
-            <b th:text="${msg_error}"></b>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-
-        <!-- Success Alert -->
-        <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${msg_success}">
-            <b th:text="${msg_success}"></b>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-
-
-        <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
-            <div class="flex-grow-1 me-3 pe-3"> <!-- Thêm pe-3 cho padding right -->
-                <input class="form-control" type="text" id="search-box" placeholder="Search...">
-            </div>
-            <div>
-                <a th:href="@{'/admin/courses/' + ${courseId} + '/tests/add'}"
-                   class="btn btn-primary btn-animation waves-effect waves-light" data-text="Add Test">
-                    <span>Add Test</span>
-                </a>
-            </div>
-        </div>
-
+<div layout:fragment="content">
+    <div class="main-content-wrapper">
+        <!-- end row -->
         <div class="row">
-            <div class="col-md-4 mb-4" th:each="test : ${tests}">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h2 class="card-title" th:text="${test.name}">Card title</h2>
-                        <p class="card-text" th:text="${test.description}">Some example text</p>
-                        <p class="card-text">
-                            Duration minutes: <span th:text="${test.durationMinutes}"></span> minutes<br>
-                            Max score: <span th:text="${test.maxScore}"></span>
-                        </p>
+            <div class="col-lg-12">
+                <div class="tab-content text-muted">
+                    <div class="row tab-pane fade show active" id="course-tests">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="card mt-n4 mx-n4 border-0">
+                                    <div class="bg-soft-primary">
+                                        <div class="card-body pb-0 px-4">
+                                            <div class="row mb-3">
+                                                <div class="col-md">
+                                                    <div class="row align-items-center g-3">
+                                                        <div class="col-md-auto">
+                                                            <div class="avatar-md">
+                                                                <div class="avatar-title bg-white rounded-circle">
+                                                                    <img th:src="${course.image}" alt="" class="avatar-xs">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md">
+                                                            <div>
+                                                                <h4 class="fw-bold" th:text="${course.name}"></h4>
+                                                                <div class="hstack gap-3 flex-wrap">
+                                                                    <div>
+                                                                        <i class="ri-building-line align-bottom me-1"></i>
+                                                                        <span th:text="${course.categoryId.name}"></span>
+                                                                    </div>
+                                                                    <div class="vr"></div>
+                                                                    <div>Create Date : <span class="fw-medium"
+                                                                                             th:text="${@dateTimeFormatter.format(course.dateAdded, 'dd-MM-yyyy')}"></span>
+                                                                    </div>
+                                                                    <div class="vr"></div>
+                                                                    <div>Due Date : <span class="fw-medium"
+                                                                                          th:text="${@dateTimeFormatter.format(course.dateEnd, 'dd-MM-yyyy')}"></span>
+                                                                    </div>
+                                                                    <div class="vr"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-auto">
+                                                    <div class="hstack gap-1 flex-wrap">
+                                                        <button type="button" class="btn py-0 fs-16 favourite-btn active">
+                                                            <i class="ri-star-fill"></i>
+                                                        </button>
+                                                        <button type="button" class="btn py-0 fs-16 text-body">
+                                                            <i class="ri-share-line"></i>
+                                                        </button>
+                                                        <button type="button" class="btn py-0 fs-16 text-body">
+                                                            <i class="ri-flag-line"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
 
-                        <a th:href="@{'/admin/courses/' + ${test.courseId.id} + '/tests/test/' + ${test.id}}"
-                           class="btn btn-primary btn-animation waves-effect waves-light" data-text="Detail">
-                            <span>Detail</span>
-                        </a>
+                                            <ul class="nav nav-tabs-custom border-bottom-0" role="tablist">
+                                                <li class="nav-item">
+                                                    <a class="nav-link fw-semibold"
+                                                       th:href="@{/admin/course/{courseId}#course-overview(courseId=${course.id})}"
+                                                       role="tab">
+                                                        Overview
+                                                    </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link fw-semibold"
+                                                       th:href="@{/admin/course/{courseId}#course-details(courseId=${course.id})}"
+                                                       role="tab">
+                                                        Details
+                                                    </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link fw-semibold"
+                                                       th:href="@{/admin/course/{courseId}#course-team(courseId=${course.id})}" role="tab">
+                                                        Students
+                                                    </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link fw-semibold"
+                                                       th:href="@{/admin/course/{courseId}/lessons(courseId=${course.id})}">
+                                                        Content Manager
+                                                    </a>
+                                                </li>
+                                                <li class="nav-item" role="presentation">
+                                                    <a class="nav-link fw-semibold" data-bs-toggle="tab" role="tab"
+                                                       aria-selected="true" href="#course-tests">
+                                                        Tests
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <!-- end card body -->
+                                    </div>
+                                </div>
+                                <!-- end card -->
+                            </div>
+                            <!-- end col -->
+                        </div>
+                        <div class="col-lg-12">
 
-                        <a th:href="@{'/admin/courses/' + ${test.courseId.id} + '/tests/test/' + ${test.id} + '/submissions'}"
-                           class="btn btn-secondary btn-label waves-effect right waves-light">
-                                <span>All Submissions</span>
-                                <i class="fa-solid fa-file-lines label-icon align-middle fs-16 ms-2"></i>
-                        </a>
+                            <div class="row">
+                                <!-- Danger Alert -->
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${msg_error}">
+                                    <b th:text="${msg_error}">Dismissible danger Alert </b>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+
+                                <!-- Success Alert -->
+                                <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${msg_success}">
+                                    <b th:text="${msg_success}"></b>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div class="flex-grow-1 me-3">
+                                            <input class="form-control" type="text" id="search-box" placeholder="Search...">
+                                        </div>
+                                        <div>
+                                            <a th:href="@{'/admin/courses/' + ${courseId} + '/tests/add'}"
+                                               class="btn btn-primary btn-animation waves-effect waves-light" data-text="Add Test">
+                                                <span>Add Test</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
+                    <div class="cards-section">
+                        <div class="row">
+                            <div class="col-xxl-12">
+                                <div id="job-list">
+                                    <!-- Lesson List -->
+                                    <div class="card d-flex" th:each="test : ${tests}">
+                                        <div class="h-100">
+                                            <div class="card-body d-flex flex-column" style="min-height: 200px;">
+                                                <div>
+                                                    <h2 class="card-title" th:text="${test.name}">Card title</h2>
+                                                    <p class="card-text" th:text="${test.description}">Some example text</p>
+                                                    <p class="card-text">
+                                                        Duration minutes: <span th:text="${test.durationMinutes}"></span> minutes<br>
+                                                        Max score: <span th:text="${test.maxScore}"></span>
+                                                    </p>
+                                                </div>
+                                                <div class="mt-auto pt-3">
+                                                    <div class="d-flex flex-wrap gap-2">
+                                                        <a th:href="@{'/admin/courses/' + ${test.courseId.id} + '/tests/test/' + ${test.id}}"
+                                                           class="btn btn-primary btn-animation waves-effect waves-light" data-text="Detail">
+                                                            <span>Detail</span>
+                                                        </a>
+
+                                                        <a th:href="@{'/admin/courses/' + ${test.courseId.id} + '/tests/test/' + ${test.id} + '/submissions'}"
+                                                           class="btn btn-secondary btn-label waves-effect waves-light">
+                                                            <span>All Submissions</span>
+                                                            <i class="fa-solid fa-file-lines label-icon align-middle fs-16 ms-2"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- End Lesson List -->
+                                </div>
+
+                                <!-- Pagination moved here and aligned to right -->
+                                <div class="pagination-bottom-right">
+                                    <div class="row g-0 text-center text-sm-start align-items-center mb-3">
+                                        <div class="col-sm-12">
+                                            <ul class="pagination pagination-separated justify-content-end mb-sm-0">
+                                                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                                                    <a th:href="@{/admin/courses/{courseId}/tests(courseId=${courseId}, page=${currentPage - 1})}" class="page-link">
+                                                        <i class="mdi mdi-chevron-left"></i>
+                                                    </a>
+                                                </li>
+
+                                                <!-- Các số trang -->
+                                                <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}" th:classappend="${page == currentPage} ? 'active'">
+                                                    <a th:href="@{/admin/courses/{courseId}/tests(courseId=${courseId}, page=${page})}" class="page-link" th:text="${page}"></a>
+                                                </li>
+
+                                                <!-- Nút Next -->
+                                                <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                                                    <a th:href="@{/admin/courses/{courseId}/tests(courseId=${courseId}, page=${currentPage + 1})}" class="page-link">
+                                                        <i class="mdi mdi-chevron-right"></i>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end col-->
+                        </div>
+                    </div>
+                    <!--        end tab-pane-->
                 </div>
             </div>
-        </div>
-
-        <!-- Pagination -->
-        <div class="col-sm-6">
-            <ul class="pagination pagination-separated justify-content-center justify-content-sm-end mb-sm-0">
-                <!-- Nút Previous -->
-                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                    <a th:href="@{/admin/courses/{courseId}/tests(courseId=${courseId}, page=${currentPage - 1})}" class="page-link">
-                        <i class="mdi mdi-chevron-left"></i>
-                    </a>
-                </li>
-
-                <!-- Các số trang -->
-                <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}" th:classappend="${page == currentPage} ? 'active'">
-                    <a th:href="@{/admin/courses/{courseId}/tests(courseId=${courseId}, page=${page})}" class="page-link" th:text="${page}"></a>
-                </li>
-
-                <!-- Nút Next -->
-                <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                    <a th:href="@{/admin/courses/{courseId}/tests(courseId=${courseId}, page=${currentPage + 1})}" class="page-link">
-                        <i class="mdi mdi-chevron-right"></i>
-                    </a>
-                </li>
-            </ul>
+            <!-- end col -->
+            <!-- end row -->
         </div>
     </div>
 
     <th:block layout:fragment="pagejs">
-        <script th:src="@{/assets/js/test-list.init.js}"></script>
+        <!-- Sweet Alerts js -->
+        <script th:src="@{/assets/libs/sweetalert2/sweetalert2.min.js}"></script>
+        <script th:src="@{/assets/js/lesson-list.init.js}"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script th:src="@{/assets/js/exercise-list.init.js}"></script>
     </th:block>
-
 </body>
+
 </html>

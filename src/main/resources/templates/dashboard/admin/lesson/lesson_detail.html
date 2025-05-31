@@ -23,7 +23,7 @@
         <input type="hidden" th:field="*{id}"/>
 
         <!-- Hidden userUploadId -->
-        <input type="hidden" th:value="${authUser.id}" id="userUploadId" name="userUploadId" />
+        <input type="hidden" th:value="${#authentication.principal.user.id}" id="userUploadId" name="userUploadId" />
 
         <div class="row">
             <!-- Danger Alert -->

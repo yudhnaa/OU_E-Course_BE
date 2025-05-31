@@ -84,6 +84,7 @@ public class TestController {
 
         model.addAttribute("tests", tests);
         model.addAttribute("courseId", courseId);
+        model.addAttribute("course", course);
         model.addAttribute("currentPage", pagination.getCurrentPage());
 //        model.addAttribute("totalTests", totalTests);
         model.addAttribute("totalPages", pagination.getTotalPages());
@@ -242,7 +243,7 @@ public class TestController {
             return "dashboard/lecturer/test/testAdd";
         }
 
-        return "redirect:/admin/courses/" + courseId + "/tests";
+        return "redirect:/admin/courses/" + courseId + "/tests" + "/test/" + test.getId();
     }
 
     @PostMapping("/test/{id}/delete")
