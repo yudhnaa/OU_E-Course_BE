@@ -1,6 +1,8 @@
 package com.ou.services;
 
 import com.ou.pojo.CourseLecturer;
+import com.ou.pojo.Lecturer;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -12,6 +14,7 @@ public interface CourseLecturerService {
 
     // Read operations with pagination
     List<CourseLecturer> getCourseLecturers(Map<String, String> params);
+    List<Lecturer> getLecturersByCourseId(Integer courseId, Map<String, String> params);
     List<CourseLecturer> searchCourseLecturers(Map<String, String> filters, Map<String, String> params);
 
     // Get a specific course-lecturer assignment

@@ -3,6 +3,7 @@ package com.ou.services.impl;
 import com.ou.pojo.Category;
 import com.ou.repositories.CategoryRepository;
 import com.ou.services.CategoryService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,7 +64,8 @@ public class CategoryServiceImpl implements CategoryService {
         if (name == null || name.trim().isEmpty()) {
             return Optional.empty();
         }
-        return categoryRepository.getCategoryByName(name);
+
+        return categoryRepository.getCategoryByName(StringUtils.capitalize(name));
     }
     
     @Override

@@ -236,7 +236,30 @@ public class CourseStudentRepositoryImpl implements CourseStudentRepository {
         
         return q.getResultList();
     }
-    
+
+    @Override
+    public List<CourseStudent> getCourseStudentsByUserId(Integer userId, Map<String, String> params) {
+        Session session = sessionFactory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<CourseStudent> query = builder.createQuery(CourseStudent.class);
+        Root<CourseStudent> root = query.from(CourseStudent.class);
+
+        query.where(builder.equal(root.get("studentId").get("userId").get("id"), userId));
+
+        Query<CourseStudent> q = session.createQuery(query);
+
+        // Process pagination parameters
+        if (params != null) {
+            int page = Integer.parseInt(params.getOrDefault("page", "1"));
+            int pageSize = Integer.parseInt(params.getOrDefault("pageSize", String.valueOf(PAGE_SIZE)));
+            int start = (page - 1) * pageSize;
+            q.setMaxResults(pageSize);
+            q.setFirstResult(start);
+        }
+
+        return q.getResultList();
+    }
+
     @Override
     @Transactional(readOnly = true)
     public long countCourseStudentsByStudent(Integer studentId) {
@@ -263,6 +286,26 @@ public class CourseStudentRepositoryImpl implements CourseStudentRepository {
         
         query.where(builder.and(predicates.toArray(new Predicate[0])));
         
+        try {
+            return Optional.ofNullable(session.createQuery(query).getSingleResult());
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<CourseStudent> getCourseStudentByCourseAndUser(Integer courseId, Integer userId) {
+        Session session = sessionFactory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<CourseStudent> query = builder.createQuery(CourseStudent.class);
+        Root<CourseStudent> root = query.from(CourseStudent.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(builder.equal(root.get("courseId").get("id"), courseId));
+        predicates.add(builder.equal(root.get("studentId").get("userId").get("id"), userId));
+
+        query.where(builder.and(predicates.toArray(new Predicate[0])));
+
         try {
             return Optional.ofNullable(session.createQuery(query).getSingleResult());
         } catch (NoResultException e) {

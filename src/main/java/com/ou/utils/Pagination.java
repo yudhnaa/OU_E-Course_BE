@@ -11,7 +11,7 @@ public class Pagination {
     private int endIndex;
 
     public Pagination(String pageParam, long totalItems) {
-        this.pageSize = PAGE_SIZE;
+        this.pageSize =  PAGE_SIZE;
         this.totalItems = totalItems;
 
         int page = (pageParam != null && pageParam.matches("\\d+")) ? Integer.parseInt(pageParam) : 1;

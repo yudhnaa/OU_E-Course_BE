@@ -1,6 +1,8 @@
 package com.ou.repositories;
 
 import com.ou.pojo.CourseLecturer;
+import com.ou.pojo.Lecturer;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -11,6 +13,7 @@ public interface CourseLecturerRepository {
 
     // Read operations with pagination
     List<CourseLecturer> getCourseLecturers(Map<String, String> params);
+    List<Lecturer> getLecturersByCourseId(Integer courseId, Map<String, String> params);
     List<CourseLecturer> searchCourseLecturers(Map<String, String> filters, Map<String, String> params);
 
     // Return an Optional<CourseLecturer> to handle cases where the entity is not found

@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -179,6 +180,18 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    public long countCoursesByStudentId(Integer studentId, Map<String, String> filters) {
+        if (studentId == null) {
+            throw new IllegalArgumentException("Student ID cannot be null");
+        }
+
+        // Validate filter parameters
+        validateFilterParams(filters);
+
+        return courseRepository.countCoursesByStudentId(studentId, filters);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Optional<Course> getCourseByName(String name) {
         if (name == null || name.trim().isEmpty()) {
@@ -240,6 +253,32 @@ public class CourseServiceImpl implements CourseService {
             }
         }
         return courseOpt.get();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Course> getCoursesByStudentId(Integer studentId, Map<String, String> filters) {
+        if (studentId == null) {
+            throw new IllegalArgumentException("Student ID cannot be null");
+        }
+
+        // Validate filter parameters
+        validateFilterParams(filters);
+
+        return courseRepository.getCoursesByStudentId(studentId, filters);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Object[]> getCoursesWithProgressByStudentId(Integer studentId, Map<String, String> params){
+        if (studentId == null) {
+            throw new IllegalArgumentException("Student ID cannot be null");
+        }
+
+        // Validate pagination parameters
+        ValidateUtils.validatePaginationParams(params);
+
+        return courseRepository.getCoursesWithProgressByStudentId(studentId, params);
     }
 
     @Override
@@ -306,6 +345,30 @@ public class CourseServiceImpl implements CourseService {
         // If only one date is set or none are set, consider it valid
         return true;
     }
+
+    @Override
+    public BigDecimal calculateTotalPrice(Set<Integer> courseIds) {
+        if (courseIds == null || courseIds.isEmpty()) {
+            String message = localizationService.getMessage("course.notFound", LocaleContextHolder.getLocale());
+            throw new IllegalArgumentException(message);
+        }
+
+        BigDecimal totalPrice = BigDecimal.ZERO;
+
+        for (Integer courseId : courseIds) {
+            Optional<Course> courseOpt = courseRepository.getCourseById(courseId);
+
+            if (courseOpt.isPresent()) {
+                totalPrice = totalPrice.add(courseOpt.get().getPrice());
+            } else {
+                String message = localizationService.getMessage("course.notFound", LocaleContextHolder.getLocale());
+                throw new NotFoundException(message);
+            }
+        }
+
+        return totalPrice;
+    }
+
 
     private void validateFilterParams(Map<String, String> filters) {
         if (filters == null) {

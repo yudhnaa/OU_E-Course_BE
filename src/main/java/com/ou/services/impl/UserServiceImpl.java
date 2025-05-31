@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
 
             // Only encode password if it has changed
             if (user.getPassword() != null && !user.getPassword().isEmpty()
-                    && !bCryptPasswordEncoder.matches(user.getPassword(), existingUser.getPassword())){
+                    && !bCryptPasswordEncoder.matches(user.getPassword(), existingUser.getPassword()) && !user.getPassword().equals(existingUser.getPassword())) {
                 user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
             } else {
                 // Keep the existing password if not changed
