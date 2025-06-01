@@ -8,17 +8,17 @@ INSERT INTO user_role (name, description) VALUES
 INSERT INTO user (last_name, first_name, birthday, username, password, avatar, public_id, email, user_role_id)
 VALUES
 #     pass: 123
-    ('Smith', 'John', '1990-01-01', 'admin', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', NULL, NULL, 'john.smith@example.com', 1),
+    ('Smith', 'John', '1990-01-01', 'admin', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', 'https://randomuser.me/api/portraits/lego/7.jpg', 'random_user', 'john.smith@example.com', 1),
     ('Duong Huu', 'Thanh', '1993-11-11', 'thanhduong', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', 'https://yt3.googleusercontent.com/ytc/AIdro_kMHMMUSXvOBzfi9e6ks4pbI6I7I8yMuqFOUoAuwXpIzUE', 'instructor_thanh_profile', 'thanh.dh@ou.edu.vn', 2),
-    ('Doe', 'Jane', '1992-02-02', 'janedoe', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', NULL, NULL, 'jane.doe@example.com', 2),
-    ('Brown', 'Charlie', '1995-03-03', 'charlieb', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', NULL, NULL, 'charlie.brown@example.com', 2),
-    ('Johnson', 'Emily', '1998-04-04', 'emilyj', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', NULL, NULL, 'emily.johnson@example.com', 2),
-    ('Williams', 'Michael', '1996-05-05', 'michaelw', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', NULL, NULL, 'michael.williams@example.com', 3),
-    ('Jones', 'Sarah', '1994-06-06', 'sarahj', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', NULL, NULL, 'sarah.jones@example.com', 3),
-    ('Garcia', 'David', '1991-07-07', 'davidg', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', NULL, NULL, 'david.garcia@example.com', 3),
-    ('Martinez', 'Sophia', '1993-08-08', 'sophiam', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', NULL, NULL, 'sophia.martinez@example.com', 3),
-    ('Hernandez', 'James', '1990-09-09', 'jamesh', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', NULL, NULL, 'james.hernandez@example.com', 3),
-    ('Lopez', 'Olivia', '1992-10-10', 'olivial', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', NULL, NULL, 'olivia.lopez@example.com', 3);
+    ('Doe', 'Jane', '1992-02-02', 'janedoe', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', 'https://randomuser.me/api/portraits/men/60.jpg', 'random_user', 'jane.doe@example.com', 2),
+    ('Brown', 'Charlie', '1995-03-03', 'charlieb', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', 'https://randomuser.me/api/portraits/men/1.jpg', 'random_user', 'charlie.brown@example.com', 2),
+    ('Johnson', 'Emily', '1998-04-04', 'emilyj', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', 'https://randomuser.me/api/portraits/men/39.jpg', 'random_user', 'emily.johnson@example.com', 2),
+    ('Williams', 'Michael', '1996-05-05', 'michaelw', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', 'https://randomuser.me/api/portraits/lego/4.jpg', 'random_user', 'michael.williams@example.com', 3),
+    ('Jones', 'Sarah', '1994-06-06', 'sarahj', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', 'https://randomuser.me/api/portraits/lego/4.jpg', 'random_user', 'sarah.jones@example.com', 3),
+    ('Garcia', 'David', '1991-07-07', 'davidg', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', 'https://randomuser.me/api/portraits/lego/3.jpg', 'random_user', 'david.garcia@example.com', 3),
+    ('Martinez', 'Sophia', '1993-08-08', 'sophiam', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', 'https://randomuser.me/api/portraits/lego/2.jpg', 'random_user', 'sophia.martinez@example.com', 3),
+    ('Hernandez', 'James', '1990-09-09', 'jamesh', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', 'https://randomuser.me/api/portraits/lego/7.jpg', 'random_user', 'james.hernandez@example.com', 3),
+    ('Lopez', 'Olivia', '1992-10-10', 'olivial', '$2a$10$ppQqUHJwO8UPXRRmroXExu1XGH3RjKSFx6OOFxJwz1Njlnf8/kayy', 'https://randomuser.me/api/portraits/lego/5.jpg', 'random_user', 'olivia.lopez@example.com', 3);
 
 -- Sample data for student
 INSERT INTO student (user_id)
@@ -79,7 +79,7 @@ VALUES
 -- Sample data for course_lecturer
 INSERT INTO course_lecturer (course_id, lecturer_id) VALUES
     (1, 1),
-    (2, 2),
+    (2, 1),
     (3, 3),
     (4, 1),
     (5, 2);
@@ -92,7 +92,7 @@ INSERT INTO course_student (progress, course_id, student_id) VALUES
     (0.6, 1, 4),
     (0.8, 1, 5),
     (0.4, 1, 6),
-    (1, 2, 6);
+    (1, 2, 2);
 
 -- Sample data for course_certificate
 INSERT INTO course_certificate (download_link, course_student_id) VALUES
@@ -111,9 +111,10 @@ VALUES
 
 -- Sample data for attachment
 INSERT INTO attachment (name, link, description, public_id) VALUES
-    ('Intro PDF', '/files/intro.pdf', 'Introduction material', 'intro_pdf_file_id'),
-    ('Chapter 1 Notes', '/files/chapter1.pdf', 'Chapter 1 supplementary notes', 'chapter1_notes_id'),
-    ('Project Guidelines', '/files/guidelines.pdf', 'Project requirements and guidelines', 'project_guidelines_id');
+    ('01-Nhap-mon-Java.pdf', 'https://drive.google.com/file/d/18NfyQ6rHlwpUBjd7MqxG-wEaLU09RfO6/view?usp=drivesdk', 'Introduction material', '18NfyQ6rHlwpUBjd7MqxG-wEaLU09RfO6'),
+    ('03-JDBC.pdf', 'https://drive.google.com/file/d/1kBeb44VULgmj2fg-19YQ_8bYCPCuf5-u/view?usp=drivesdk', 'Chapter 1 supplementary notes', '1kBeb44VULgmj2fg-19YQ_8bYCPCuf5-u'),
+    ('04-Hibernate.pdf', 'https://drive.google.com/file/d/10Zqw4R_3PryF4cpMcm2ZOaPMjfOad6Wv/view?usp=drivesdk', 'Project requirements and guidelines', '10Zqw4R_3PryF4cpMcm2ZOaPMjfOad6Wv'),
+    ('05-reactjs.pdf', 'https://drive.google.com/file/d/1LzkdMOvwGB3OmZHGF8xmApftRpYjToaB/view?usp=drivesdk', 'Project requirements and guidelines', '1LzkdMOvwGB3OmZHGF8xmApftRpYjToaB');
 
 -- Sample data for lesson_type
 INSERT INTO lesson_type (name, description) VALUES
@@ -125,13 +126,18 @@ INSERT INTO lesson (name, embed_link, description, lesson_type_id, course_id, us
     ('Phát Triển Hệ Thống Web - Lý Thuyết 1', 'https://www.youtube.com/embed/9gsCCaFGSuo?si=PDfydo-PQ0L1-yWb', 'Phát Triển Hệ Thống Web - Lý Thuyết 1 - GV: Th.s Dương Hữu Thành', 1, 1, 2, 1, @default_img, 'lesson1_thumbnail'),
     ('Phát Triển Hệ Thống Web - Lý Thuyết 2', 'https://www.youtube.com/embed/dIPqLrbbKPc?si=SOrMDTohl7F4Ua_v', 'Phát Triển Hệ Thống Web - Lý Thuyết 2 - GV: Th.s Dương Hữu Thành', 1, 1, 2, 2, @default_img, 'lesson2_thumbnail'),
     ('Phát Triển Hệ Thống Web - Lý Thuyết 3', 'https://www.youtube.com/embed/Dgu7Y-Puzfw?si=H0w7SY1HHjd48m_Z', 'Phát Triển Hệ Thống Web - Lý Thuyết 3 - GV: Th.s Dương Hữu Thành', 1, 1, 2, 3, @default_img, 'lesson3_thumbnail'),
-    ('Phát Triển Hệ Thống Web - Lý Thuyết 4', 'https://drive.google.com/file/d/134pjmZIX_KMW1F3Rxjzh4m5nSA74BQ7M/preview', 'Phát Triển Hệ Thống Web - Lý Thuyết 4 - GV: Th.s Dương Hữu Thành', 1, 1, 2, 4, @default_img, 'lesson4_thumbnail');
+    ('Phát Triển Hệ Thống Web - Lý Thuyết 4', 'https://drive.google.com/file/d/134pjmZIX_KMW1F3Rxjzh4m5nSA74BQ7M/preview', 'Phát Triển Hệ Thống Web - Lý Thuyết 4 - GV: Th.s Dương Hữu Thành', 1, 1, 2, 4, @default_img, 'lesson4_thumbnail'),
+
+    ('Lập Trình Hướng Đối Tượng - Lý Thuyết 1', 'https://www.youtube.com/embed/BwQ0fXRlKmo?si=UvEZiUWzIlugDPL_', 'Lập Trình Hướng Đối Tượng - Lý Thuyết 1 - GV: Th.s Dương Hữu Thành', 1, 2, 1, 1, @default_img, 'lesson1_thumbnail'),
+    ('Lập Trình Hướng Đối Tượng - Lý Thuyết 2', 'https://www.youtube.com/embed/qKxePVasXNk?si=ajqQCFW8JD5YGC1N', 'Lập Trình Hướng Đối Tượng - Lý Thuyết 2 - GV: Th.s Dương Hữu Thành', 1, 2, 1, 2, @default_img, 'lesson1_thumbnail');
+
 
 -- Sample data for lesson_attachment
 INSERT INTO lesson_attachment (lesson_id, attachment_id) VALUES
     (1, 1),
     (2, 2),
-    (3, 3);
+    (3, 3),
+    (4, 4);
 
 -- Sample data for lesson_student with learned_at
 INSERT INTO lesson_student (is_learn, learned_at, lesson_id, student_id) VALUES
@@ -147,10 +153,10 @@ INSERT INTO exercise (name, duration_minutes, max_score, created_by_user_id, cou
     ('Quiz 2', 30, 100.00, 2, 1, 2),
     ('Quiz 3', 30, 100.00, 3, 1, 3),
     ('Quiz 4', 30, 100.00, 1, 1, 4),
-    ('Assignment 1', 60, 100.00, 2, 2, 1),
-    ('Assignment 2', 60, 100.00, 3, 2, 2),
-    ('Midterm Exercise', 90, 100.00, 1, 3, 1),
-    ('Final Exercise', 120, 100.00, 2, 3, 2);
+    ('Assignment 1', 60, 100.00, 2, 2, 5),
+    ('Assignment 2', 60, 100.00, 3, 2, 6),
+    ('Midterm Exercise', 90, 100.00, 1, 1, 1),
+    ('Final Exercise', 120, 100.00, 2, 1, 2);
 
 -- Sample data for exercise_attachment
 INSERT INTO exercise_attachment (exercise_id, attachment_id) VALUES

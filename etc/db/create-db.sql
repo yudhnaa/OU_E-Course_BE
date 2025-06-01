@@ -1,4 +1,6 @@
 USE ecourse;
+# USE test;
+
 
 CREATE TABLE `user_role`
 (
@@ -369,26 +371,26 @@ CREATE TABLE test_attempt_answer
 CREATE TABLE payment_receipts
 (
     id             INT AUTO_INCREMENT PRIMARY KEY,
-    receipt_id     VARCHAR(255)                                   NOT NULL UNIQUE, -- Stripe session hoặc paymentIntent ID
-    amount         DECIMAL(15, 2)                                 NOT NULL,        -- Số tiền thanh toán
-    currency       VARCHAR(10)                                    NOT NULL,        -- Mã tiền tệ (USD, VND, ...)
+    receipt_id     VARCHAR(255)                                                                   NOT NULL UNIQUE, -- Stripe session hoặc paymentIntent ID
+    amount         DECIMAL(15, 2)                                                                 NOT NULL,        -- Số tiền thanh toán
+    currency       VARCHAR(10)                                                                    NOT NULL,        -- Mã tiền tệ (USD, VND, ...)
     status         ENUM ('succeeded', 'requires_payment_method', 'requires_action', 'processing') NOT NULL DEFAULT 'processing',
-    payment_method VARCHAR(100),                                                   -- Phương thức thanh toán
-    created_at     TIMESTAMP                                               DEFAULT CURRENT_TIMESTAMP,
-    updated_at     TIMESTAMP                                               DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    payment_method VARCHAR(100),                                                                                   -- Phương thức thanh toán
+    created_at     TIMESTAMP                                                                               DEFAULT CURRENT_TIMESTAMP,
+    updated_at     TIMESTAMP                                                                               DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    student_id     INT                                            NOT NULL,         -- ID sinh viên / user
+    student_id     INT                                                                            NOT NULL,        -- ID sinh viên / user
     FOREIGN KEY (student_id) REFERENCES student (id) ON DELETE NO ACTION
 );
 
 CREATE TABLE payment_receipt_course
 (
-    id             INT AUTO_INCREMENT PRIMARY KEY,
+    id                 INT AUTO_INCREMENT PRIMARY KEY,
 
     payment_receipt_id INT NOT NULL,
     FOREIGN KEY (payment_receipt_id) REFERENCES payment_receipts (id) ON DELETE CASCADE,
 
-    course_id      INT NOT NULL,
+    course_id          INT NOT NULL,
     FOREIGN KEY (course_id) REFERENCES course (id) ON DELETE CASCADE,
 
     UNIQUE KEY unique_payment_receipt_course (payment_receipt_id, course_id)
@@ -412,6 +414,31 @@ BEGIN
     IF p < 1 THEN
         SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = 'Cannot issue certificate: Course progress is not complete';
+    END IF;
+END;
+//
+
+DELIMITER ;
+
+
+DELIMITER //
+
+CREATE TRIGGER check_lesson_course_match
+    BEFORE INSERT ON exercise
+    FOR EACH ROW
+BEGIN
+    DECLARE lesson_course_id INT;
+
+    SELECT course_id INTO lesson_course_id
+    FROM lesson
+    WHERE id = NEW.lesson_id;
+
+    IF lesson_course_id IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Lesson does not exist';
+    END IF;
+
+    IF lesson_course_id != NEW.course_id THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Lesson and Exercise must belong to the same course';
     END IF;
 END;
 //

@@ -3,7 +3,7 @@
 
 <th:block layout:fragment="pagetitle">
     <!--page title-->
-    <div th:replace="~{partials/title-meta :: title-meta('Create Lesson')}"></div>
+    <div th:replace="~{partials/title-meta :: title-meta('Lesson Detail')}"></div>
 </th:block>
 
 <head>
@@ -13,7 +13,7 @@
 
 <body>
 <div layout:fragment="content">
-    <div th:replace="~{partials/page-title :: page-title('Create Lesson','Course')}"></div>
+    <div th:replace="~{partials/page-title :: page-title('Lesson Detail','Course')}"></div>
     <form id="lessonForm"
           th:action="@{/admin/course/{courseId}/lesson/{lessonId}/update(courseId=${course.id},lessonId=${lesson.id})}"
           th:object="${lesson}"
