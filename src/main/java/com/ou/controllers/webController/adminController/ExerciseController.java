@@ -65,7 +65,6 @@ public class ExerciseController {
         params.put("courseId", String.valueOf(courseId));
         params.put("lessonId", String.valueOf(lessonId));
         params.put("page", params.getOrDefault("page", "1"));
-        // Check if the user has permission to view exercises for this course and lesson
         if(principal.getUser().getUserRoleId().getName().contains("LECTURER")){
             Lecturer lecturer = lecturerService.getLecturerByUserId(principal.getUser().getId())
                     .orElseThrow(() -> new NotFoundException(localizationService.getMessage("lecturer.notFound", LocaleContextHolder.getLocale())));
@@ -112,7 +111,7 @@ public class ExerciseController {
         model.addAttribute("lecturerNames", lecturerNames);
         model.addAttribute("courseId", courseId);
         model.addAttribute("lessonId", lessonId);
-//        model.addAttribute("courseName", course.get().getName());
+        model.addAttribute("lessonName", lesson.get().getName());
         model.addAttribute("courseName", course.getName());
         model.addAttribute("currentPage", pagination.getCurrentPage());
         model.addAttribute("totalPages", pagination.getTotalPages());
@@ -158,9 +157,11 @@ public class ExerciseController {
     @GetMapping("/exercise/add")
     public String addExercise(Model model,
                                   @PathVariable("courseId") Integer courseId,
-                                  @PathVariable("lessonId") Integer lessonId) {
-        Optional<Course> course = courseService.getCourseById(courseId);
-        if (course.isEmpty()) {
+                                  @PathVariable("lessonId") Integer lessonId,
+                                  @AuthenticationPrincipal CustomUserDetails principal) {
+        // Check if the user has permission to create exercises for the course
+        Course course = courseService.getCourseByIdWithPermissionCheck(courseId, principal.getUser());
+        if (course == null) {
             model.addAttribute("msg_error", "Course not found.");
             return "dashboard/lecturer/exercise/exercise";
         }
@@ -204,6 +205,7 @@ public class ExerciseController {
         Lesson lesson = lessonService.getLessonById(lessonId)
                 .orElseThrow(() -> new NotFoundException("Lesson not found"));
         exercise.setLessonId(lesson);
+        exercise.setCourseId(course);
         if (result.hasErrors()) {
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.exercise", result);
             redirectAttributes.addFlashAttribute("exercise", exercise);
@@ -224,7 +226,7 @@ public class ExerciseController {
                                  @PathVariable("exerciseId") Integer exerciseId,
                                  @Valid @ModelAttribute("exercise") Exercise exerciseUpdate,
                                  BindingResult result,
-                                    @AuthenticationPrincipal CustomUserDetails principal,
+                                 @AuthenticationPrincipal CustomUserDetails principal,
                                  RedirectAttributes redirectAttributes,
                                  Model model) throws Exception {
         Exercise existingExercise = exerciseService.getExerciseByIdWithPermissionsCheck(exerciseId, principal.getUser());
@@ -253,6 +255,14 @@ public class ExerciseController {
                                  @PathVariable("exerciseId") Integer exerciseId,
                                  @AuthenticationPrincipal CustomUserDetails principal,
                                  RedirectAttributes redirectAttributes) {
+        // Check if the user is lecturer and has permission to delete the exercise
+        if (principal.getUser().getUserRoleId().getName().contains("LECTURER")) {
+            Exercise exercise = exerciseService.getExerciseByIdWithPermissionsCheck(exerciseId, principal.getUser());
+            if (exercise == null) {
+                redirectAttributes.addFlashAttribute("msg_error", "Exercise not found or you do not have permission to delete it.");
+                return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises";
+            }
+        }
         try {
             if (!exerciseService.deleteExercise(exerciseId)) {
                 redirectAttributes.addFlashAttribute("msg_error", "Exercise not found or already deleted.");

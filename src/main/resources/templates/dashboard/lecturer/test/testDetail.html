@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
       layout:decorate="~{layout}">
 
 <th:block layout:fragment="pagetitle">
@@ -160,7 +162,8 @@
                                         </div>
 
                                         <div class="text-end">
-                                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                                            <button sec:authorize="hasRole('LECTURER')"
+                                                    type="submit" class="btn btn-primary">Save Changes</button>
                                             <a type="button" class="btn btn-danger" id="delete-test-btn"
                                                     th:data-url="@{'/admin/courses/' + ${test.courseId.id} + '/tests/test/' + ${test.id} + '/delete'}">
                                                 Delete test
@@ -184,7 +187,8 @@
                                 <div class="card-body">
                                     <!-- Nút mở modal thêm câu hỏi -->
                                     <div class="text-start mt-3 mb-3">
-                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        <button sec:authorize="hasRole('LECTURER')"
+                                                type="button" class="btn btn-primary" data-bs-toggle="modal"
                                                 data-bs-target="#addQuestionModal">
                                             <i class="ri-add-line align-bottom me-1"></i> Add Questions
                                         </button>
@@ -225,6 +229,7 @@
                                                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                                             <li>
                                                                 <a class="dropdown-item text-danger delete-question"
+                                                                   sec:authorize="hasRole('LECTURER')"
                                                                    th:data-id="${question.id}"
                                                                    th:data-url="@{'/admin/courses/' + ${test.courseId.id} + '/tests/test/' + ${test.id} + '/question/' + ${question.id} + '/delete'}">
                                                                     Delete

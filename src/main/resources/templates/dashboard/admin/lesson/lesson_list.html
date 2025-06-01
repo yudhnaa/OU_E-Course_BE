@@ -98,6 +98,12 @@
                                                     Content Manager
                                                 </a>
                                             </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link fw-semibold"
+                                                    th:href="@{/admin/courses/{courseId}/tests(courseId=${course.id})}" role="tab">
+                                                    Tests
+                                                </a>
+                                            </li>
                                         </ul>
                                     </div>
                                     <!-- end card body -->
@@ -215,6 +221,9 @@
                                         <div>
                                             <a th:href="@{/admin/course/{courseId}/lesson/{lessonId}(courseId=${course.id},lessonId=${lesson.id})}" class="btn btn-primary viewjob-list">
                                                 View Lesson <i class="ri-arrow-right-line align-bottom ms-1"></i>
+                                            </a>
+                                            <a th:href="@{/admin/courses/{courseId}/lessons/{lessonId}/exercises(courseId=${course.id},lessonId=${lesson.id})}" class="btn btn-secondary viewjob-list">
+                                                View Exercise <i class="ri-arrow-right-line align-bottom ms-1"></i>
                                             </a>
                                         </div>
                                     </div>

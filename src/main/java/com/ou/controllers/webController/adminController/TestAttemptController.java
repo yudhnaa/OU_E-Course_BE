@@ -135,8 +135,17 @@ public class TestAttemptController {
     public String updateTestAttempt(@ModelAttribute("testAttempt") TestAttempt testAttempt,
                                     @PathVariable(value = "courseId") Integer courseId,
                                     @PathVariable(value = "testId") Integer testId,
+                                    @AuthenticationPrincipal CustomUserDetails principal,
                                     @RequestParam Map<String, String> params,
                                     RedirectAttributes redirectAttributes) {
+
+        // Check if the user has permission to update test attempt
+        Test test = testService.getTestByIdWithPermissionsCheck(testId, principal.getUser());
+        if (test == null) {
+            redirectAttributes.addFlashAttribute("msg_error", "Test not found or you do not have permission to update it.");
+            return "redirect:/admin/courses/" + courseId + "/tests/test/" + testId + "/submissions";
+        }
+
         if(testAttempt.getId() == null || testAttempt.getId() <= 0) {
             throw new IllegalArgumentException("Invalid test attempt ID");
         }

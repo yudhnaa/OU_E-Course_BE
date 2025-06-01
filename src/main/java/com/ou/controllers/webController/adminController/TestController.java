@@ -57,7 +57,8 @@ public class TestController {
     public String getAllTestsByCourse(@PathVariable("courseId") Integer courseId,
                                       Model model,
                                       @RequestParam Map<String,String> params,
-                                      @AuthenticationPrincipal CustomUserDetails principal) {
+                                      @AuthenticationPrincipal CustomUserDetails principal,
+                                      RedirectAttributes redirectAttributes) {
         Course course = courseService.getCourseByIdWithPermissionCheck(courseId, principal.getUser());
         params.put("courseId", String.valueOf(courseId));
 
@@ -68,27 +69,25 @@ public class TestController {
         }
 
         long totalTests = testService.countSearchResults(params);
-        if (totalTests == 0) {
-            model.addAttribute("message", "No tests found for this course.");
-            return "dashboard/lecturer/test/test";
-        }
-
-        Pagination pagination = paginationHelper.getPagination(params, totalTests);
-
         List<Test> tests = testService.getAllTests(params);
 
-        if (tests.isEmpty()) {
-            model.addAttribute("message", "No tests were found");
-            return "dashboard/lecturer/test/test";
+        // Tạo pagination ngay cả khi không có test
+        Pagination pagination = paginationHelper.getPagination(params, totalTests);
+
+        // Thêm thông báo nếu không có test
+        if (totalTests == 0) {
+            model.addAttribute("msg_info", "No tests found for this course. Create your first test!");
         }
 
         model.addAttribute("tests", tests);
         model.addAttribute("courseId", courseId);
+        model.addAttribute("course", course);
         model.addAttribute("currentPage", pagination.getCurrentPage());
-//        model.addAttribute("totalTests", totalTests);
         model.addAttribute("totalPages", pagination.getTotalPages());
         model.addAttribute("startIndex", pagination.getStartIndex());
         model.addAttribute("endIndex", pagination.getEndIndex());
+
+        // Luôn return về trang test thay vì redirect
         return "dashboard/lecturer/test/test";
     }
 
@@ -117,14 +116,20 @@ public class TestController {
         return "dashboard/lecturer/test/testDetail";
     }
 
-    // Thêm endpoint để xử lý việc thêm multiple questions
+    // endpoint để xử lý việc thêm multiple questions
     @PostMapping("/test/{testId}/questions/add-multiple")
     @ResponseBody
     public ResponseEntity<?> addMultipleQuestions(
             @PathVariable("courseId") Integer courseId,
             @PathVariable("testId") Integer testId,
-            @RequestBody Map<String, List<Integer>> requestBody) {
-
+            @RequestBody Map<String, List<Integer>> requestBody,
+            @AuthenticationPrincipal CustomUserDetails principal) {
+        // Kiểm tra quyền của người dùng
+        Test test = testService.getTestByIdWithPermissionsCheck(testId, principal.getUser());
+        if (test == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("success", false, "message", "Test not found or access denied"));
+        }
         try {
             List<Integer> questionIds = requestBody.get("questionIds");
 
@@ -151,8 +156,13 @@ public class TestController {
     public ResponseEntity<?> deleteQuestionFromTest(
             @PathVariable("courseId") Integer courseId,
             @PathVariable("testId") Integer testId,
-            @PathVariable("questionId") Integer questionId) {
-
+            @PathVariable("questionId") Integer questionId,
+            @AuthenticationPrincipal CustomUserDetails principal) {
+        Test test = testService.getTestByIdWithPermissionsCheck(testId, principal.getUser());
+        if (test == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("success", false, "message", "Test not found or access denied"));
+        }
         try {
             boolean removed = testQuestionService.removeQuestionFromTest(testId, questionId);
             if (removed) {
@@ -173,6 +183,7 @@ public class TestController {
                              @PathVariable("id") Integer id,
                              @ModelAttribute("test") Test test,
                              BindingResult result,
+                             @AuthenticationPrincipal CustomUserDetails principal,
                              RedirectAttributes redirectAttributes,
                              Model model){
         if (result.hasErrors()) {
@@ -183,8 +194,10 @@ public class TestController {
         }
 
         try {
-            Test existingTest = testService.getTestById(id)
-                    .orElseThrow(() -> new RuntimeException("Test not found with id " + id));
+            Test existingTest = testService.getTestByIdWithPermissionsCheck(id, principal.getUser());
+            if (existingTest == null) {
+                throw new NotFoundException(localizationService.getMessage("test.notFound", LocaleContextHolder.getLocale()));
+            }
             existingTest.setName(test.getName());
             existingTest.setDescription(test.getDescription());
             existingTest.setDurationMinutes(test.getDurationMinutes());
@@ -205,11 +218,19 @@ public class TestController {
 
     @GetMapping("/add")
     public String addTestForm(@PathVariable("courseId") Integer courseId,
-                              @RequestParam(value = "lecturerId", required = false, defaultValue = "1") Integer lecturerId,
+                              @AuthenticationPrincipal CustomUserDetails principal,
                               Model model) {
+        // Kiểm tra quyền của người dùng
+        Course course = courseService.getCourseByIdWithPermissionCheck(courseId, principal.getUser());
+        if (course == null) {
+            throw new NotFoundException(localizationService.getMessage("course.notFound", LocaleContextHolder.getLocale()));
+        }
+        Lecturer lecturer = lecturerService.getLecturerByUserId(principal.getUser().getId())
+                .orElseThrow(() -> new NotFoundException(localizationService.getMessage("lecturer.notFound", LocaleContextHolder.getLocale())));
+
         Test test = new Test();
-        test.setCourseId(new Course(courseId));
-        test.setCreatedByUserId(new Lecturer(lecturerId));
+        test.setCourseId(course);
+        test.setCreatedByUserId(lecturer);
         test.setCreatedAt(LocalDateTime.now()); // Set current date as creation date
         test.setMaxScore(new BigDecimal(100)); // Default max score
         test.setDurationMinutes(60); // Default duration
@@ -224,6 +245,7 @@ public class TestController {
                                 @ModelAttribute("test") Test test,
                                 BindingResult result,
                                 RedirectAttributes redirectAttributes,
+                                @AuthenticationPrincipal CustomUserDetails principal,
                                 Model model) {
         if (result.hasErrors()) {
             model.addAttribute("error", "Form has errors.");
@@ -231,6 +253,11 @@ public class TestController {
             return "dashboard/lecturer/test/testAdd";
         }
 
+        // Kiểm tra quyền của người dùng
+        Course course = courseService.getCourseByIdWithPermissionCheck(courseId, principal.getUser());
+        if (course == null) {
+            throw new NotFoundException(localizationService.getMessage("course.notFound", LocaleContextHolder.getLocale()));
+        }
         try {
             if (test.getCreatedAt() == null) {
                 test.setCreatedAt(LocalDateTime.now());
@@ -242,16 +269,17 @@ public class TestController {
             return "dashboard/lecturer/test/testAdd";
         }
 
-        return "redirect:/admin/courses/" + courseId + "/tests";
+        return "redirect:/admin/courses/" + courseId + "/tests" + "/test/" + test.getId();
     }
 
     @PostMapping("/test/{id}/delete")
     public String deleteTest(
             @PathVariable("courseId") Integer courseId,
             @PathVariable("id") Integer id,
-            RedirectAttributes redirectAttributes) {
-        Optional<Test> testOpt = testService.getTestById(id);
-        if (testOpt.isPresent()) {
+            RedirectAttributes redirectAttributes,
+            @AuthenticationPrincipal CustomUserDetails principal) {
+        Test test = testService.getTestByIdWithPermissionsCheck(id, principal.getUser());
+        if (test != null) {
             testService.deleteTest(id);
             redirectAttributes.addFlashAttribute("success", "Test deleted successfully!");
         } else {
