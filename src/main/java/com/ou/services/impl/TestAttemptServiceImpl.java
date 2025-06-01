@@ -1,7 +1,10 @@
 package com.ou.services.impl;
 
+import com.ou.pojo.Exercise;
+import com.ou.pojo.Test;
 import com.ou.pojo.TestAttempt;
 import com.ou.repositories.TestAttemptRepository;
+import com.ou.services.CourseStudentService;
 import com.ou.services.LocalizationService;
 import com.ou.services.TestAttemptService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,8 @@ public class TestAttemptServiceImpl implements TestAttemptService {
 
     @Autowired
     private LocalizationService localizationService;
+    @Autowired
+    private CourseStudentService courseStudentService;
 
 
     @Override
@@ -87,12 +92,15 @@ public class TestAttemptServiceImpl implements TestAttemptService {
     }
 
     @Override
-    public TestAttempt addTestAttempt(TestAttempt testAttempt) {
+    public TestAttempt addTestAttempt(TestAttempt testAttempt) throws Exception {
         if (!isValidTestAttempt(testAttempt)) {
             throw new IllegalArgumentException(localizationService.getMessage("testAttempt.invalid", LocaleContextHolder.getLocale()));
         }
+        TestAttempt createdTestAttempt =  testAttemptRepository.addTestAttempt(testAttempt);
 
-        return testAttemptRepository.addTestAttempt(testAttempt);
+        courseStudentService.updateCourseProgress(testAttempt.getTestId().getCourseId().getId(), testAttempt.getUserId().getId());
+
+        return createdTestAttempt;
     }
 
     @Override
@@ -101,5 +109,21 @@ public class TestAttemptServiceImpl implements TestAttemptService {
             throw new IllegalArgumentException(localizationService.getMessage("testAttempt.id.invalid", LocaleContextHolder.getLocale()));
         }
         return testAttemptRepository.deleteTestAttemptById(id);
+    }
+
+    @Override
+    public Double calculateTestStudentProgress(List<Test> tests, Integer studentId, Integer courseId, Map<String, String> params) {
+//        if (tests == null || tests.isEmpty()) {
+//            throw new IllegalArgumentException(localizationService.getMessage("test.list.empty", LocaleContextHolder.getLocale()));
+//        }
+        if (studentId == null || studentId <= 0) {
+            throw new IllegalArgumentException(localizationService.getMessage("student.invalidData", LocaleContextHolder.getLocale()));
+        }
+        if (courseId == null || courseId <= 0) {
+            throw new IllegalArgumentException(localizationService.getMessage("course.invalidData", LocaleContextHolder.getLocale()));
+        }
+
+        long completedAttempts = testAttemptRepository.countTestAttemptsByStudentIdAndCourseId(studentId, courseId , params);
+        return (double) completedAttempts / tests.size();
     }
 }

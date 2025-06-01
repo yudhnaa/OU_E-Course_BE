@@ -4,12 +4,14 @@ import com.ou.dto.CourseDto;
 import com.ou.dto.CourseRateDto;
 import com.ou.dto.PaginationDto;
 import com.ou.helpers.PaginationHelper;
+import com.ou.mappers.CourseCertificateMapper;
 import com.ou.mappers.CourseMapper;
 import com.ou.mappers.CourseRateMapper;
 import com.ou.pojo.Course;
 import com.ou.pojo.CourseRate;
 import com.ou.pojo.CourseStudent;
 import com.ou.pojo.CustomUserDetails;
+import com.ou.services.CourseCertificateService;
 import com.ou.services.CourseRateService;
 import com.ou.services.CourseService;
 import com.ou.services.CourseStudentService;
@@ -34,14 +36,18 @@ public class RestCourseController {
     private final CourseRateService courseRateService;
     private final CourseRateMapper courseRateMapper;
     private final CourseStudentService courseStudentService;
+    private final CourseCertificateService courseCertificateService;
+    private final CourseCertificateMapper courseCertificateMapper;
 
-    public RestCourseController(PaginationHelper paginationHelper, CourseService courseService, CourseMapper courseMapper, CourseRateService courseRateService, CourseRateMapper courseRateMapper, CourseStudentService courseStudentService) {
+    public RestCourseController(PaginationHelper paginationHelper, CourseService courseService, CourseMapper courseMapper, CourseRateService courseRateService, CourseRateMapper courseRateMapper, CourseStudentService courseStudentService, CourseCertificateService courseCertificateService, CourseCertificateMapper courseCertificateMapper) {
         this.paginationHelper = paginationHelper;
         this.courseService = courseService;
         this.courseMapper = courseMapper;
         this.courseRateService = courseRateService;
         this.courseRateMapper = courseRateMapper;
         this.courseStudentService = courseStudentService;
+        this.courseCertificateService = courseCertificateService;
+        this.courseCertificateMapper = courseCertificateMapper;
     }
 
     @GetMapping("/course-list")
@@ -79,7 +85,6 @@ public class RestCourseController {
                 pagination.getPageSize(),
                 pagination.getTotalItems(),
                 pagination.getTotalPages()
-
         );
 
         List<CourseDto> courseDtos = courses.stream().map(courseMapper::toDto).toList();
@@ -104,7 +109,6 @@ public class RestCourseController {
         List<CourseRateDto> courseRates = courseRateService.getCourseRatesByCourse(course.get().getId(), null)
                 .stream().map(courseRateMapper::toDto).toList();
 
-
         Map<String, Object> response = new HashMap<>();
         response.put("course", courseMapper.toDto(course.get()));
         response.put("courseRates", courseRates);
@@ -118,11 +122,68 @@ public class RestCourseController {
             @PathVariable("courseId") Integer courseId,
             @AuthenticationPrincipal CustomUserDetails principal) {
 
-
-
         Optional<CourseStudent> courseStudent = courseStudentService.getCourseStudentByCourseAndUser(courseId, principal.getUser().getId());
         boolean isEnrolled = courseStudent.isPresent() && courseStudent.get().getStudentId().getUserId().getId().equals(principal.getUser().getId());
 
         return new ResponseEntity<>(isEnrolled, HttpStatus.OK);
     }
+
+    @PostMapping("/secure/course/{courseId}/review")
+    public ResponseEntity<CourseRateDto> reviewCourse(
+            @PathVariable("courseId") Integer courseId,
+            @RequestBody CourseRateDto courseRateDto,
+            @AuthenticationPrincipal CustomUserDetails principal) throws Exception {
+
+        Optional<Course> course = courseService.getCourseById(courseId);
+        CourseRate courseRate = courseRateMapper.toEntity(courseRateDto, principal.getUser().getId());
+
+        if (course.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // Check for duplicate ratings
+        Map<String, String> filters = Map.of(
+                "courseId", courseRate.getCourseStudentId().getCourseId().getId().toString(),
+                "studentId", courseRate.getCourseStudentId().getStudentId().getId().toString()
+        );
+        List<CourseRate> existingRatings = courseRateService.searchCourseRates(filters, null);
+
+        if (!existingRatings.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
+
+        CourseRate savedCourseRate = courseRateService.addCourseRate(courseRate);
+
+        return new ResponseEntity<>(courseRateMapper.toDto(savedCourseRate), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/secure/course/{courseId}/review-update")
+    public ResponseEntity<CourseRateDto> reviewCourseUpdate(
+            @PathVariable("courseId") Integer courseId,
+            @RequestBody CourseRateDto courseRateDto,
+            @AuthenticationPrincipal CustomUserDetails principal) throws Exception {
+
+        CourseRate courseRate = courseRateMapper.toEntity(courseRateDto, principal.getUser().getId());
+
+        // Check for existing ratings
+        Map<String, String> filters = Map.of(
+                "courseId", courseRate.getCourseStudentId().getCourseId().getId().toString(),
+                "studentId", courseRate.getCourseStudentId().getStudentId().getId().toString()
+        );
+        CourseRate existingRatings = courseRateService.searchCourseRates(filters, null).get(0);
+
+        if (existingRatings == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        existingRatings.setRate(courseRate.getRate());
+        existingRatings.setComment(courseRate.getComment());
+
+        CourseRate updatedCourseRate = courseRateService.updateCourseRate(existingRatings);
+
+        return new ResponseEntity<>(courseRateMapper.toDto(updatedCourseRate), HttpStatus.CREATED);
+    }
+
+
 }

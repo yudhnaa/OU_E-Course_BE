@@ -115,6 +115,7 @@ public class TestRepositoryImpl implements TestRepository {
         List<Predicate> predicates = new ArrayList<>();
         predicates.add(builder.equal(root.get("courseId").get("id"), courseId));
         // Apply filters if any
+
         predicates.addAll(buildSearchPredicates(builder,root, params));
 
         query.where(builder.and(predicates.toArray(new Predicate[0])));
@@ -198,6 +199,10 @@ public class TestRepositoryImpl implements TestRepository {
     }
 
     private List<Predicate> buildSearchPredicates(CriteriaBuilder builder, Root<Test> root, Map<String, String> filters) {
+        if (filters == null || filters.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         List<Predicate> predicates = new ArrayList<>();
 
         if (filters.containsKey("name")) {

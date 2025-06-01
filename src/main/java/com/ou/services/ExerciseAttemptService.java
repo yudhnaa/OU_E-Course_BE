@@ -1,5 +1,6 @@
 package com.ou.services;
 
+import com.ou.pojo.Exercise;
 import com.ou.pojo.ExerciseAttempt;
 import java.util.List;
 import java.util.Map;
@@ -7,7 +8,7 @@ import java.util.Optional;
 
 public interface ExerciseAttemptService {
     // Create operations
-    ExerciseAttempt addExerciseAttempt(ExerciseAttempt exerciseAttempt);
+    ExerciseAttempt addExerciseAttempt(ExerciseAttempt exerciseAttempt) throws Exception;
 
     // Read operations with pagination
     List<ExerciseAttempt> getExerciseAttempts(Map<String, String> params);
@@ -17,6 +18,10 @@ public interface ExerciseAttemptService {
     List<ExerciseAttempt> getExerciseAttemptsByExerciseId(Integer exerciseId, Map<String, String> params);
     List<ExerciseAttempt> getExerciseAttemptsByScoreByUserId(Integer userId, Map<String, String> params);
     List<ExerciseAttempt> getExerciseAttemptsByStatusId(Integer statusId, Map<String, String> params);
+
+    //progress methods
+    Boolean isStudentDidAllCourseExercise(List<Exercise> exerciseIds, Integer studentId, Map<String, String> params);
+    Double calculateExerciseStudentProgress(List<Exercise> exerciseIds, Integer studentId, Integer courseId, Map<String, String> params);
 
     // Update operation
     ExerciseAttempt updateExerciseAttempt(ExerciseAttempt exerciseAttempt);

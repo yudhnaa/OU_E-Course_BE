@@ -399,26 +399,26 @@ CREATE TABLE payment_receipt_course
 
 # Triger
 
-# chi co the tao certificate khi student da hoan thanh course: progress = 1
-DELIMITER //
-
-CREATE TRIGGER trg_before_insert_certificate
-    BEFORE INSERT
-    ON course_certificate
-    FOR EACH ROW
-BEGIN
-    DECLARE p DOUBLE;
-
-    SELECT progress INTO p FROM course_student WHERE id = NEW.course_student_id;
-
-    IF p < 1 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Cannot issue certificate: Course progress is not complete';
-    END IF;
-END;
-//
-
-DELIMITER ;
+# # chi co the tao certificate khi student da hoan thanh course: progress = 1
+# DELIMITER //
+#
+# CREATE TRIGGER trg_before_insert_certificate
+#     BEFORE INSERT
+#     ON course_certificate
+#     FOR EACH ROW
+# BEGIN
+#     DECLARE p DOUBLE;
+#
+#     SELECT progress INTO p FROM course_student WHERE id = NEW.course_student_id;
+#
+#     IF p < 1 THEN
+#         SIGNAL SQLSTATE '45000'
+#             SET MESSAGE_TEXT = 'Cannot issue certificate: Course progress is not complete';
+#     END IF;
+# END;
+# //
+#
+# DELIMITER ;
 
 
 DELIMITER //

@@ -1,9 +1,9 @@
 package com.ou.repositories.impl;
 
 import com.ou.configs.WebApplicationSettings;
+import com.ou.pojo.Exercise;
 import com.ou.pojo.ExerciseAttempt;
 import com.ou.repositories.ExerciseAttemptRepository;
-import jakarta.persistence.NoResultException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 @Transactional
@@ -139,11 +140,30 @@ public class ExerciseAttemptRepositoryImpl implements ExerciseAttemptRepository 
         if (!predicates.isEmpty()) {
             query.where(builder.and(predicates.toArray(new Predicate[0])));
         }
-        
+
         query.select(builder.count(root));
         return session.createQuery(query).getSingleResult();
     }
-    
+
+    @Override
+    public Long countExerciseAttemptsByStudentIdAndCourseId(Integer courseId, Integer studentId, Map<String, String> params) {
+        Session session = sessionFactory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+
+        CriteriaQuery<Long> query = builder.createQuery(Long.class);
+        Root<ExerciseAttempt> root = query.from(ExerciseAttempt.class);
+
+        query.select(builder.countDistinct(root.get("exerciseId").get("id")));
+
+        Predicate byCourse = builder.equal(root.get("exerciseId").get("courseId").get("id"), courseId);
+        Predicate byStudent = builder.equal(root.get("studentId").get("id"), studentId);
+
+        query.where(builder.and(byCourse, byStudent));
+
+        return session.createQuery(query).getSingleResult();
+    }
+
+
     private List<Predicate> buildSearchPredicates(CriteriaBuilder builder, Root<ExerciseAttempt> root, Map<String, String> filters) {
         List<Predicate> predicates = new ArrayList<>();
         
@@ -298,6 +318,32 @@ public class ExerciseAttemptRepositoryImpl implements ExerciseAttemptRepository 
 
         return q.getResultList();
     }
+
+    @Override
+    public Boolean isStudentDidAllCourseExercise(List<Exercise> exerciseIds, Integer studentId, Map<String, String> params) {
+        Session session = sessionFactory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+
+        CriteriaQuery<Long> query = builder.createQuery(Long.class);
+        Root<ExerciseAttempt> root = query.from(ExerciseAttempt.class);
+
+        // Count distinct exercise attempts for the given student and exercises, because a student can have multiple attempts for the same exercise
+        query.select(builder.countDistinct(root.get("exerciseId").get("id")));
+
+        List<Integer> exerciseIdList = exerciseIds.stream()
+                .map(Exercise::getId)
+                .collect(Collectors.toList());
+
+        Predicate exercisePredicate = root.get("exerciseId").get("id").in(exerciseIdList);
+        Predicate studentPredicate = builder.equal(root.get("studentId").get("id"), studentId);
+
+        query.where(builder.and(exercisePredicate, studentPredicate));
+
+        Long completedCount = session.createQuery(query).getSingleResult();
+
+        return completedCount != null && completedCount == exerciseIdList.size();
+    }
+
 
 
     @Override
