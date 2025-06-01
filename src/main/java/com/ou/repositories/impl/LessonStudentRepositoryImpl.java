@@ -18,6 +18,19 @@ public class LessonStudentRepositoryImpl implements LessonStudentRepository {
     private LocalSessionFactoryBean factory;
 
     @Override
+    public LessonStudent createLessonStudent(LessonStudent lessonStudent) {
+        Session session = factory.getObject().getCurrentSession();
+        try {
+            session.persist(lessonStudent);
+            session.flush();
+            return lessonStudent;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
     public LessonStudent updateLessonStudent(LessonStudent lessonStudent) {
         Session session = factory.getObject().getCurrentSession();
         try {

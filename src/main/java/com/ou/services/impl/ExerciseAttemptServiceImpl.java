@@ -3,6 +3,7 @@ package com.ou.services.impl;
 import com.ou.pojo.Exercise;
 import com.ou.pojo.ExerciseAttempt;
 import com.ou.repositories.ExerciseAttemptRepository;
+import com.ou.services.CourseStudentService;
 import com.ou.services.ExerciseAttemptService;
 import com.ou.services.LocalizationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +26,11 @@ public class ExerciseAttemptServiceImpl implements ExerciseAttemptService {
 
     @Autowired
     private LocalizationService localizationService;
+    @Autowired
+    private CourseStudentService courseStudentService;
 
     @Override
-    public ExerciseAttempt addExerciseAttempt(ExerciseAttempt exerciseAttempt) {
+    public ExerciseAttempt addExerciseAttempt(ExerciseAttempt exerciseAttempt) throws Exception {
         // Business logic validation
         validateExerciseAttempt(exerciseAttempt);
         
@@ -35,8 +38,11 @@ public class ExerciseAttemptServiceImpl implements ExerciseAttemptService {
         if (exerciseAttempt.getStartedAt() == null) {
             exerciseAttempt.setStartedAt(LocalDateTime.now());
         }
-        
-        return exerciseAttemptRepository.addExerciseAttempt(exerciseAttempt);
+        ExerciseAttempt createdExerciseAttempt = exerciseAttemptRepository.addExerciseAttempt(exerciseAttempt);
+
+        courseStudentService.updateCourseProgress(exerciseAttempt.getExerciseId().getCourseId().getId(), exerciseAttempt.getStudentId().getId());
+
+        return createdExerciseAttempt;
     }
 
     @Override

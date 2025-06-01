@@ -39,8 +39,8 @@ public class CourseStudentRepositoryImpl implements CourseStudentRepository {
     @Override
     public CourseStudent updateCourseStudent(CourseStudent courseStudent) {
         Session session = sessionFactory.getObject().getCurrentSession();
-        session.merge(courseStudent);
-        return courseStudent;
+        CourseStudent merged = (CourseStudent) session.merge(courseStudent);
+        return merged;
     }
 
     @Override

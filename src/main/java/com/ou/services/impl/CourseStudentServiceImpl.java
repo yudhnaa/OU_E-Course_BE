@@ -295,13 +295,13 @@ public class CourseStudentServiceImpl implements CourseStudentService {
         double newProgress = calculateCourseProgress(courseId, studentId);
 
         // Update progress if it has changed
-        if (Math.abs(newProgress - courseStudent.getProgress()) > 0.001) { // Small tolerance for floating point comparison
+        if (Math.abs(newProgress - courseStudent.getProgress()) > 0.001) {
             courseStudent.setProgress(newProgress);
-            courseStudent = updateCourseStudent(courseStudent);
+            CourseStudent updateCourseStudent = updateCourseStudent(courseStudent);
 
             // Check if certificate should be generated
-            if (shouldGenerateCertificate(courseStudent)) {
-                generateCertificateForStudent(courseStudent);
+            if (shouldGenerateCertificate(updateCourseStudent)) {
+                generateCertificateForStudent(updateCourseStudent);
             }
         }
 
@@ -319,9 +319,9 @@ public class CourseStudentServiceImpl implements CourseStudentService {
         List<Exercise> exercises = exerciseService.getExercisesByCourse(courseId, null);
         List<Test> tests = testService.getTestsByCourse(courseId, null);
 
-        Boolean isComplete = exerciseAttemptService.isStudentDidAllCourseExercise(exercises, studentId, null);
-        if (isComplete)
-            return 1.0;
+//        Boolean isComplete = exerciseAttemptService.isStudentDidAllCourseExercise(exercises, studentId, null);
+//        if (isComplete)
+//            return 1.0;
 
         Double exerciseCompletePercent = exerciseAttemptService.calculateExerciseStudentProgress(exercises, studentId, courseId, null);
         Double testCompletePercent = testAttemptService.calculateTestStudentProgress(tests, studentId, courseId, null);
@@ -337,10 +337,16 @@ public class CourseStudentServiceImpl implements CourseStudentService {
 
     // Helper method to generate certificate (placeholder)
     private void generateCertificateForStudent(CourseStudent courseStudent) throws Exception {
+
 //        Boolean isCompleteCourse = courseStudentService.isCourseCompleted(courseStudent);
 //
 //        if (!isCompleteCourse) {
 //            throw new Exception("Course is not completed, cannot generate certificate");
+//        }
+
+//        Optional<CourseStudent> courseStudent = courseStudentRepository.getCourseStudentById(courseStudentId);
+//        if (courseStudent == null) {
+//            throw new NotFoundException("CourseStudent not found with ID: " + courseStudentId);
 //        }
 
         CourseCertificate createdCourseCertificate = courseCertificateService.createCourseCertificate(courseStudent, "N/A");

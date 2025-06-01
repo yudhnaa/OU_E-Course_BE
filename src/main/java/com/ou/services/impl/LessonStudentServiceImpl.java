@@ -98,7 +98,7 @@ public class LessonStudentServiceImpl implements LessonStudentService {
             newLessonStudent.setStudentId(student);
             newLessonStudent.setIsLearn(true);
             newLessonStudent.setLearnedAt(LocalDateTime.now());
-            result = lessonStudentRepo.updateLessonStudent(newLessonStudent);
+            result = lessonStudentRepo.createLessonStudent(newLessonStudent);
         }
 
         // Automatically update course progress after marking lesson as learned
@@ -106,7 +106,6 @@ public class LessonStudentServiceImpl implements LessonStudentService {
             Integer courseId = lesson.get().getCourseId().getId();
             courseStudentService.updateCourseProgress(courseId, studentId);
         } catch (Exception e) {
-            // Log the error but don't fail the lesson marking operation
             System.err.println("Failed to update course progress after marking lesson as learned: " + e.getMessage());
         }
 

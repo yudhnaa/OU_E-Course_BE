@@ -4,12 +4,14 @@ import com.ou.dto.CourseDto;
 import com.ou.dto.CourseRateDto;
 import com.ou.dto.PaginationDto;
 import com.ou.helpers.PaginationHelper;
+import com.ou.mappers.CourseCertificateMapper;
 import com.ou.mappers.CourseMapper;
 import com.ou.mappers.CourseRateMapper;
 import com.ou.pojo.Course;
 import com.ou.pojo.CourseRate;
 import com.ou.pojo.CourseStudent;
 import com.ou.pojo.CustomUserDetails;
+import com.ou.services.CourseCertificateService;
 import com.ou.services.CourseRateService;
 import com.ou.services.CourseService;
 import com.ou.services.CourseStudentService;
@@ -34,14 +36,18 @@ public class RestCourseController {
     private final CourseRateService courseRateService;
     private final CourseRateMapper courseRateMapper;
     private final CourseStudentService courseStudentService;
+    private final CourseCertificateService courseCertificateService;
+    private final CourseCertificateMapper courseCertificateMapper;
 
-    public RestCourseController(PaginationHelper paginationHelper, CourseService courseService, CourseMapper courseMapper, CourseRateService courseRateService, CourseRateMapper courseRateMapper, CourseStudentService courseStudentService) {
+    public RestCourseController(PaginationHelper paginationHelper, CourseService courseService, CourseMapper courseMapper, CourseRateService courseRateService, CourseRateMapper courseRateMapper, CourseStudentService courseStudentService, CourseCertificateService courseCertificateService, CourseCertificateMapper courseCertificateMapper) {
         this.paginationHelper = paginationHelper;
         this.courseService = courseService;
         this.courseMapper = courseMapper;
         this.courseRateService = courseRateService;
         this.courseRateMapper = courseRateMapper;
         this.courseStudentService = courseStudentService;
+        this.courseCertificateService = courseCertificateService;
+        this.courseCertificateMapper = courseCertificateMapper;
     }
 
     @GetMapping("/course-list")
@@ -79,7 +85,6 @@ public class RestCourseController {
                 pagination.getPageSize(),
                 pagination.getTotalItems(),
                 pagination.getTotalPages()
-
         );
 
         List<CourseDto> courseDtos = courses.stream().map(courseMapper::toDto).toList();
@@ -104,7 +109,6 @@ public class RestCourseController {
         List<CourseRateDto> courseRates = courseRateService.getCourseRatesByCourse(course.get().getId(), null)
                 .stream().map(courseRateMapper::toDto).toList();
 
-
         Map<String, Object> response = new HashMap<>();
         response.put("course", courseMapper.toDto(course.get()));
         response.put("courseRates", courseRates);
@@ -117,8 +121,6 @@ public class RestCourseController {
     public ResponseEntity<Boolean> isEnrolledCourse(
             @PathVariable("courseId") Integer courseId,
             @AuthenticationPrincipal CustomUserDetails principal) {
-
-
 
         Optional<CourseStudent> courseStudent = courseStudentService.getCourseStudentByCourseAndUser(courseId, principal.getUser().getId());
         boolean isEnrolled = courseStudent.isPresent() && courseStudent.get().getStudentId().getUserId().getId().equals(principal.getUser().getId());

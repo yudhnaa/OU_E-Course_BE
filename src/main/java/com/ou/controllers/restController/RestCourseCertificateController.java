@@ -3,9 +3,11 @@ package com.ou.controllers.restController;
 import com.ou.dto.CourseCertificateDto;
 import com.ou.mappers.CourseCertificateMapper;
 import com.ou.pojo.CourseCertificate;
+import com.ou.pojo.CourseStudent;
 import com.ou.pojo.CustomUserDetails;
 import com.ou.pojo.Student;
 import com.ou.services.CourseCertificateService;
+import com.ou.services.CourseStudentService;
 import com.ou.services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,8 +31,10 @@ public class RestCourseCertificateController {
     private StudentService studentService;
     @Autowired
     private CourseCertificateMapper courseCertificateMapper;
+    @Autowired
+    private CourseStudentService courseStudentService;
 
-//     Get all certificates for the authenticated student
+    //     Get all certificates for the authenticated student
     @GetMapping
     public ResponseEntity<Map<String, Object>> getStudentCertificates(
             @RequestParam Map<String, String> params,
@@ -74,13 +78,17 @@ public class RestCourseCertificateController {
 
         try {
             Student student = studentService.getStudentByUserId(principal.getUser().getId());
+            Optional<CourseStudent> courseStudent = courseStudentService.getCourseStudentByCourseAndStudent(courseId, student.getId());
+            if (courseStudent.isEmpty()) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("success", false);
+                errorResponse.put("error", "Student is not enrolled in this course");
+                return ResponseEntity.badRequest().body(errorResponse);
+            }
+//            params.put("courseId", courseId.toString());
+//            params.put("studentId", student.getId().toString());
 
-            // This would need implementation in CourseCertificateService to filter by course and student
-            // For now, using existing method with parameters
-            params.put("courseId", courseId.toString());
-            params.put("studentId", student.getId().toString());
-
-            List<CourseCertificate> certificates = courseCertificateService.getCourseCertificates(params);
+            List<CourseCertificate> certificates = courseCertificateService.getCertificatesByCourseStudentId(courseStudent.get().getId(), null);
             List<CourseCertificateDto> courseCertificateDtos = certificates.stream().map(courseCertificateMapper::toDto).toList();
 
             Map<String, Object> response = new HashMap<>();

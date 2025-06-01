@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface ExerciseAttemptService {
     // Create operations
-    ExerciseAttempt addExerciseAttempt(ExerciseAttempt exerciseAttempt);
+    ExerciseAttempt addExerciseAttempt(ExerciseAttempt exerciseAttempt) throws Exception;
 
     // Read operations with pagination
     List<ExerciseAttempt> getExerciseAttempts(Map<String, String> params);
