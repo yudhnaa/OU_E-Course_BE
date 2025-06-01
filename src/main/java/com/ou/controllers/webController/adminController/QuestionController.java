@@ -1,14 +1,13 @@
 package com.ou.controllers.webController.adminController;
 
+import com.ou.pojo.CustomUserDetails;
 import com.ou.pojo.Question;
 import com.ou.pojo.QuestionType;
 import com.ou.pojo.Exercise;
-import com.ou.services.MultipleChoiceAnswerService;
-import com.ou.services.QuestionService;
-import com.ou.services.QuestionTypeService;
-import com.ou.services.WritingAnswerService;
+import com.ou.services.*;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -35,33 +34,50 @@ public class QuestionController {
     @Autowired
     private WritingAnswerService writingAnswerService;
 
+    @Autowired
+    private ExerciseService exerciseService;
+
 
     @GetMapping("/{questionId}")
     public String getQuestionById(@PathVariable("courseId") Integer courseId,
                                   @PathVariable("lessonId") Integer lessonId,
                                   @PathVariable("exerciseId") Integer exerciseId,
                                   @PathVariable("questionId") Integer questionId,
+                                  @AuthenticationPrincipal CustomUserDetails principal,
+                                  RedirectAttributes redirectAttributes,
                                   Model model) {
+        // Check if the user has permission to view the question
+        if (principal.getUser().getUserRoleId().getName().contains("LECTURER")) {
+            Exercise exercise = exerciseService.getExerciseByIdWithPermissionsCheck(exerciseId, principal.getUser());
+            if (exercise == null) {
+                redirectAttributes.addFlashAttribute("msg_error", "You do not have permission to view this exercise.");
+                return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId; // Redirect to an error page or exercise detail
+            }
 
-        Question question = questionService.getQuestionById(questionId);
-        if (question == null) {
-            model.addAttribute("msg_error", "Question not found.");
+            Question question = questionService.getQuestionById(questionId);
+            if (question == null) {
+                model.addAttribute("msg_error", "Question not found.");
+                return "dashboard/lecturer/question/question_detail";
+            }
+
+            model.addAttribute("question", question);
+
+            if (question.getQuestionTypeId().getName().equals("multiple choice")) {
+                model.addAttribute("answers", multipleChoiceAnswerService.getAnswersByQuestionId(questionId));
+            } else if (question.getQuestionTypeId().getName().equals("writing")) {
+                model.addAttribute("answers", writingAnswerService.getWritingAnswerByQuestionId(questionId));
+            }
+
+            model.addAttribute("courseId", courseId);
+            model.addAttribute("lessonId", lessonId);
+            model.addAttribute("exerciseId", exerciseId);
+            model.addAttribute("questionId", questionId);
             return "dashboard/lecturer/question/question_detail";
+
+        } else {
+            redirectAttributes.addFlashAttribute("msg_error", "Only lecturer can edit the question of this exercise.");
+            return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId;
         }
-
-        model.addAttribute("question", question);
-
-        if (question.getQuestionTypeId().getName().equals("multiple choice")) {
-            model.addAttribute("answers", multipleChoiceAnswerService.getAnswersByQuestionId(questionId));
-        } else if (question.getQuestionTypeId().getName().equals("writing")) {
-            model.addAttribute("answers", writingAnswerService.getWritingAnswerByQuestionId(questionId));
-        }
-
-        model.addAttribute("courseId", courseId);
-        model.addAttribute("lessonId", lessonId);
-        model.addAttribute("exerciseId", exerciseId);
-        model.addAttribute("questionId", questionId);
-        return "dashboard/lecturer/question/question_detail";
     }
 
     @PostMapping("/{questionId}")
@@ -76,55 +92,80 @@ public class QuestionController {
                                  @RequestParam(value = "correctOption", required = false) Integer correctOption,
                                  @RequestParam(value = "sampleAnswer", required = false) String sampleAnswer,
                                  @RequestParam(value = "writingAnswerId", required = false) Integer writingAnswerId,
+                                 @AuthenticationPrincipal CustomUserDetails principal,
                                  RedirectAttributes redirectAttributes) {
-
-        try {
-            Question question = questionService.getQuestionById(questionId);
-            if (question == null) {
-                redirectAttributes.addFlashAttribute("msg_error", "Question not found.");
-                return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId;
+        // Check if the user has permission to update the question
+        if (principal.getUser().getUserRoleId().getName().contains("LECTURER")) {
+            Exercise exercise = exerciseService.getExerciseByIdWithPermissionsCheck(exerciseId, principal.getUser());
+            if (exercise == null) {
+                redirectAttributes.addFlashAttribute("msg_error", "You do not have permission to edit this exercise.");
+                return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId; // Redirect to an error page or exercise detail
             }
 
-            // Update question properties
-            question.setContent(content);
-
-            if(deletedAnswerIds != null && !deletedAnswerIds.isEmpty()){
-                String[] ids = deletedAnswerIds.split(",");
-                for(String id : ids){
-                    Integer answerId = Integer.parseInt(id);
-                    multipleChoiceAnswerService.deleteMultipleChoiceAnswer(answerId);
+            try {
+                Question question = questionService.getQuestionById(questionId);
+                if (question == null) {
+                    redirectAttributes.addFlashAttribute("msg_error", "Question not found.");
+                    return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId;
                 }
-            }
 
-            // Update the question
-            questionService.updateQuestion(question);
+                // Update question properties
+                question.setContent(content);
 
-            // Update answers based on question type
-            String questionType = question.getQuestionTypeId().getName();
-            if (questionType.equals("multiple choice") && options != null && answerIds != null) {
-                if (options.size() == answerIds.size()) {
-                    multipleChoiceAnswerService.updateMultipleChoiceAnswer(questionId, answerIds, options, correctOption);
-                } else {
-                    redirectAttributes.addFlashAttribute("msg_error", "Options and answer IDs don't match.");
-                    return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId + "/question/" + questionId;
+                if(deletedAnswerIds != null && !deletedAnswerIds.isEmpty()){
+                    String[] ids = deletedAnswerIds.split(",");
+                    for(String id : ids){
+                        Integer answerId = Integer.parseInt(id);
+                        multipleChoiceAnswerService.deleteMultipleChoiceAnswer(answerId);
+                    }
                 }
-            } else if (questionType.equals("writing") && sampleAnswer != null) {
-                writingAnswerService.updateWritingAnswer(questionId,writingAnswerId,sampleAnswer);
+
+                // Update the question
+                questionService.updateQuestion(question);
+
+                // Update answers based on question type
+                String questionType = question.getQuestionTypeId().getName();
+                if (questionType.equals("multiple choice") && options != null && answerIds != null) {
+                    if (options.size() == answerIds.size()) {
+                        multipleChoiceAnswerService.updateMultipleChoiceAnswer(questionId, answerIds, options, correctOption);
+                    } else {
+                        redirectAttributes.addFlashAttribute("msg_error", "Options and answer IDs don't match.");
+                        return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId + "/question/" + questionId;
+                    }
+                } else if (questionType.equals("writing") && sampleAnswer != null) {
+                    writingAnswerService.updateWritingAnswer(questionId,writingAnswerId,sampleAnswer);
+                }
+
+                redirectAttributes.addFlashAttribute("msg_success", "Question updated successfully!");
+            } catch (Exception e) {
+                redirectAttributes.addFlashAttribute("msg_error", "Error updating question: " + e.getMessage());
             }
 
-            redirectAttributes.addFlashAttribute("msg_success", "Question updated successfully!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("msg_error", "Error updating question: " + e.getMessage());
+            return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId + "/question/" + questionId;
         }
-
-        return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId + "/question/" + questionId;
+        else{
+            redirectAttributes.addFlashAttribute("msg_error", "Only lecturer can edit the question of this exercise.");
+            return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId;
+        }
     }
 
     @GetMapping("/add")
     public String showAddQuestionForm(@PathVariable("courseId") Integer courseId,
                                       @PathVariable("lessonId") Integer lessonId,
                                       @PathVariable("exerciseId") Integer exerciseId,
+                                      @AuthenticationPrincipal CustomUserDetails principal,
                                       Model model) {
+        // Check if the user has permission to add a question
+        if(principal.getUser().getUserRoleId().getName().contains("LECTURER")) {
+            Exercise exercise = exerciseService.getExerciseByIdWithPermissionsCheck(exerciseId, principal.getUser());
+            if (exercise == null) {
+                model.addAttribute("msg_error", "You do not have permission to add a question to this exercise.");
+                return "dashboard/lecturer/question/question_add"; // Redirect to an error page or exercise detail
+            }
+        } else {
+            model.addAttribute("msg_error", "Only lecturer can add a question to this exercise.");
+            return "dashboard/lecturer/question/question_add"; // Redirect to an error page or exercise detail
+        }
         List<QuestionType> questionTypes = questionTypeService.getAllQuestionTypes();
         Question question = new Question();
         // Pre-populate the exercise
@@ -147,9 +188,20 @@ public class QuestionController {
                               @RequestParam(value = "sampleAnswer", required = false) String sampleAnswer,
                               @RequestParam(value = "options", required = false) List<String> options,
                               @RequestParam(value = "correctOption", required = false) Integer correctOption,
+                              @AuthenticationPrincipal CustomUserDetails principal,
                               BindingResult result,
                               RedirectAttributes redirectAttributes) {
-
+        // Check if the user has permission to add a question
+        if (principal.getUser().getUserRoleId().getName().contains("LECTURER")) {
+            Exercise exercise = exerciseService.getExerciseByIdWithPermissionsCheck(exerciseId, principal.getUser());
+            if (exercise == null) {
+                redirectAttributes.addFlashAttribute("msg_error", "You do not have permission to add a question to this exercise.");
+                return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId; // Redirect to an error page or exercise detail
+            }
+        } else {
+            redirectAttributes.addFlashAttribute("msg_error", "Only lecturer can add a question to this exercise.");
+            return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId;
+        }
         try {
             // Set the complex objects manually after basic binding
             question.setExerciseId(new Exercise(exerciseId));
@@ -203,13 +255,24 @@ public class QuestionController {
         }
     }
 
-    @GetMapping("/{questionId}/delete")
+    @PostMapping("/{questionId}/delete")
     public String deleteQuestion(
             @PathVariable("courseId") Integer courseId,
             @PathVariable("lessonId") Integer lessonId,
             @PathVariable("exerciseId") Integer exerciseId,
             @PathVariable("questionId") Integer questionId,
+            @AuthenticationPrincipal CustomUserDetails principal,
             RedirectAttributes redirectAttributes) {
+        // Check if the user has permission to delete the question
+        if (!principal.getUser().getUserRoleId().getName().contains("LECTURER")) {
+            redirectAttributes.addFlashAttribute("msg_error", "Only lecturer can delete the question of this exercise.");
+            return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId;
+        }
+        Exercise exercise = exerciseService.getExerciseByIdWithPermissionsCheck(exerciseId, principal.getUser());
+        if (exercise == null) {
+            redirectAttributes.addFlashAttribute("msg_error", "You do not have permission to delete this question.");
+            return "redirect:/admin/courses/" + courseId + "/lessons/" + lessonId + "/exercises/exercise/" + exerciseId;
+        }
         try {
             questionService.deleteQuestion(questionId);
             redirectAttributes.addFlashAttribute("msg_success", "Question deleted successfully");

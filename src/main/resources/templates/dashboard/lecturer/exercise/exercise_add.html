@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      layout:decorate="~{layout}">
 <th:block layout:fragment="pagetitle" >
     <div th:replace="partials/title-meta :: title-meta('Test')"></div>
 </th:block>
@@ -74,7 +77,7 @@
         <div class="col-lg-12">
             <div class="tab-content text-muted">
                 <!-- Tab pane detail -->
-                <div class="tab-pane fade" id="exercise-detail" role="tabpanel">
+                <div class="tab-pane fade show active" id="exercise-detail" role="tabpanel">
                     <div class="row">
                         <div class="col-xl-9 col-lg-8">
                             <div class="card">
@@ -101,7 +104,7 @@
                                         </div>
 
                                         <div class="text-end">
-                                            <button type="submit" class="btn btn-primary">Add exercise</button>
+                                            <button sec:authorize="hasRole('LECTURER')" type="submit" class="btn btn-primary">Add exercise</button>
                                         </div>
                                     </form>
                                 </div>
@@ -120,7 +123,7 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="text-start mt-3">
-                                        <a th:href="@{'/admin/courses/' + ${courseId} + '/lessons/' + ${lessonId} + '/exercises/exercise/' + ${exercise.id} + '/question/add'}"
+                                        <a sec:authorize="hasRole('LECTURER')" th:href="@{'/admin/courses/' + ${courseId} + '/lessons/' + ${lessonId} + '/exercises/exercise/' + ${exercise.id} + '/question/add'}"
                                            class="btn btn-primary">
                                             <i class="ri-add-line align-bottom me-1"></i> Add Question
                                         </a>
@@ -161,7 +164,7 @@
                                                         </a>
                                                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                                             <li>
-                                                                <a class="dropdown-item"
+                                                                <a sec:authorize="hasRole('LECTURER')" class="dropdown-item"
                                                                    th:href="@{'/admin/courses/' + ${courseId} + '/lessons/' + ${lessonId} + '/exercises/exercise/' + ${exercise.id} + '/question/' + ${question.id}}">
                                                                     Edit exercise
                                                                 </a>
