@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     }).then(response => {
                         if (response.ok) {
-                            window.location.reload(); // Reload trang sau khi xóa thành công
+                            window.location.href = `/Ecourse/admin/courses/${document.getElementById('courseId').value}/tests`;
                         } else {
                             Swal.fire('Error', 'Failed to delete question', 'error');
                         }

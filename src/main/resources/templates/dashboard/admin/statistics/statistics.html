@@ -1,10 +1,430 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      layout:decorate="~{layout}">
+
+<th:block layout:fragment="pagetitle">
+    <!--page title-->
+    <div th:replace="~{partials/title-meta :: title-meta('Statistics')}"></div>
+</th:block>
+
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
 </head>
 <body>
-$END$
+<div layout:fragment="content">
+    <div th:replace="~{partials/page-title :: page-title('Ecourse','Statistics')}"></div>
+    <!-- end page title -->
+    <div class="row">
+        <!-- Danger Alert -->
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${msg_error}">
+            <b th:text="${msg_error}">Dismissible danger Alert </b>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Success Alert -->
+        <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${msg_success}">
+            <b th:text="${msg_success}"></b>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title mb-4">User Role Statistics</h4>
+                <div id="userRoleChart" style="height: 400px;"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="card-title mb-0">Revenue & Orders Statistics</h4>
+                    <div class="year-selector">
+                        <form method="GET" th:action="@{/admin/statistics}" class="d-flex align-items-center">
+                            <label for="yearSelect" class="form-label me-2 mb-0">Select Year:</label>
+                            <select id="yearSelect" name="year" class="form-select" style="width: auto;" onchange="this.form.submit()">
+                                <option th:each="year : ${availableYears}"
+                                        th:value="${year}"
+                                        th:text="${year}"
+                                        th:selected="${year == selectedYear}">
+                                </option>
+                            </select>
+                        </form>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <span class="badge bg-primary me-2">Selected Year: <span th:text="${selectedYear}"></span></span>
+                    <span class="badge bg-info" th:if="${selectedYear == currentYear}">Current Year</span>
+                </div>
+                <div id="monthlyChart" style="height: 450px;"></div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-body">
+                <h4 class="card-title mb-4">Course Revenue Statistics</h4>
+                <div id="courseRevenueGrid"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<th:block layout:fragment="pagejs">
+    <!-- apexcharts -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
+    <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+    <script th:inline="javascript">
+        var userRoleStats = /*[[${userRoleStats}]]*/ [];
+        var selectedYear = /*[[${selectedYear}]]*/ 0;
+
+        // Prepare data for pie chart
+        var labels = [];
+        var series = [];
+        var colors = ['#FF6B6B', '#4ECDC4', '#45B7D1'];
+
+        // Extract labels and values from the List<UserRoleStatisticsDto>
+        if (userRoleStats && Array.isArray(userRoleStats)) {
+            userRoleStats.forEach(function(roleStats) {
+                labels.push(roleStats.roleName);
+                series.push(roleStats.userCount);
+            });
+        }
+
+        // ApexCharts configuration
+        var options = {
+            series: series,
+            chart: {
+                type: 'pie',
+                height: 400,
+                animations: {
+                    enabled: true,
+                    easing: 'easeinout',
+                    speed: 800,
+                }
+            },
+            labels: labels,
+            colors: colors,
+            responsive: [{
+                breakpoint: 480,
+                options: {
+                    chart: {
+                        width: 200
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }],
+            legend: {
+                position: 'bottom',
+                horizontalAlign: 'center',
+                fontSize: '14px',
+                markers: {
+                    width: 12,
+                    height: 12,
+                    radius: 6
+                },
+                itemMargin: {
+                    horizontal: 10,
+                    vertical: 5
+                }
+            },
+            plotOptions: {
+                pie: {
+                    expandOnClick: true,
+                    donut: {
+                        size: '0%'
+                    }
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                formatter: function (val, opts) {
+                    return opts.w.config.series[opts.seriesIndex] + " (" + val.toFixed(1) + "%)";
+                },
+                style: {
+                    fontSize: '12px',
+                    fontWeight: 'bold'
+                }
+            },
+            tooltip: {
+                enabled: true,
+                y: {
+                    formatter: function (val) {
+                        return val + " users";
+                    }
+                }
+            }
+        };
+
+        // Render the chart
+        var chart = new ApexCharts(document.querySelector("#userRoleChart"), options);
+        chart.render();
+
+        // Monthly chart
+        var monthlyStats = /*[[${monthlyRevenueStats}]]*/ [];
+        var categories = [];
+        var revenueData = [];
+        var ordersData = [];
+
+        if (monthlyStats && Array.isArray(monthlyStats)) {
+            // Sort data by year and month (handle null months)
+            monthlyStats.sort(function(a, b) {
+                if (a.year !== b.year) {
+                    return a.year - b.year;
+                }
+                // Handle null months (yearly data)
+                if (a.month === null && b.month === null) return 0;
+                if (a.month === null) return 1;
+                if (b.month === null) return -1;
+                return (a.month || 0) - (b.month || 0);
+            });
+
+            monthlyStats.forEach(function(stat) {
+                var label;
+
+                if (stat.month === null || stat.month === undefined) {
+                    // Yearly data - just show year
+                    label = "Year " + stat.year;
+                } else {
+                    // Monthly data - show month and year
+                    var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                    label = monthNames[stat.month - 1] + " " + stat.year;
+                }
+
+                categories.push(label);
+                revenueData.push(stat.totalRevenue || 0);
+                ordersData.push(stat.totalOrders || 0);
+            });
+        }
+
+        // ApexCharts configuration for Revenue Combination Chart
+        var revenueOptions = {
+            series: [
+                {
+                    name: 'Total Revenue',
+                    type: 'line',
+                    data: revenueData
+                },
+                {
+                    name: 'Total Orders',
+                    type: 'column',
+                    data: ordersData
+                }
+            ],
+            chart: {
+                height: 400,
+                type: 'line',
+                animations: {
+                    enabled: true,
+                    easing: 'easeinout',
+                    speed: 800,
+                },
+                toolbar: {
+                    show: true,
+                    tools: {
+                        download: true,
+                        selection: true,
+                        zoom: true,
+                        zoomin: true,
+                        zoomout: true,
+                        pan: true,
+                        reset: true
+                    }
+                }
+            },
+            stroke: {
+                width: [4, 0],
+                curve: 'smooth'
+            },
+            plotOptions: {
+                bar: {
+                    columnWidth: '50%',
+                    borderRadius: 4
+                }
+            },
+            fill: {
+                opacity: [1, 0.8],
+                gradient: {
+                    inverseColors: false,
+                    shade: 'light',
+                    type: "vertical",
+                    opacityFrom: 0.85,
+                    opacityTo: 0.55,
+                    stops: [0, 100, 100, 100]
+                }
+            },
+            labels: categories,
+            markers: {
+                size: 6,
+                colors: ['#4ECDC4'],
+                strokeColors: '#fff',
+                strokeWidth: 2,
+                hover: {
+                    size: 8
+                }
+            },
+            colors: ['#4ECDC4', '#FF6B6B'],
+            xaxis: {
+                type: 'category',
+                title: {
+                    text: 'Time Period - ' + selectedYear,
+                    style: {
+                        fontSize: '14px',
+                        fontWeight: 600
+                    }
+                }
+            },
+            yaxis: [
+                {
+                    title: {
+                        text: 'Revenue ($)',
+                        style: {
+                            color: '#4ECDC4',
+                            fontSize: '14px',
+                            fontWeight: 600
+                        }
+                    },
+                    labels: {
+                        style: {
+                            colors: '#4ECDC4'
+                        },
+                        formatter: function (val) {
+                            return '$' + val.toLocaleString();
+                        }
+                    }
+                },
+                {
+                    opposite: true,
+                    title: {
+                        text: 'Orders Count',
+                        style: {
+                            color: '#FF6B6B',
+                            fontSize: '14px',
+                            fontWeight: 600
+                        }
+                    },
+                    labels: {
+                        style: {
+                            colors: '#FF6B6B'
+                        },
+                        formatter: function (val) {
+                            return val.toLocaleString();
+                        }
+                    }
+                }
+            ],
+            tooltip: {
+                shared: true,
+                intersect: false,
+                y: [
+                    {
+                        formatter: function (y) {
+                            if (typeof y !== "undefined") {
+                                return '$' + y.toLocaleString();
+                            }
+                            return y;
+                        }
+                    },
+                    {
+                        formatter: function (y) {
+                            if (typeof y !== "undefined") {
+                                return y.toLocaleString() + ' orders';
+                            }
+                            return y;
+                        }
+                    }
+                ]
+            },
+            legend: {
+                position: 'top',
+                horizontalAlign: 'center',
+                fontSize: '14px',
+                markers: {
+                    width: 12,
+                    height: 12,
+                    radius: 6
+                },
+                itemMargin: {
+                    horizontal: 15,
+                    vertical: 5
+                }
+            },
+            grid: {
+                borderColor: '#f1f1f1',
+                strokeDashArray: 3
+            },
+            responsive: [{
+                breakpoint: 768,
+                options: {
+                    chart: {
+                        height: 350
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }]
+        };
+
+        // Render Revenue Chart
+        var monthlyChart = new ApexCharts(document.querySelector("#monthlyChart"), revenueOptions);
+        monthlyChart.render();
+
+        // Course Revenue GridJS
+        var courseRevenueStats = /*[[${courseRevenueStats}]]*/ [];
+
+        // Prepare data for GridJS
+        var gridData = [];
+        if (courseRevenueStats && Array.isArray(courseRevenueStats)) {
+            courseRevenueStats.forEach(function(course, index) {
+                gridData.push([
+                    index + 1,
+                    course.courseName || 'N/A',
+                    course.categoryName || 'N/A',
+                    course.enrollmentCount || 0,
+                    '$' + (course.totalRevenue || 0).toLocaleString()
+                ]);
+            });
+        }
+
+        // Initialize GridJS
+        new gridjs.Grid({
+            columns: [
+                { name: '#', width: '60px' },
+                { name: 'Course Name', width: '300px' },
+                { name: 'Category', width: '150px' },
+                { name: 'Enrollments', width: '120px' },
+                { name: 'Total Revenue', width: '150px' }
+            ],
+            data: gridData,
+            search: true,
+            pagination: {
+                limit: 5,
+                summary: true
+            },
+            sort: true,
+            resizable: true,
+            style: {
+                table: {
+                    'font-size': '14px'
+                },
+                th: {
+                    'background-color': 'rgba(0, 123, 255, 0.1)',
+                    'color': '#495057',
+                    'font-weight': '600'
+                },
+                td: {
+                    'text-align': 'center'
+                }
+            }
+        }).render(document.getElementById('courseRevenueGrid'));
+
+    </script>
+</th:block>
+
 </body>
 </html>
