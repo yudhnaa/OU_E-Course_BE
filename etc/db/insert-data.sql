@@ -252,11 +252,33 @@ INSERT INTO test_question (test_id, question_id) VALUES
 #     (2, 2, 'Java features include platform independence through JVM and strong security features.', NULL, 85.00),
 #     (2, 4, 'string', 1, 100.00);
 
+
 # -- Sample data for test_attempt_answer
 # INSERT INTO test_attempt_answer (attempt_id, question_id, answer_text, is_correct, score) VALUES
-#     (1, 1, 'A programming language', 1, 100.00),
-#     (1, 2, 'Java is a versatile, object-oriented language with platform independence via the JVM.', NULL, 95.00),
-#     (1, 3, 'Java Virtual Machine', 1, 100.00),
-#     (2, 1, 'A programming language', 1, 100.00),
-#     (2, 2, 'Java has features like garbage collection and platform independence.', NULL, 85.00),
-#     (2, 3, 'Java Visual Machine', 0, 0.00);
+#    (1, 1, 'A programming language', 1, 100.00),
+#    (1, 2, 'Java is a versatile, object-oriented language with platform independence via the JVM.', NULL, 95.00),
+#    (1, 3, 'Java Virtual Machine', 1, 100.00),
+#    (2, 1, 'A programming language', 1, 100.00),
+#    (2, 2, 'Java has features like garbage collection and platform independence.', NULL, 85.00),
+#    (2, 3, 'Java Visual Machine', 0, 0.00);
+
+INSERT INTO payment_receipts (receipt_id, amount, currency, status, payment_method, student_id) VALUES
+                                                                                                    ('pi_3Oa1b2P3NcUv2JkY1a1b2c3d', 1000.00, 'USD', 'succeeded', 'card_visa', 1),
+                                                                                                    ('pi_3Oa1b2P3NcUv2JkY1a1b2c3e', 1000.00, 'USD', 'succeeded', 'card_mastercard', 2),
+                                                                                                    ('pi_3Oa1b2P3NcUv2JkY1a1b2c3f', 1000.00, 'USD', 'succeeded', 'card_amex', 3),
+                                                                                                    ('pi_3Oa1b2P3NcUv2JkY1a1b2c3g', 1000.00, 'USD', 'succeeded', 'card_visa', 4),
+                                                                                                    ('pi_3Oa1b2P3NcUv2JkY1a1b2c3h', 2000.00, 'USD', 'succeeded', 'card_mastercard', 5),
+                                                                                                    ('pi_3Oa1b2P3NcUv2JkY1a1b2c3i', 1000.00, 'USD', 'succeeded', 'card_visa', 6),
+                                                                                                    ('pi_3Oa1b2P3NcUv2JkY1a1b2c3j', 1000.00, 'USD', 'requires_payment_method', NULL, 1),
+                                                                                                    ('pi_3Oa1b2P3NcUv2JkY1a1b2c3k', 1000.00, 'USD', 'processing', NULL, 2);
+
+INSERT INTO payment_receipt_course (payment_receipt_id, course_id) VALUES
+(1, 1), -- Student 1 thanh toán cho course 1
+(2, 1), -- Student 2 thanh toán cho course 1
+(3, 2), -- Student 3 thanh toán cho course 2
+(4, 3), -- Student 4 thanh toán cho course 3
+(5, 1), -- Student 5 thanh toán cho course 1
+(5, 2), -- Student 5 thanh toán cho course 2 (cùng receipt)
+(6, 4), -- Student 6 thanh toán cho course 4
+(7, 5), -- Student 1 thanh toán (chưa hoàn thành) cho course 5
+(8, 6); -- Student 2 thanh toán (đang xử lý) cho course 6

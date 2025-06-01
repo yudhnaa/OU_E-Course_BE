@@ -82,7 +82,8 @@ public class SpringSecurityConfigs {
                                         "/admin/lecturer",
                                         "/admin/students",
                                         "/admin/student",
-                                        "/admin/course/create"
+                                        "/admin/course/create",
+                                        "/admin/statistics"
                                 ).hasRole("ADMIN")
 
                                 .requestMatchers(
