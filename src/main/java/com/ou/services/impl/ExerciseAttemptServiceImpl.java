@@ -1,7 +1,9 @@
 package com.ou.services.impl;
 
+import com.ou.pojo.Exercise;
 import com.ou.pojo.ExerciseAttempt;
 import com.ou.repositories.ExerciseAttemptRepository;
+import com.ou.services.CourseStudentService;
 import com.ou.services.ExerciseAttemptService;
 import com.ou.services.LocalizationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,9 +26,11 @@ public class ExerciseAttemptServiceImpl implements ExerciseAttemptService {
 
     @Autowired
     private LocalizationService localizationService;
+    @Autowired
+    private CourseStudentService courseStudentService;
 
     @Override
-    public ExerciseAttempt addExerciseAttempt(ExerciseAttempt exerciseAttempt) {
+    public ExerciseAttempt addExerciseAttempt(ExerciseAttempt exerciseAttempt) throws Exception {
         // Business logic validation
         validateExerciseAttempt(exerciseAttempt);
         
@@ -35,8 +38,11 @@ public class ExerciseAttemptServiceImpl implements ExerciseAttemptService {
         if (exerciseAttempt.getStartedAt() == null) {
             exerciseAttempt.setStartedAt(LocalDateTime.now());
         }
-        
-        return exerciseAttemptRepository.addExerciseAttempt(exerciseAttempt);
+        ExerciseAttempt createdExerciseAttempt = exerciseAttemptRepository.addExerciseAttempt(exerciseAttempt);
+
+        courseStudentService.updateCourseProgress(exerciseAttempt.getExerciseId().getCourseId().getId(), exerciseAttempt.getStudentId().getId());
+
+        return createdExerciseAttempt;
     }
 
     @Override
@@ -94,6 +100,34 @@ public class ExerciseAttemptServiceImpl implements ExerciseAttemptService {
             throw new IllegalArgumentException("Invalid status ID");
         }
         return exerciseAttemptRepository.getExerciseAttemptsByStatusId(statusId, params);
+    }
+
+    @Override
+    public Boolean isStudentDidAllCourseExercise(List<Exercise> exerciseIds, Integer studentId, Map<String, String> params) {
+        if (exerciseIds == null || exerciseIds.isEmpty()) {
+            throw new IllegalArgumentException("Invalid exercise ID");
+        }
+        if (studentId == null || studentId <= 0) {
+            throw new IllegalArgumentException("Invalid student ID");
+        }
+        return exerciseAttemptRepository.isStudentDidAllCourseExercise(exerciseIds, studentId, params);
+    }
+
+    @Override
+    public Double calculateExerciseStudentProgress(List<Exercise> exerciseIds, Integer studentId, Integer courseId, Map<String, String> params) {
+//        if (exerciseIds == null || exerciseIds.isEmpty()) {
+//            throw new IllegalArgumentException("Invalid exercise ID");
+//        }
+        if (studentId == null || studentId <= 0) {
+            throw new IllegalArgumentException("Invalid student ID");
+        }
+        if (courseId == null || courseId <= 0) {
+            throw new IllegalArgumentException("Invalid course ID");
+        }
+
+        // Calculate progress based on the number of attempts and total exercises
+        long completedAttempts = exerciseAttemptRepository.countExerciseAttemptsByStudentIdAndCourseId(courseId, studentId, params);
+        return (double) completedAttempts / exerciseIds.size();
     }
 
     @Override

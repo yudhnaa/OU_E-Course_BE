@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
       layout:decorate="~{layout}">
 <th:block layout:fragment="pagetitle">
     <div th:replace="~{partials/title-meta :: title-meta('Question Detail')}"></div>
@@ -78,7 +80,9 @@
                 </div>
             </div>
             <div class="text-end">
-                <button type="submit" class="btn btn-primary">Update Question</button>
+                <button type="submit" class="btn btn-primary"
+                        sec:authorize="hasRole('LECTURER')"
+                >Update Question</button>
                 <a th:href="@{'/admin/courses/' + ${courseId} + '/lessons/' + ${lessonId} + '/exercises/exercise/' + ${exerciseId}}" class="btn btn-secondary">Back</a>
             </div>
         </form>

@@ -60,6 +60,24 @@ public class CourseCertificateRepositoryImpl implements CourseCertificateReposit
     }
 
     @Override
+    public Optional<CourseCertificate> getCourseCertificateByIdAndStudentId(Integer certificateId, Integer studentId) {
+        Session session = sessionFactory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<CourseCertificate> query = builder.createQuery(CourseCertificate.class);
+        Root<CourseCertificate> root = query.from(CourseCertificate.class);
+
+        query.select(root)
+             .where(builder.and(
+                 builder.equal(root.get("id"), certificateId),
+                 builder.equal(root.get("courseStudentId").get("studentId").get("id"), studentId)
+             ));
+        Query<CourseCertificate> q = session.createQuery(query);
+        CourseCertificate certificate = q.uniqueResult();
+
+        return Optional.ofNullable(certificate);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<CourseCertificate> getCourseCertificates(Map<String, String> params) {
         Session session = sessionFactory.getObject().getCurrentSession();

@@ -162,11 +162,11 @@ public class CourseRateRepositoryImpl implements CourseRateRepository {
             }
             
             if (filters.containsKey("courseId")) {
-                predicates.add(builder.equal(root.get("courseId").get("id"), Integer.valueOf(filters.get("courseId"))));
+                predicates.add(builder.equal(root.get("courseStudentId").get("courseId").get("id"), Integer.valueOf(filters.get("courseId"))));
             }
             
             if (filters.containsKey("studentId")) {
-                predicates.add(builder.equal(root.get("studentId").get("id"), Integer.valueOf(filters.get("studentId"))));
+                predicates.add(builder.equal(root.get("courseStudentId").get("studentId").get("id"), Integer.valueOf(filters.get("studentId"))));
             }
         }
         

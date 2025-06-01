@@ -104,7 +104,9 @@ public class SpringSecurityConfigs {
                         .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/")
                         .failureUrl("/login").permitAll())
+
                 .logout(logout -> logout.logoutSuccessUrl("/login").permitAll())
+
                 .exceptionHandling(exception -> exception
                         .accessDeniedPage("/access-denied")
                 );

@@ -5,13 +5,16 @@ import com.ou.dto.LessonDto;
 import com.ou.dto.LessonWithAttachmentsDto;
 import com.ou.pojo.Lesson;
 
+import com.ou.pojo.LessonStudent;
 import com.ou.services.ExerciseAttachmentService;
 import com.ou.services.ExerciseService;
 import com.ou.services.LessonAttachmentService;
+import com.ou.services.LessonStudentService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -20,12 +23,14 @@ public class LessonMapper {
     private final ExerciseAttachmentService exerciseAttachmentService;
     private final AttachmentMapper attachmentMapper;
     private final ExerciseService exerciseService;
+    private final LessonStudentService lessonStudentService;
 
-    public LessonMapper(LessonAttachmentService lessonAttachmentService, ExerciseAttachmentService exerciseAttachmentService, AttachmentMapper attachmentMapper, ExerciseService exerciseService) {
+    public LessonMapper(LessonAttachmentService lessonAttachmentService, ExerciseAttachmentService exerciseAttachmentService, AttachmentMapper attachmentMapper, ExerciseService exerciseService, LessonStudentService lessonStudentService) {
         this.lessonAttachmentService = lessonAttachmentService;
         this.exerciseAttachmentService = exerciseAttachmentService;
         this.attachmentMapper = attachmentMapper;
         this.exerciseService = exerciseService;
+        this.lessonStudentService = lessonStudentService;
     }
 
 
@@ -77,7 +82,7 @@ public class LessonMapper {
         return lessonDto;
     }
 
-    public LessonWithAttachmentsDto toDtoWithExtraData(Lesson lesson) {
+    public LessonWithAttachmentsDto toDtoWithExtraData(Lesson lesson, Integer ... studentId) {
         if ( lesson == null ) {
             return null;
         }
@@ -95,14 +100,16 @@ public class LessonMapper {
         LessonWithAttachmentsDto lessonWithAttachmentDto = new LessonWithAttachmentsDto();
         BeanUtils.copyProperties(lessonDto, lessonWithAttachmentDto);
 
+        lessonWithAttachmentDto.setIsLearned(false);
+        if ( studentId != null && studentId.length > 0 ) {
+            Optional<LessonStudent> lessonStudent = lessonStudentService.getLessonStudentByLessonAndStudent(lesson.getId(), studentId[0]);
+
+            if (lessonStudent.isPresent() && lessonStudent.get().getIsLearn() != null && lessonStudent.get().getIsLearn()) {
+                lessonWithAttachmentDto.setIsLearned(true);
+            }
+        }
+
         List<AttachmentDto> attachmentDtos = lessonAttachmentService.getAttachmentsByLesson(lesson.getId()).stream().map(attachmentMapper::toDto).toList();
-//        List<AttachmentDto> attachmentDtos =
-
-
-//                lesson.getLessonAttachmentSet().stream()
-//                .map(attachmentMapper::toDto)
-//                .collect(Collectors.toList());
-
         lessonWithAttachmentDto.setAttachmentDtos(attachmentDtos);
 
 

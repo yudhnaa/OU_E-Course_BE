@@ -32,6 +32,10 @@ public class RestExerciseAttemptController {
 
     @Autowired
     private ExerciseService exerciseService;
+    @Autowired
+    private CourseService courseService;
+    @Autowired
+    private CourseStudentService courseStudentService;
 
 
     @GetMapping("/attempts")
@@ -75,7 +79,6 @@ public class RestExerciseAttemptController {
         exerciseAttemptMapper.linkExerciseAttemptAnswerSet(exerciseAttempt);
 
         ExerciseAttempt addedAttempt = exerciseAttemptService.addExerciseAttempt(exerciseAttempt);
-
 
         ExerciseAttemptDto addedAttemptDto = exerciseAttemptMapper.toDto(addedAttempt);
 

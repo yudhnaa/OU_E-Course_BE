@@ -13,7 +13,8 @@ import java.util.Objects;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LessonWithAttachmentsDto extends LessonDto implements Serializable {
-    List<AttachmentDto> attachmentDtos;
+    private List<AttachmentDto> attachmentDtos;
+    private boolean isLearned;
 
     public LessonWithAttachmentsDto() {
     }
@@ -29,5 +30,13 @@ public class LessonWithAttachmentsDto extends LessonDto implements Serializable 
 
     public void setAttachmentDtos(List<AttachmentDto> attachmentDtos) {
         this.attachmentDtos = attachmentDtos;
+    }
+
+    public boolean getIsLearned() {
+        return isLearned;
+    }
+
+    public void setIsLearned(boolean learned) {
+        isLearned = learned;
     }
 }

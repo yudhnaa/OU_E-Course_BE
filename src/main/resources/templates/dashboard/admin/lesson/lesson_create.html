@@ -47,19 +47,19 @@
                         <!-- Name -->
                         <div class="mb-3">
                             <label class="form-label" for="lesson-title-input">Lesson Name</label>
-                            <input type="text" th:field="*{name}" class="form-control" id="lesson-title-input" placeholder="Enter lesson name">
+                            <input type="text" th:field="*{name}" class="form-control" id="lesson-title-input" placeholder="Enter lesson name" required>
                         </div>
 
                         <!-- Thumbnail -->
                         <div class="mb-3">
                             <label class="form-label" for="lesson-thumbnail-img">Thumbnail Image</label>
-                            <input class="form-control" th:field="*{thumbnailImage}" id="lesson-thumbnail-img" type="file" accept="image/png, image/jpeg, image/gif">
+                            <input class="form-control" th:field="*{thumbnailImage}" id="lesson-thumbnail-img" type="file" accept="image/png, image/jpeg, image/gif" required>
                         </div>
 
                         <!-- Description -->
                         <div class="mb-3">
                             <label class="form-label" for="lessonDescription">Lesson Description</label>
-                            <textarea th:field="*{description}" class="form-control" id="lessonDescription" rows="10" placeholder="Lesson Description"></textarea>
+                            <textarea th:field="*{description}" class="form-control" id="lessonDescription" rows="10" placeholder="Lesson Description" required></textarea>
                         </div>
                     </div>
                 </div>
@@ -74,7 +74,7 @@
                             <!-- Textbox nhập link video, ẩn mặc định -->
                             <div style="margin-top: 10px;">
                                 <label for="video-link" class="form-label">Embed Video Link</label>
-                                <input type="text" th:field="*{embedLink}" class="form-control" id="video-link" placeholder="Enter embed video URL">
+                                <input type="text" th:field="*{embedLink}" class="form-control" id="video-link" placeholder="Enter embed video URL" required>
                             </div>
                         </div>
                     </div>

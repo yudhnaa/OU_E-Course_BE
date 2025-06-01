@@ -86,28 +86,28 @@ INSERT INTO course_lecturer (course_id, lecturer_id) VALUES
 
 -- Sample data for course_student
 INSERT INTO course_student (progress, course_id, student_id) VALUES
-    (1, 1, 1),
-    (0.75, 1, 2),
-    (0.25, 1, 3),
-    (0.6, 1, 4),
-    (0.8, 1, 5),
-    (0.4, 1, 6),
-    (1, 2, 2);
+    (0, 1, 1),
+    (0, 1, 2),
+    (0, 1, 3),
+    (0, 1, 4),
+    (0, 1, 5),
+    (0, 1, 6),
+    (0, 2, 2);
 
 -- Sample data for course_certificate
-INSERT INTO course_certificate (download_link, course_student_id) VALUES
-    ('https://drive.google.com/file/d/1Q2zOARXiZrEpNu_aMngCdb3qGszNV2nJ/view?usp=drivesdk', 1),
-    ('https://drive.google.com/file/d/1Q2zOARXiZrEpNu_aMngCdb3qGszNV2nJ/view?usp=drivesdk', 7);
+# INSERT INTO course_certificate (download_link, course_student_id) VALUES
+#     ('https://drive.google.com/file/d/1Q2zOARXiZrEpNu_aMngCdb3qGszNV2nJ/view?usp=drivesdk', 1);
+#     ('https://drive.google.com/file/d/1Q2zOARXiZrEpNu_aMngCdb3qGszNV2nJ/view?usp=drivesdk', 7);
 
 -- Sample data for course_rate
 INSERT INTO course_rate (rate, comment, course_student_id)
 VALUES
-    (4.5, 'Great course!', 1),
-    (3.0, 'Average course.', 2),
+    (5.0, 'Great course!', 1),
+    (5.0, 'Average course.', 2),
     (5.0, 'Excellent course!', 3),
-    (2.5, 'Not what I expected.', 4),
-    (4.0, 'Good content.', 5),
-    (3.5, 'Decent course.', 6);
+    (5.0, 'Not what I expected.', 4),
+    (5.0, 'Good content.', 5),
+    (5.0, 'Decent course.', 6);
 
 -- Sample data for attachment
 INSERT INTO attachment (name, link, description, public_id) VALUES
@@ -139,30 +139,30 @@ INSERT INTO lesson_attachment (lesson_id, attachment_id) VALUES
     (3, 3),
     (4, 4);
 
--- Sample data for lesson_student with learned_at
-INSERT INTO lesson_student (is_learn, learned_at, lesson_id, student_id) VALUES
-    (1, '2023-09-20 14:30:00', 1, 1),
-    (0, NULL, 1, 2),
-    (1, '2023-09-22 10:15:00', 2, 2),
-    (0, NULL, 3, 3),
-    (1, '2023-09-25 16:45:00', 4, 4);
+# -- Sample data for lesson_student with learned_at
+# INSERT INTO lesson_student (is_learn, learned_at, lesson_id, student_id) VALUES
+#     (1, '2023-09-20 14:30:00', 1, 1),
+#     (0, NULL, 1, 2),
+#     (1, '2023-09-22 10:15:00', 2, 2),
+#     (0, NULL, 3, 3),
+#     (1, '2023-09-25 16:45:00', 4, 4);
 
 -- Sample data for exercise
 INSERT INTO exercise (name, duration_minutes, max_score, created_by_user_id, course_id, lesson_id) VALUES
     ('Quiz 1', 30, 100.00, 1, 1, 1),
-    ('Quiz 2', 30, 100.00, 2, 1, 2),
-    ('Quiz 3', 30, 100.00, 3, 1, 3),
-    ('Quiz 4', 30, 100.00, 1, 1, 4),
-    ('Assignment 1', 60, 100.00, 2, 2, 5),
-    ('Assignment 2', 60, 100.00, 3, 2, 6),
-    ('Midterm Exercise', 90, 100.00, 1, 1, 1),
-    ('Final Exercise', 120, 100.00, 2, 1, 2);
+    ('Quiz 2', 30, 100.00, 2, 1, 2);
+#     ('Quiz 3', 30, 100.00, 3, 1, 3),
+#     ('Quiz 4', 30, 100.00, 1, 1, 4),
+#     ('Assignment 1', 60, 100.00, 2, 2, 5),
+#     ('Assignment 2', 60, 100.00, 3, 2, 6),
+#     ('Midterm Exercise', 90, 100.00, 1, 1, 1),
+#     ('Final Exercise', 120, 100.00, 2, 1, 2);
 
 -- Sample data for exercise_attachment
 INSERT INTO exercise_attachment (exercise_id, attachment_id) VALUES
     (1, 1),
-    (2, 2),
-    (3, 3);
+    (2, 2);
+#     (3, 3);
 
 -- Sample data for question_type
 INSERT INTO question_type (name, description) VALUES
@@ -172,10 +172,10 @@ INSERT INTO question_type (name, description) VALUES
 -- Sample data for question
 INSERT INTO question (content, exercise_id, question_type_id) VALUES
     ('What is Java?', 1, 1),
-    ('Explain the main features of Java', 1, 2),
-    ('What is JVM?', 1, 1),
-    ('Which of these is not a Java keyword?', 1, 1),
-    ('What is the default value of int in Java?', 1, 1);
+    ('Explain the main features of Java', 1, 1),
+    ('What is JVM?', 2, 1),
+    ('Which of these is not a Java keyword?', 2, 1),
+    ('What is the default value of int in Java?', 2, 1);
 
 -- Sample data for multiple_choice_answer
 INSERT INTO multiple_choice_answer (content, is_correct, question_id) VALUES
@@ -210,20 +210,20 @@ INSERT INTO exercise_score_status (name, description) VALUES
     ('Pending', 'Waiting for grading'),
     ('Graded', 'Graded by lecturer');
 
--- Sample data for exercise_attempt with proper dates
-INSERT INTO exercise_attempt (started_at, submitted_at, total_score, response, status_id, exercise_id, score_by_user_id, student_id) VALUES
-    ('2023-09-20 10:00:00', '2023-09-20 10:25:00', 95.00, 'Answer to quiz 1', 3, 1, 1, 1),
-    ('2023-09-22 14:30:00', '2023-09-22 14:55:00', 85.00, 'Answer to quiz 2', 3, 2, 2, 1),
-    ('2023-09-25 09:15:00', '2023-09-25 09:40:00', 90.00, 'Answer to quiz 3', 3, 3, 3, 3),
-    ('2023-09-27 13:00:00', '2023-09-27 13:25:00', 88.00, 'Answer to quiz 4', 2, 4, 1, 4);
+# -- Sample data for exercise_attempt with proper dates
+# INSERT INTO exercise_attempt (started_at, submitted_at, total_score, response, status_id, exercise_id, score_by_user_id, student_id) VALUES
+#     ('2023-09-20 10:00:00', '2023-09-20 10:25:00', 95.00, 'Answer to quiz 1', 3, 1, 1, 1),
+#     ('2023-09-22 14:30:00', '2023-09-22 14:55:00', 85.00, 'Answer to quiz 2', 3, 2, 2, 1),
+#     ('2023-09-25 09:15:00', '2023-09-25 09:40:00', 90.00, 'Answer to quiz 3', 3, 3, 3, 3),
+#     ('2023-09-27 13:00:00', '2023-09-27 13:25:00', 88.00, 'Answer to quiz 4', 2, 4, 1, 4);
 
 -- Sample data for test
 INSERT INTO test (name, description, duration_minutes, created_at, max_score, created_by_user_id, course_id) VALUES
     ('Midterm Exam', 'Midterm examination', 90, '2023-10-15', 100.00, 1, 1),
-    ('Final Exam', 'Final examination', 120, '2023-12-10', 100.00, 2, 1),
-    ('Java Basics Test', 'Basic Java concepts test', 60, '2023-10-05', 50.00, 3, 2),
-    ('Web Development Quiz', 'HTML/CSS/JS quiz', 45, '2023-10-20', 40.00, 1, 7),
-    ('Database Design Test', 'ER diagrams and SQL test', 75, '2023-10-25', 60.00, 2, 8);
+    ('Final Exam', 'Final examination', 120, '2023-12-10', 100.00, 2, 1);
+#     ('Java Basics Test', 'Basic Java concepts test', 60, '2023-10-05', 50.00, 3, 2),
+#     ('Web Development Quiz', 'HTML/CSS/JS quiz', 45, '2023-10-20', 40.00, 1, 7),
+#     ('Database Design Test', 'ER diagrams and SQL test', 75, '2023-10-25', 60.00, 2, 8);
 
 -- Sample data for test_question
 INSERT INTO test_question (test_id, question_id) VALUES
@@ -231,35 +231,36 @@ INSERT INTO test_question (test_id, question_id) VALUES
     (1, 2),
     (1, 3),
     (2, 4),
-    (2, 5),
-    (3, 1),
-    (3, 3);
+    (2, 5);
+#     (3, 1),
+#     (3, 3);
 
--- Sample data for test_attempt with proper student IDs
-INSERT INTO test_attempt (started_at, submitted_at, total_score, test_id, user_id) VALUES
-    ('2023-10-15 09:00:00', '2023-10-15 10:25:00', 92.00, 1, 1),
-    ('2023-10-15 09:00:00', '2023-10-15 10:28:00', 88.00, 1, 2),
-    ('2023-10-15 09:00:00', '2023-10-15 10:15:00', 95.00, 1, 3),
-    ('2023-12-10 14:00:00', '2023-12-10 15:55:00', 90.00, 2, 1),
-    ('2023-12-10 14:00:00', '2023-12-10 15:50:00', 85.00, 2, 2);
+# -- Sample data for test_attempt with proper student IDs
+# INSERT INTO test_attempt (started_at, submitted_at, total_score, test_id, user_id) VALUES
+#     ('2023-10-15 09:00:00', '2023-10-15 10:25:00', 92.00, 1, 1),
+#     ('2023-10-15 09:00:00', '2023-10-15 10:28:00', 88.00, 1, 2),
+#     ('2023-10-15 09:00:00', '2023-10-15 10:15:00', 95.00, 1, 3),
+#     ('2023-12-10 14:00:00', '2023-12-10 15:55:00', 90.00, 2, 1),
+#     ('2023-12-10 14:00:00', '2023-12-10 15:50:00', 85.00, 2, 2);
 
--- Sample data for exercise_attempt_answer
-INSERT INTO exercise_attempt_answer (attempt_id, question_id, answer_text, is_correct, score) VALUES
-    (1, 1, 'A programming language', 1, 100.00),
-    (1, 2, 'Java is object-oriented and has automatic memory management called garbage collection.', NULL, 90.00),
-    (1, 3, 'Java Virtual Machine', 1, 100.00),
-    (2, 1, 'A programming language', 1, 100.00),
-    (2, 2, 'Java features include platform independence through JVM and strong security features.', NULL, 85.00),
-    (2, 4, 'string', 1, 100.00);
+# -- Sample data for exercise_attempt_answer
+# INSERT INTO exercise_attempt_answer (attempt_id, question_id, answer_text, is_correct, score) VALUES
+#     (1, 1, 'A programming language', 1, 100.00),
+#     (1, 2, 'Java is object-oriented and has automatic memory management called garbage collection.', NULL, 90.00),
+#     (1, 3, 'Java Virtual Machine', 1, 100.00),
+#     (2, 1, 'A programming language', 1, 100.00),
+#     (2, 2, 'Java features include platform independence through JVM and strong security features.', NULL, 85.00),
+#     (2, 4, 'string', 1, 100.00);
 
--- Sample data for test_attempt_answer
-INSERT INTO test_attempt_answer (attempt_id, question_id, answer_text, is_correct, score) VALUES
-    (1, 1, 'A programming language', 1, 100.00),
-    (1, 2, 'Java is a versatile, object-oriented language with platform independence via the JVM.', NULL, 95.00),
-    (1, 3, 'Java Virtual Machine', 1, 100.00),
-    (2, 1, 'A programming language', 1, 100.00),
-    (2, 2, 'Java has features like garbage collection and platform independence.', NULL, 85.00),
-    (2, 3, 'Java Visual Machine', 0, 0.00);
+
+# -- Sample data for test_attempt_answer
+# INSERT INTO test_attempt_answer (attempt_id, question_id, answer_text, is_correct, score) VALUES
+#    (1, 1, 'A programming language', 1, 100.00),
+#    (1, 2, 'Java is a versatile, object-oriented language with platform independence via the JVM.', NULL, 95.00),
+#    (1, 3, 'Java Virtual Machine', 1, 100.00),
+#    (2, 1, 'A programming language', 1, 100.00),
+#    (2, 2, 'Java has features like garbage collection and platform independence.', NULL, 85.00),
+#    (2, 3, 'Java Visual Machine', 0, 0.00);
 
 INSERT INTO payment_receipts (receipt_id, amount, currency, status, payment_method, student_id) VALUES
                                                                                                     ('pi_3Oa1b2P3NcUv2JkY1a1b2c3d', 1000.00, 'USD', 'succeeded', 'card_visa', 1),

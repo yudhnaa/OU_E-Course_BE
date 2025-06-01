@@ -138,6 +138,27 @@ public class TestAttemptRepositoryImpl implements TestAttemptRepository {
         return testAttempt;
     }
 
+    @Override
+    public Long countTestAttemptsByStudentIdAndCourseId(Integer studentId, Integer courseId, Map<String, String> params) {
+        Session session = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+
+        CriteriaQuery<Long> query = builder.createQuery(Long.class);
+        Root<TestAttempt> root = query.from(TestAttempt.class);
+
+        // distinct
+        query.select(builder.countDistinct(root.get("testId").get("id")));
+
+        List<Predicate> predicates = new ArrayList<>();
+        // userId thuc la la studentId vi dat ten nham trong TestAttempt
+        predicates.add(builder.equal(root.get("userId").get("id"), studentId));
+        predicates.add(builder.equal(root.get("testId").get("courseId").get("id"), courseId));
+
+        query.where(builder.and(predicates.toArray(new Predicate[0])));
+
+        return session.createQuery(query).getSingleResult();
+    }
+
     private List<Predicate> buildPredicates(CriteriaBuilder builder, Root<TestAttempt> root, Map<String, String> filters) {
         List<Predicate> predicates = new ArrayList<>();
 

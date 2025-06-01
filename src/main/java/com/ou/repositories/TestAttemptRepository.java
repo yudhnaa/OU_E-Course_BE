@@ -14,4 +14,6 @@ public interface TestAttemptRepository {
     TestAttempt addTestAttempt(TestAttempt testAttempt);
     boolean deleteTestAttemptById(Integer id);
     TestAttempt updateTestAttempt(TestAttempt testAttempt);
+
+    Long countTestAttemptsByStudentIdAndCourseId(Integer studentId, Integer courseId, Map<String, String> params);
 }
