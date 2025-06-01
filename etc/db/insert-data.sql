@@ -172,7 +172,7 @@ INSERT INTO question_type (name, description) VALUES
 -- Sample data for question
 INSERT INTO question (content, exercise_id, question_type_id) VALUES
     ('What is Java?', 1, 1),
-    ('Explain the main features of Java', 1, 2),
+    ('Explain the main features of Java', 1, 1),
     ('What is JVM?', 1, 1),
     ('Which of these is not a Java keyword?', 1, 1),
     ('What is the default value of int in Java?', 1, 1);

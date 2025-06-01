@@ -125,4 +125,63 @@ public class RestCourseController {
 
         return new ResponseEntity<>(isEnrolled, HttpStatus.OK);
     }
+
+    @PostMapping("/secure/course/{courseId}/review")
+    public ResponseEntity<CourseRateDto> reviewCourse(
+            @PathVariable("courseId") Integer courseId,
+            @RequestBody CourseRateDto courseRateDto,
+            @AuthenticationPrincipal CustomUserDetails principal) throws Exception {
+
+        Optional<Course> course = courseService.getCourseById(courseId);
+        CourseRate courseRate = courseRateMapper.toEntity(courseRateDto, principal.getUser().getId());
+
+        if (course.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // Check for duplicate ratings
+        Map<String, String> filters = Map.of(
+                "courseId", courseRate.getCourseStudentId().getCourseId().getId().toString(),
+                "studentId", courseRate.getCourseStudentId().getStudentId().getId().toString()
+        );
+        List<CourseRate> existingRatings = courseRateService.searchCourseRates(filters, null);
+
+        if (!existingRatings.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
+
+        CourseRate savedCourseRate = courseRateService.addCourseRate(courseRate);
+
+        return new ResponseEntity<>(courseRateMapper.toDto(savedCourseRate), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/secure/course/{courseId}/review-update")
+    public ResponseEntity<CourseRateDto> reviewCourseUpdate(
+            @PathVariable("courseId") Integer courseId,
+            @RequestBody CourseRateDto courseRateDto,
+            @AuthenticationPrincipal CustomUserDetails principal) throws Exception {
+
+        CourseRate courseRate = courseRateMapper.toEntity(courseRateDto, principal.getUser().getId());
+
+        // Check for existing ratings
+        Map<String, String> filters = Map.of(
+                "courseId", courseRate.getCourseStudentId().getCourseId().getId().toString(),
+                "studentId", courseRate.getCourseStudentId().getStudentId().getId().toString()
+        );
+        CourseRate existingRatings = courseRateService.searchCourseRates(filters, null).get(0);
+
+        if (existingRatings == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        existingRatings.setRate(courseRate.getRate());
+        existingRatings.setComment(courseRate.getComment());
+
+        CourseRate updatedCourseRate = courseRateService.updateCourseRate(existingRatings);
+
+        return new ResponseEntity<>(courseRateMapper.toDto(updatedCourseRate), HttpStatus.CREATED);
+    }
+
+
 }
