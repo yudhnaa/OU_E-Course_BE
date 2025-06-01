@@ -15,6 +15,7 @@ public interface CourseCertificateRepository {
     
     // Return an Optional<CourseCertificate> to handle cases where the certificate is not found
     Optional<CourseCertificate> getCourseCertificateById(Integer id);
+    Optional<CourseCertificate> getCourseCertificateByIdAndStudentId(Integer certificateId, Integer studentId);
     
     // Get certificates by course student ID
     List<CourseCertificate> getCertificatesByCourseStudentId(Integer courseStudentId, Map<String, String> params);

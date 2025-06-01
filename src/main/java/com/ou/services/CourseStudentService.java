@@ -15,7 +15,7 @@ public interface CourseStudentService {
 
     // Get by ID
     Optional<CourseStudent> getCourseStudentById(Integer id);
-    
+
     // Get by relations
     List<CourseStudent> getCourseStudentsByCourse(Integer courseId, Map<String, String> params);
     List<CourseStudent> getCourseStudentsByStudent(Integer studentId, Map<String, String> params);
@@ -34,9 +34,14 @@ public interface CourseStudentService {
     long countCourseStudentsByCourse(Integer courseId);
     long countCourseStudentsByStudent(Integer studentId);
     long countSearchResults(Map<String, String> filters);
-    
+
     // Business validation methods
     boolean isEnrollmentValid(Integer courseId, Integer studentId);
     boolean canUpdateProgress(CourseStudent courseStudent, double newProgress);
     boolean isCourseCompleted(CourseStudent courseStudent);
+
+    // Progress calculation methods
+    double calculateCourseProgress(Integer courseId, Integer studentId) throws Exception;
+    CourseStudent updateCourseProgress(Integer courseId, Integer studentId) throws Exception;
+    boolean shouldGenerateCertificate(CourseStudent courseStudent);
 }

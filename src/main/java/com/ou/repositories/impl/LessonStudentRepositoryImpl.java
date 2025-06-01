@@ -90,6 +90,7 @@ public class LessonStudentRepositoryImpl implements LessonStudentRepository {
         query.setParameter("lessonId", lessonId);
         query.setParameter("studentId", studentId);
 
-        return query.getSingleResult();
+        List<LessonStudent> results = query.getResultList();
+        return results.isEmpty() ? null : results.get(0);
     }
 }

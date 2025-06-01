@@ -1,5 +1,6 @@
 package com.ou.services;
 
+import com.ou.pojo.Exercise;
 import com.ou.pojo.Test;
 import com.ou.pojo.TestAttempt;
 
@@ -16,4 +17,6 @@ public interface TestAttemptService {
     boolean isValidTestAttempt(TestAttempt testAttempt);
     TestAttempt addTestAttempt(TestAttempt testAttempt);
     boolean deleteTestAttemptById(Integer id);
+
+    Double calculateTestStudentProgress(List<Test> tests, Integer studentId, Integer courseId, Map<String, String> params);
 }

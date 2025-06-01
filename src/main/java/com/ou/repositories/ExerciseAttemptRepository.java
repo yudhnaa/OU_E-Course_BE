@@ -1,5 +1,6 @@
 package com.ou.repositories;
 
+import com.ou.pojo.Exercise;
 import com.ou.pojo.ExerciseAttempt;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,9 @@ public interface ExerciseAttemptRepository {
     List<ExerciseAttempt> getExerciseAttemptsByStatusId(Integer statusId, Map<String, String> params);
     List<ExerciseAttempt> getExerciseAttemptsByStudentId(Integer studentId, Map<String, String> params);
 
+    //progress methods
+    Boolean isStudentDidAllCourseExercise(List<Exercise> exerciseIds, Integer studentId, Map<String, String> params);
+
     // Update operation
     ExerciseAttempt updateExerciseAttempt(ExerciseAttempt exerciseAttempt);
 
@@ -32,5 +36,6 @@ public interface ExerciseAttemptRepository {
     long countExerciseAttemptsByScoreByUserId(Integer userId);
     long countExerciseAttemptsByStatusId(Integer statusId);
     long countSearchResults(Map<String, String> filters);
+    Long countExerciseAttemptsByStudentIdAndCourseId(Integer courseId, Integer studentId, Map<String, String> params);
 
 }
