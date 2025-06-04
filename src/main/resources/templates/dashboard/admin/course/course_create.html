@@ -33,6 +33,7 @@
   <div class="row">
     <!-- Danger Alert -->
     <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${msg_error}">
+      <!--/*@thymesVar id="msg_error" type=""*/-->
       <b th:text="${msg_error}">Dismissible danger Alert </b>
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>

@@ -15,6 +15,7 @@ public class LocalizationServiceImpl implements LocalizationService {
 
     public String getMessage(String key, Locale locale) {
         Locale localeObj = locale != null ? locale: LocaleContextHolder.getLocale();
+        System.out.println("Lang is: " + localeObj.getDisplayLanguage());
         return messageSource.getMessage(key, null, localeObj);
     }
 }

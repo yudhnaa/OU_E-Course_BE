@@ -39,7 +39,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public Question updateQuestion(Question question) {
-        return null;
+        return questionRepository.updateQuestion(question);
     }
 
     @Override
